@@ -11,8 +11,8 @@ const MAGIC_MOTION 	= 0x00060000;
 const MAGIC_BCH 	= 0x00484342;
 
 /**
- * @param data BufferedReader
- * @param header GFPackageHeader
+ * @param {BufferedReader} data
+ * @param {GFPackageHeader} header
  */
 function parse(data, header) {
 	let out;

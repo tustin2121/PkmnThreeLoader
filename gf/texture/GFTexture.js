@@ -20,7 +20,7 @@ const GFTextureFormat = {
 };
 
 class GFTexture {
-	/** @param data BufferedReader */
+	/** @param {BufferedReader} data */
 	constructor(data) {
 		if (!data) {
 			this.name = '';
