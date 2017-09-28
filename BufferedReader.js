@@ -129,8 +129,15 @@ class BufferedReader {
 		if (advance) this.data.skip(len);
 		return str;
 	}
+	readStringArray(count) {
+		let out = [];
+		for (let i = 0; i < count; i++) {
+			out[i] = data.readByteLenString();
+		}
+		return out;
+	}
 	
-	skip(len) { this.data.skip(len); }
+	skip(len=1) { this.data.skip(len); }
 	
 	skipPadding() {
 		while((this.data.offset & 0xF) != 0) this.data.offset++;

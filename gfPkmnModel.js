@@ -1,8 +1,10 @@
 // https://github.com/gdkchan/SPICA/blob/master/SPICA.WinForms/Formats/GFPkmnModel.cs
 
-const { GFModelPack } = require('./gf/GFModelPack');
-const { GFModel } = require('./gf/model/GFModel');
-const { GFShader } = require('./gf/shader/GFShader');
+const { Skeleton } = require('three');
+const { GFModelPack } = require('./gf');
+const { GFModel } = require('./gf/model');
+const { GFShader } = require('./gf/shader');
+const { GFTexture } = require('./gf/texture');
 const { GFPackage } = require('./gfPackage');
 
 const MAGIC_MODEL 	= 0x15122117;
@@ -15,7 +17,7 @@ const MAGIC_BCH 	= 0x00484342;
  * @param {GFPackageHeader} header
  */
 function parse(data, header) {
-	let out;
+	let out = {};
 	
 	data.offset = header.entries[0].address;
 	let magicNum = data.readUint32();
@@ -50,13 +52,22 @@ function parse(data, header) {
 					modelpack.shaders.push(new GFShader(data));
 				}
 			}
-			out = modelpack.toThreeObj();
+			out.model = modelpack;
 		} break;
-		case MAGIC_TEX: {
-			//TODO
+		case GFTexture.MAGIC_NUMBER: {
+			out.textures = [];
+			for (let entry of psHeader.entries) {
+				data.offset = entry.addr;
+				out.textures.push(new GFTexture(data));
+			}
 		} break;
 		case MAGIC_MOTION: {
-			//TODO
+			out.skeletonAnimations = [];
+			out.materialAnimations = [];
+			out.visibilityAnimations = [];
+			out.skeleton = new Skeleton();
+			
+			
 		} break;
 		case MAGIC_BCH: {
 			//TODO ?

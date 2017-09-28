@@ -20,3 +20,5 @@ class GFMotionPack {
 	get(index) { return this.animations[index]; }
 	set(index, val) { this.animations[index] = val; }
 }
+
+module.exports = { GFMotionPack };
