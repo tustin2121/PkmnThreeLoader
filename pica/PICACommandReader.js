@@ -1,5 +1,11 @@
 
-const { PICACommand } = require('./PICACommand');
+class PICACommand {
+	constructor({ register, parameters=[], mask=0 }) {
+		this.register = register;
+		this.parameters = parameters;
+		this.mask = mask;
+	}
+}
 
 class UniformManager {
 	constructor() {
@@ -87,4 +93,4 @@ class PICACommandReader {
 	
 	//TODO https://github.com/gdkchan/SPICA/blob/master/SPICA/PICA/PICACommandReader.cs#L186
 }
-module.exports = { PICACommandReader };
+module.exports = { PICACommand, PICACommandReader };

@@ -1,6 +1,7 @@
 // https://github.com/gdkchan/SPICA/blob/master/SPICA.WinForms/Formats/GFCharaModel.cs
 
 const { GFModelPack } = require('./gf/GFModelPack');
+const { GFMotionPack } = require('./gf/GFMotionPack');
 
 /**
  * @param data BufferedReader
