@@ -59,5 +59,8 @@ class GFMotion {
 		}
 	}
 }
+Object.defineProperties(GFModel, {
+	'MAGIC_NUMBER': { value:0x00060000, },
+});
 
 module.exports = { GFMotion };
