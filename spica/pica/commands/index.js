@@ -1,3 +1,3 @@
-module.exports = Object.keys({}, ...[
+module.exports = Object.assign({}, ...[
 	require('./PICATextures'),
 ]);

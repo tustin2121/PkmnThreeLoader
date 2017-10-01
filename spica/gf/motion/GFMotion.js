@@ -59,7 +59,7 @@ class GFMotion {
 		}
 	}
 }
-Object.defineProperties(GFModel, {
+Object.defineProperties(GFMotion, {
 	'MAGIC_NUMBER': { value:0x00060000, },
 });
 

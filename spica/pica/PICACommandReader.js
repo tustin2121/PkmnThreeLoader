@@ -84,10 +84,10 @@ class PICACommandReader {
 			let parameter	= cmds[index++];
 			let command		= cmds[index++];
 			
-			let id 			= (cmd >>  0) & 0xFFFF;
-			let mask		= (cmd >> 16) & 0xF;
-			let extraParams	= (cmd >> 20) & 0x7FF;
-			let consecutive = (cmd >> 31) !== 0;
+			let id 			= (command >>  0) & 0xFFFF;
+			let mask		= (command >> 16) & 0xF;
+			let extraParams	= (command >> 20) & 0x7FF;
+			let consecutive = (command >> 31) !== 0;
 			
 			if (consecutive) {
 				for (let i = 0; i < extraParams + 1; i++) {

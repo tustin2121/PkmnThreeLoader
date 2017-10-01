@@ -12,3 +12,4 @@ class ShaderBinary {
 	
 	
 }
+module.exports = { ShaderBinary };

@@ -1,7 +1,8 @@
 module.exports = Object.assign({}, ...[
 	require('./ShaderProgram'),
 	require('./ShaderUniform'),
-	require('./ShaderOutputRegName'),
+	require('./ShaderOutput'),
 	require('./ShaderOpCode'),
 	require('./ShaderLabel'),
+	require('./ShaderBinary'),
 ]);

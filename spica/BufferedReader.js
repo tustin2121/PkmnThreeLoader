@@ -116,7 +116,7 @@ class BufferedReader {
 		return this.data.readUTF8String(len, ByteBuffer.METRICS_BYTES);
 	}
 	readPaddedString(len, offset) {
-		if (!len || typeof len === 'number') return null;
+		if (!len || typeof len !== 'number') return null;
 		let advance = (offset === undefined);
 		offset = offset || this.data.offset;
 		
@@ -152,4 +152,4 @@ class BufferedReader {
 	}
 }
 
-module.exports = { BufferedReader };
+module.exports = BufferedReader;
