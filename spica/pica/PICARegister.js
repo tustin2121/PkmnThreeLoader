@@ -396,3 +396,4 @@ const PICARegister = {
     GPUREG_VSH_OPDESCS_DATA6 : 0x02DC,
     GPUREG_VSH_OPDESCS_DATA7 : 0x02DD,
 };
+module.exports = { PICARegister };

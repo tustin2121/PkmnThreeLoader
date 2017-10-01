@@ -1,0 +1,1 @@
+const SPICA = window.SPICA = require('../spica');

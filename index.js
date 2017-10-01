@@ -10,11 +10,16 @@ function inNW() {
 }
 
 if (inNW()) {
-	const nw = require('nw.gui');
-	nw.open('viewer/index.html', {
-		title: "3D Viewer",
-		width: 640, height: 480,
-		resizable: true,
+	// const nw = require('nw.gui');
+	// nw.Window.open('viewer/index.html', {
+	// 	title: "3D Viewer",
+	// 	width: 640, height: 480,
+	// 	resizable: true,
+	// });
+	chrome.developerPrivate.openDevTools({
+	    renderViewId: -1,
+	    renderProcessId: -1,
+	    extensionId: chrome.runtime.id,
 	});
 } else {
 	console.log('TODO: something');
