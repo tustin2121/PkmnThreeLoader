@@ -31,6 +31,7 @@ class GFTexture {
 			this.mipmapSize = 0;
 		} else {
 			let magic = data.readUint32();
+			if (magic !== GFTexture.MAGIC_NUMBER) throw new TypeError('Texture magic number does not match!');
 			let texCount = data.readUint32();
 			let texSection = new GFSection(data);
 			let texLen = data.readUint32();

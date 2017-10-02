@@ -1,9 +1,9 @@
 // https://github.com/gdkchan/SPICA/blob/master/SPICA/Formats/GFL2/Shader/GFShader.cs
 
-const { PICACommand, PICACommandReader } = require('../../pica/PICACommandReader');
-const { PICARegister } = require('../../pica/PICARegister');
+const { PICACommand, PICACommandReader, PICARegister } = require('../../pica');
+const { GFSection } = require('../GFSection');
 const {
-	PICATexEnvSource, PICATexEnvOperand, PICATexEnvCombiner, PICATexEnvScale,
+	PICATexEnvStage, PICATexEnvSource, PICATexEnvOperand, PICATexEnvCombiner, PICATexEnvScale,
 } = require('../../pica/commands');
 const {
 	ShaderProgram, ShaderOutputReg, ShaderOutputRegName, ShaderLabel,
@@ -89,7 +89,7 @@ class GFShader {
 				case PICARegister.GPUREG_TEXENV3_SOURCE:
 				case PICARegister.GPUREG_TEXENV4_SOURCE:
 				case PICARegister.GPUREG_TEXENV5_SOURCE:
-					texEnvStages[stage].source = new PICATexEnvSource(param);
+					this.texEnvStages[stage].source = new PICATexEnvSource(param);
 					break;
 				case PICARegister.GPUREG_TEXENV0_OPERAND:
 				case PICARegister.GPUREG_TEXENV1_OPERAND:
@@ -97,7 +97,7 @@ class GFShader {
 				case PICARegister.GPUREG_TEXENV3_OPERAND:
 				case PICARegister.GPUREG_TEXENV4_OPERAND:
 				case PICARegister.GPUREG_TEXENV5_OPERAND:
-					texEnvStages[stage].operand = new PICATexEnvOperand(param);
+					this.texEnvStages[stage].operand = new PICATexEnvOperand(param);
 					break;
 				case PICARegister.GPUREG_TEXENV0_COMBINER:
 				case PICARegister.GPUREG_TEXENV1_COMBINER:
@@ -105,7 +105,7 @@ class GFShader {
 				case PICARegister.GPUREG_TEXENV3_COMBINER:
 				case PICARegister.GPUREG_TEXENV4_COMBINER:
 				case PICARegister.GPUREG_TEXENV5_COMBINER:
-					texEnvStages[stage].combiner = new PICATexEnvCombiner(param);
+					this.texEnvStages[stage].combiner = new PICATexEnvCombiner(param);
 					break;
 				case PICARegister.GPUREG_TEXENV0_COLOR:
 				case PICARegister.GPUREG_TEXENV1_COLOR:
@@ -113,7 +113,7 @@ class GFShader {
 				case PICARegister.GPUREG_TEXENV3_COLOR:
 				case PICARegister.GPUREG_TEXENV4_COLOR:
 				case PICARegister.GPUREG_TEXENV5_COLOR:
-					texEnvStages[stage].color = param;
+					this.texEnvStages[stage].color = param;
 					break;
 				case PICARegister.GPUREG_TEXENV0_SCALE:
 				case PICARegister.GPUREG_TEXENV1_SCALE:
@@ -121,10 +121,10 @@ class GFShader {
 				case PICARegister.GPUREG_TEXENV3_SCALE:
 				case PICARegister.GPUREG_TEXENV4_SCALE:
 				case PICARegister.GPUREG_TEXENV5_SCALE:
-					texEnvStages[stage].scale = new PICATexEnvScale(param);
+					this.texEnvStages[stage].scale = new PICATexEnvScale(param);
 					break;
 				case PICARegister.GPUREG_TEXENV_UPDATE_BUFFER:
-				 	PICATexEnvStage.SetUpdateBuffer(TexEnvStages, Param);
+				 	PICATexEnvStage.setUpdateBuffer(this.texEnvStages, param);
 					break;
 				case PICARegister.GPUREG_TEXENV_BUFFER_COLOR:
 					this.texEnvBufferColor = param;

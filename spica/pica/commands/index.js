@@ -1,7 +1,7 @@
 module.exports = Object.assign({}, ...[
-	require('./PICATextures'),
 	require('./PICA_LUT'),
-	require('./PICAVectorFloat24'),
-	require('./PICATests'),
 	require('./PICAAttributes'),
+	require('./PICATests'),
+	require('./PICATextures'),
+	require('./PICAVectorFloat24'),
 ]);
