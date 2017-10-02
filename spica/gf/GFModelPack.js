@@ -14,7 +14,7 @@ class GFModelPack {
 		
 		let pos = data.offset;
 		let magic = data.readUint32();
-		if (magic != 0x00010000) throw new Error('Invalid header for GFModelPack');
+		if (magic != GFModelPack.MAGIC_NUMBER) throw new Error('Invalid header for GFModelPack');
 		
 		let counts = [];
 		for (let i = 0; i < 5; i++) counts[i] = data.readUint32();
