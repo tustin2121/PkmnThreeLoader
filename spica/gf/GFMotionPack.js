@@ -1,5 +1,7 @@
 // https://github.com/gdkchan/SPICA/blob/master/SPICA/Formats/GFL2/GFMotionPack.cs
 
+const { GFMotion } = require('./motion');
+
 class GFMotionPack {
 	constructor(data) {
 		this.animations = []; /** @type {List<GFMotion>} */
@@ -19,6 +21,9 @@ class GFMotionPack {
 	
 	get(index) { return this.animations[index]; }
 	set(index, val) { this.animations[index] = val; }
+	[Symbol.iterator]() { return this.animations[Symbol.iterator](); }
+	
+	push(...items) { this.animations.push(...items); }
 }
 
 module.exports = { GFMotionPack };

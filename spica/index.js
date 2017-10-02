@@ -7,27 +7,27 @@ const GFPackage = require('./gfPackage');
 
 const { GFModelPack, GFModel, GFTexture, GFMotion } = require('./gf');
 
-function parse(data) {
+function parse(data, out={}) {
 	let reader = new BufferedReader(data);
 	let magicNumber = reader.readUint32(0);
 	let header = GFPackage.parseHeader(reader);
 	if (header) {
 		switch (header.magic) {
-			case 'CM': return require('./gfCharacterModel').parse(reader, header);
-			case 'PC': return require('./gfPkmnModel').parse(reader, header);
+			case 'CM': return require('./gfCharacterModel').parse(reader, header, out);
+			case 'PC': return require('./gfPkmnModel').parse(reader, header, out);
 			default: throw new Error(`Unknown header '${header.magic}' !`);
 		}
 	} else {
 		switch (magicNumber) {
 			case GFModel.MAGIC_NUMBER:
-				return new GFModel(data, "Model");
+				return Object.assign(out, { model: new GFModel(data, "Model") });
 			case GFTexture.MAGIC_NUMBER:
-				return new GFTexture(data);
+				return Object.assign(out, { tex: new GFTexture(data) });
 			case GFModelPack.MAGIC_NUMBER:
-				return new GFModelPack(data);
+				return Object.assign(out, { modelpack: new GFModelPack(data) });
 			case GFMotion.MAGIC_NUMBER:
 				//parse to GFMotion and skeleton
-				return new GFMotion(data, 0);
+				return Object.assign(out, { motion: new GFMotion(data, 0) });
 		}
 		throw new Error('Invalid file type!');
 	}
@@ -86,7 +86,18 @@ function loadAll(files) {
 		return load(files).then(parse);
 	}
 }
-module.exports = { load, loadAll, parse, parseAll, open:loadAll };
+
+function open(files) {
+	if (!Array.isArray(files)) files = [files];
+	return Promise
+		.all( files.map((x)=>load(x)) )
+		.then((fs)=>{
+			let out = {};
+			fs.forEach( x=>parse(x, out) );
+			return out;
+		});
+}
+module.exports = { load, loadAll, parse, parseAll, open };
 
 /*
 function open(file) {

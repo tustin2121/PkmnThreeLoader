@@ -1,5 +1,5 @@
 module.exports = Object.assign({}, ...[
-	require('./GfSection'),
+	require('./GFSection'),
 	require('./GFModelPack'),
 	require('./GFMotionPack'),
 	

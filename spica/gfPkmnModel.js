@@ -1,7 +1,7 @@
 // https://github.com/gdkchan/SPICA/blob/master/SPICA.WinForms/Formats/GFPkmnModel.cs
 
 const { Skeleton } = require('three');
-const { GFModelPack, GFModel, GFTexture, GFMotion, GFShader } = require('./gf');
+const { GFModelPack, GFMotionPack, GFModel, GFTexture, GFMotion, GFShader } = require('./gf');
 const GFPackage = require('./gfPackage');
 
 // const MAGIC_MODEL 	= 0x15122117;
@@ -13,15 +13,13 @@ const MAGIC_BCH 	= 0x00484342;
  * @param {BufferedReader} data
  * @param {GFPackageHeader} header
  */
-function parse(data, header) {
-	let out = {};
-	
+function parse(data, header, out={}) {
 	data.offset = header.entries[0].address;
 	let magicNum = data.readUint32();
 	
 	switch(magicNum) {
 		case GFModelPack.MAGIC_NUMBER: {
-			let modelpack = new GFModelPack();
+			let modelpack = out.modelpack || new GFModelPack();
 			
 			// High Poly Pokemon model
 			data.offset = header.entries[0].addr;
@@ -49,18 +47,20 @@ function parse(data, header) {
 					modelpack.shaders.push(new GFShader(data));
 				}
 			}
-			out.model = modelpack;
+			out.modelpack = modelpack;
 		} break;
 		case GFTexture.MAGIC_NUMBER: {
-			out.textures = [];
+			out.modelpack = out.modelpack || new GFModelPack();
+			let textures = out.modelpack.textures;
 			for (let entry of header.entries) {
 				data.offset = entry.addr;
-				out.textures.push(new GFTexture(data));
+				textures.push(new GFTexture(data));
 			}
 		} break;
 		case GFMotion.MAGIC_NUMBER: {
-			out.animations = [];
-			out.skeleton = new Skeleton();
+			let motionpack = new GFMotionPack();
+			// out.animations = [];
+			// out.skeleton = new Skeleton();
 			
 			for (let i = 0; i < header.entries.length; i++) {
 				let entry = header.entries[i];
@@ -70,8 +70,10 @@ function parse(data, header) {
 				if (data.readUint32(data.offset) !== GFMotion.MAGIC_NUMBER) continue;
 				
 				let mot = new GFMotion(data, i);
-				out.animations.push(mot);
+				motionpack.push(mot);
 			}
+			out.motionpacks = out.motionpacks || [];
+			out.motionpacks.push(motionpack);
 		} break;
 		case MAGIC_BCH: {
 			throw new TypeError('XY/ORAS BCH format not supported.');
@@ -80,3 +82,5 @@ function parse(data, header) {
 	}
 	return out;
 }
+
+module.exports = { parse };

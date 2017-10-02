@@ -1,6 +1,6 @@
 // https://github.com/gdkchan/SPICA/blob/master/SPICA/Formats/GFL2/Motion/GFMaterialMot.cs
 
-const GFMotKeyFrame = require('./GFMotKeyFrame');
+const { GFMotKeyFrame } = require('./GFMotKeyFrame');
 
 class GFMotUVTransform {
 	constructor(data, name, frameCount) {

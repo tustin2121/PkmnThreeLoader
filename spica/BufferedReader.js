@@ -143,7 +143,7 @@ class BufferedReader {
 	readStringArray(count) {
 		let out = [];
 		for (let i = 0; i < count; i++) {
-			out[i] = data.readByteLenString();
+			out[i] = this.readByteLenString();
 		}
 		return out;
 	}

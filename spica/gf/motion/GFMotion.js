@@ -1,6 +1,9 @@
 // https://github.com/gdkchan/SPICA/blob/master/SPICA/Formats/GFL2/Motion/GFMotion.cs
 
 const { Vector3 } = require('three');
+const { GFSkeletonMot } = require('./GFSkeletonMot');
+const { GFMaterialMot } = require('./GFMaterialMot');
+const { GFVisibilityMot } = require('./GFVisibilityMot');
 
 const SECT_SUBHEADER = 0;
 const SECT_SKELETAL = 1;
@@ -9,6 +12,7 @@ const SECT_VISABILITY = 6;
 
 class GFMotion {
 	constructor(data, index) {
+		this.index = index || 0; /** @type {int} */
 		this.frameCount = 0; /** @type {uint} */
 		this.isLooping = false;
 		this.isBlended = false;
@@ -17,11 +21,11 @@ class GFMotion {
 		this.skeletonAnimation = null; /** @type {GFSkeletonMot} */
 		this.materialAnimation = null; /** @type {GFMaterialMot} */
 		this.visibilityAnimation = null; /** @type {GFVisibilityMot} */
-		this.index = index || 0; /** @type {int} */
 		
 		if (!data) return this;
 		let pos = data.offset;
 		let magicNum = data.readUint32();
+		if (magicNum !== GFMotion.MAGIC_NUMBER) throw new TypeError('Invalid magic number for motion!');
 		let secCount = data.readUint32();
 		
 		let animSects = new Array(secCount);

@@ -1,6 +1,6 @@
 // https://github.com/gdkchan/SPICA/blob/master/SPICA/Formats/GFL2/Motion/GFSkeletonMot.cs
 
-const GFMotKeyFrame = require('./GFMotKeyFrame');
+const { GFMotKeyFrame } = require('./GFMotKeyFrame');
 
 class GFMotBoneTransform {
 	constructor(data, name, frameCount) {
