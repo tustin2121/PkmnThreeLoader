@@ -1,4 +1,4 @@
-// PICATexEnvStage.js
+// PICATextures.js
 
 const PICATextureCombinerAlphaOp = {
 	Alpha : 0,

@@ -5,15 +5,21 @@ const { GFBone } = require('./GFBone');
 const { GF_LUT } = require('./GF_LUT');
 const { GFMaterial } = require('./GFMaterial');
 const { GFMesh } = require('./GFMesh');
+const { GFHashName } = require('./GFHashName');
 
 function readHashTable(data) {
 	let count = data.readUint32();
 	let values = new Array(count);
 	for (let i = 0; i < count; i++) {
-		let hash = data.readUint32();
-		let str = data.readPaddedString(0x40);
-		str.hash = hash;
-		values[i] = str;
+		values[i] = new GFHashName({
+			hash : data.readUint32(),
+			name : data.readPaddedString(0x40),
+		});
+		// let hash = data.readUint32();
+		// let str = data.readPaddedString(0x40);
+		// str = new String(str); //jshint ignore:line
+		// str.hash = hash;
+		// values[i] = str;
 	}
 	return values;
 }
@@ -27,6 +33,7 @@ class GFModel {
 		
 		this.name = name;
 		let magicNum = data.readUint32(); //0x15122117 ?
+		if (magicNum !== GFModel.MAGIC_NUMBER) throw new ReferenceError('Magic Number does not match!');
 		let shaderCount = data.readUint32();
 		data.skipPadding();
 		
@@ -59,16 +66,22 @@ class GFModel {
 			let len = data.readUint32();
 			data.skipPadding();
 			for (let i = 0; i < num; i++) {
-				this.luts.push(new GF_LUT(data, `Sampler_${this.name}_${i}`, len));
+				let m = new GF_LUT(data, `Sampler_${this.name}_${i}`, len);
+				m.name = lutNames[i].valueOf();
+				this.luts.push(m);
 			}
 		}
 		// Materials
 		for (let i = 0; i < matNames.length; i++) {
-			this.materials.push(new GFMaterial(data));
+			let m = new GFMaterial(data);
+			m.name = matNames[i].valueOf();
+			this.materials.push(m);
 		}
 		// Meshes
 		for (let i = 0; i < meshNames.length; i++) {
-			this.meshes.push(new GFMesh(data));
+			let m = new GFMesh(data);
+			m.name = meshNames[i].valueOf();
+			this.meshes.push(m);
 		}
 	}
 }

@@ -9,7 +9,7 @@ class GFSection {
 			this.magic = data.readPaddedString(8);
 			this.length = data.readUint32();
 			// this.padding = data.readUint32();
-			data.offset += 4; //skip padding
+			data.skip(4); //skip padding
 		}
 	}
 	

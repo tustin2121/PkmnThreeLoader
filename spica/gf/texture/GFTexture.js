@@ -1,6 +1,6 @@
 // https://github.com/gdkchan/SPICA/blob/master/SPICA/Formats/GFL2/Texture/GFTexture.cs
 
-const GFSection = require('../GFSection');
+const { GFSection } = require('../GFSection');
 
 const GFTextureFormat = {
 	RGB565 : 0x02,

@@ -15,6 +15,10 @@ class PICACommand {
 		this.parameters = parameters;
 		this.mask = mask;
 	}
+	
+	toString() {
+		return `PICACommand[${PICARegister.reverse[this.register]}] { ${this.register.toString(16)} }`;
+	}
 }
 
 class UniformManager {
@@ -50,7 +54,7 @@ class UniformManager {
 					case 1: words[1] = param; break;
 					case 2: words[2] = param; break;
 				}
-				if ((uniformIndex & 3) == 2) {
+				if ((this.uniformIndex & 3) == 2) {
 					//The Float 24 Vector only uses 3 Words (24 * 4 = 96 bits = 3 Words)
                     //for all four elements (X/Y/Z/W), so we ignore the fourth Word here
 					this.uniformIndex++;
@@ -74,6 +78,7 @@ class PICACommandReader {
 	 * @param {uint[]} cmds
 	 */
 	constructor(cmds) {
+		if (!cmds) throw new ReferenceError('Must pass parameter cmds!');
 		this.cmdIndex = 0;
 		this.commands = []; /** @type {List<PICACommand>} */
 		this.vtxShader = new UniformManager();

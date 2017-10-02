@@ -23,6 +23,17 @@ class BufferedReader {
 	readUint16(offset) { return this.data.readUint16(offset); }
 	readUint32(offset) { return this.data.readUint32(offset); }
 	
+	readRGBA(offset) {
+		let le = this.data.littleEndian;
+		let val;
+		try {
+			val = this.data.order(false).readUint32(offset);
+		} finally {
+			this.data.order(le);
+		}
+		return val;
+	}
+	
 	readVector2(offset) {
 		let advance = (offset === undefined);
 		offset = offset || this.data.offset;
@@ -122,7 +133,7 @@ class BufferedReader {
 		
 		let str = '';
 		for (let i = 0; i < len; i++) {
-			let char = this.data.readUint8(offset);
+			let char = this.data.readUint8(offset+i);
 			if (char === 0) break;
 			str += String.fromCharCode(char);
 		}
