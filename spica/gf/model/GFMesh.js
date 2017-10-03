@@ -1,13 +1,46 @@
 // https://github.com/gdkchan/SPICA/blob/master/SPICA/Formats/GFL2/Model/Mesh/GFMesh.cs
 
 const { GFSection } = require('../GFSection');
-const { GFSubMesh } = require('./GFSubMesh');
 const { PICACommandReader, PICARegister } = require('../../pica');
 const {
 	Vector4, PICAAttributeName, PICAFixedAttribute, PICAAttribute,
 } = require('../../pica/commands');
 
 const SCALES = [ 1/127, 1/255, 1/65535, 1 ];
+
+class GFSubMesh {
+	constructor(obj) {
+		this.hash = null;
+		this.name = null;
+		
+		this.boneIndicesCount = null;
+		this.boneIndices = null;
+		
+		this.indicesCount = null;
+		this.indicesLength = null;
+		this.verticesCount = null;
+		this.verticesLength = null;
+		this.vertexStride = null;
+		
+		this.indices = null; // ushort[]
+		this.rawBuffer = null; // byte[]
+		
+		Object.assign(this, obj);
+		
+		Object.defineProperties(this, {
+			attributes: {
+				value: [],
+				enumerable: true,
+				writable: false,
+			},
+			fixedAttributes: {
+				value: [],
+				enumerable: true,
+				writable: false,
+			}
+		});
+	}
+}
 
 class GFMesh {
 	constructor(data) {
@@ -190,4 +223,5 @@ class GFMesh {
 		data.offset = pos + meshSection.length;
 	}
 }
-module.exports = { GFMesh };
+
+module.exports = { GFMesh, GFSubMesh };

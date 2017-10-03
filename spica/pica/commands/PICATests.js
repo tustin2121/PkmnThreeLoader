@@ -1,5 +1,7 @@
 //
 
+const THREE = new require('three');
+
 const PICATestFunc = {
 	Never : 0,
 	Always : 1,
@@ -28,6 +30,10 @@ const PICABlendEquation = {
 	FuncReverseSubtract : 2,
 	Min : 3,
 	Max : 4,
+	
+	convert3 : function(pica) {
+		return pica + THREE.AddEquation; //+100
+	},
 };
 
 const PICABlendFunc = {
@@ -46,6 +52,26 @@ const PICABlendFunc = {
 	ConstantAlpha : 12,
 	OneMinusConstantAlpha : 13,
 	SourceAlphaSaturate : 14,
+	
+	convert3 : function(pica) {
+		switch (pica) {
+			case Zero: return THREE.ZeroFactor;
+			case One: return THREE.OneFactor;
+			case SourceColor: return THREE.SrcColorFactor;
+			case OneMinusSourceColor: return THREE.OneMinusSrcColorFactor;
+			case DestinationColor: return THREE.DstColorFactor;
+			case OneMinusDestinationColor: return THREE.OneMinusDstColorFactor;
+			case SourceAlpha: return THREE.SrcAlphaFactor;
+			case OneMinusSourceAlpha: return THREE.OneMinusSrcAlphaFactor;
+			case DestinationAlpha: return THREE.DstAlphaFactor;
+			case OneMinusDestinationAlpha: return THREE.OneMinusDstAlphaFactor;
+			case ConstantColor: throw new TypeError('Unsupported blend funciton: ConstantColor');
+			case OneMinusConstantColor: throw new TypeError('Unsupported blend funciton: OneMinusConstantColor');
+			case ConstantAlpha: throw new TypeError('Unsupported blend funciton: ConstantAlpha');
+			case OneMinusConstantAlpha: throw new TypeError('Unsupported blend funciton: OneMinusConstantAlpha');
+			case SourceAlphaSaturate: return THREE.SrcAlphaSaturateFactor;
+		}
+	},
 };
 
 const PICABlendMode = {
@@ -103,6 +129,21 @@ class PICAAlphaTest {
 	}
 	// TODO ? https://github.com/gdkchan/SPICA/blob/master/SPICA/PICA/Commands/PICAAlphaTest.cs#L20
 	toUint32() { throw new Error('Not implemented'); }
+	/** Convert to a Three.js alpha test number */
+	convert3() {
+		if (!this.enabled) return 0;
+		switch (this.function) {
+			case PICATestFunc.Never: return 0;
+			case PICATestFunc.Always: return 1;
+			case PICATestFunc.Equal: throw new TypeError('Invalid operation for AlphaTest: Equal');
+			case PICATestFunc.Notequal: throw new TypeError('Invalid operation for AlphaTest: NotEqual');
+			case PICATestFunc.Less: return this.reference/255;
+			case PICATestFunc.Lequal: return (this.reference+1)/255;
+			case PICATestFunc.Greater: return 1 - (this.reference/255)
+			case PICATestFunc.Gequal: return 1 - ((this.reference+1)/255)
+		}
+		return 0;
+	}
 }
 
 class PICAStencilOperation {
@@ -142,6 +183,13 @@ class PICABlendFunction {
 	}
 	// TODO? https://github.com/gdkchan/SPICA/blob/master/SPICA/PICA/Commands/PICABlendFunction.cs#L26
 	toUint32() { throw new Error('Not implemented'); }
+	
+	isCustom() {
+		return !(
+			this.colorEquation == 0 && this.colorSrcFunc == 1 && this.colorDstFunc == 0 &&
+			this.alphaEquation == 0 && this.alphaSrcFunc == 1 && this.alphaDstFunc == 0
+		);
+	}
 }
 
 class PICAColorOperation {
