@@ -1,5 +1,6 @@
 // https://github.com/gdkchan/SPICA/blob/master/SPICA/Formats/GFL2/Texture/GFTexture.cs
 
+const THREE = require('three');
 const { GFSection } = require('../GFSection');
 
 const GFTextureFormat = {
@@ -17,6 +18,24 @@ const GFTextureFormat = {
 	A4 : 0x29,
 	ETC1 : 0x2A,
 	ETC1A4 : 0x2B,
+	convert3 : function(pica) {
+		switch (pica) {
+			case GFTextureFormat.RGB565: return { type: THREE.UnsignedShort565Type, format:THREE.RGBFormat };
+			case GFTextureFormat.RGB8: return { type: THREE.UnsignedByteType, format:THREE.RGBFormat };
+			case GFTextureFormat.RGBA8: return { type: THREE.UnsignedByteType, format:THREE.RGBAFormat };
+			case GFTextureFormat.RGBA4: return { type: THREE.UnsignedShort4444Type, format:THREE.RGBAFormat };
+			case GFTextureFormat.RGBA555: return { type: THREE.UnsignedShort5551Type, format:THREE.RGBAFormat };
+			case GFTextureFormat.LA8: return { type: THREE.UnsignedByteType, format:THREE.LuminanceAlphaFormat };
+			case GFTextureFormat.HiLo8: throw new TypeError('Unsupported GFTextureFormat.HiLo8');
+			case GFTextureFormat.L8: return { type: THREE.UnsignedByteType, format:THREE.LuminanceFormat };
+			case GFTextureFormat.A8: return { type: THREE.UnsignedByteType, format:THREE.AlphaFormat };
+			case GFTextureFormat.LA4: return { type: THREE.UnsignedShort4444Type, format:THREE.LuminanceAlphaFormat };
+			case GFTextureFormat.L4: return { type: THREE.UnsignedShort4444Type, format:THREE.LuminanceFormat };
+			case GFTextureFormat.A4: return { type: THREE.UnsignedShort4444Type, format:THREE.AlphaFormat };
+			case GFTextureFormat.ETC1: throw new TypeError('Unsupported GFTextureFormat.ETC1');
+			case GFTextureFormat.ETC1A4: throw new TypeError('Unsupported GFTextureFormat.ETC1A4');
+		}
+	},
 };
 
 class GFTexture {
