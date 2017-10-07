@@ -16,6 +16,16 @@ const GFTextureMappingType = {
     ProjectionMap : 3,
     Shadow : 4,
     ShadowBox : 5,
+	convert3 : function(pica) {
+		switch (pica) {
+			case GFTextureMappingType.UvCoordinateMap: return THREE.UVMapping;
+			case GFTextureMappingType.CameraCubeEnvMap: return THREE.CubeReflectionMapping;
+			case GFTextureMappingType.CameraSphereEnvMap: return THREE.SphericalReflectionMapping;
+			case GFTextureMappingType.ProjectionMap: return THREE.EquirectangularReflectionMapping; //?
+			case GFTextureMappingType.Shadow: throw new TypeError('Unsupported GFTextureMappingType.Shadow');
+			case GFTextureMappingType.ShadowBox: throw new TypeError('Unsupported GFTextureMappingType.ShadowBox');
+		}
+	},
 };
 
 const GFTextureWrap = {
@@ -23,6 +33,14 @@ const GFTextureWrap = {
     ClampToBorder : 1,
     Repeat : 2,
     Mirror : 3,
+	convert3 : function(pica) {
+		switch (pica) {
+			case GFTextureWrap.ClampToEdge: return THREE.ClampToEdgeWrapping;
+			case GFTextureWrap.ClampToBorder: return THREE.ClampToEdgeWrapping;
+			case GFTextureWrap.Repeat: return THREE.RepeatWrapping;
+			case GFTextureWrap.Mirror: return THREE.MirroredRepeatWrapping;
+		}
+	},
 };
 
 const GFMinFilter = {
@@ -32,11 +50,27 @@ const GFMinFilter = {
     Linear : 3,
     LinearMipmapNearest : 4,
     LinearMipmapLinear : 5,
+	convert3 : function(pica) {
+		switch (pica) {
+			case GFMinFilter.Nearest: return THREE.NearestFilter;
+			case GFMinFilter.NearestMipmapNearest: return THREE.NearestMipMapNearestFilter;
+			case GFMinFilter.NearestMipmapLinear: return THREE.NearestMipMapLinearFilter;
+			case GFMinFilter.Linear: return THREE.LinearFilter;
+			case GFMinFilter.LinearMipmapNearest: return THREE.LinearMipMapNearestFilter;
+			case GFMinFilter.LinearMipmapLinear: return THREE.LinearMipMapLinearFilter;
+		}
+	},
 };
 
 const GFMagFilter = {
     Nearest : 0,
     Linear : 1,
+	convert3 : function(pica) {
+		switch (pica) {
+			case GFMagFilter.Nearest: return THREE.NearestFilter;
+			case GFMagFilter.Linear: return THREE.LinearFilter;
+		}
+	},
 };
 
 function RGBA(param) {

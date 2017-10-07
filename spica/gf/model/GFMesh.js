@@ -144,8 +144,8 @@ class GFMesh {
 					case PICARegister.GPUREG_FIXEDATTRIB_DATA1: fixed[fixedIndex][1] = param; break;
 					case PICARegister.GPUREG_FIXEDATTRIB_DATA2: fixed[fixedIndex][2] = param; break;
 					case PICARegister.GPUREG_VSH_NUM_ATTR: attrTotal = (param + 1); break;
-					case PICARegister.GPUREG_VSH_ATTRIBUTES_PERMUTATION_LOW:  bufferAttr_L |= param; break;
-					case PICARegister.GPUREG_VSH_ATTRIBUTES_PERMUTATION_HIGH: bufferAttr_H |= param; break;
+					case PICARegister.GPUREG_VSH_ATTRIBUTES_PERMUTATION_LOW:  bufferPermutation_L |= param; break;
+					case PICARegister.GPUREG_VSH_ATTRIBUTES_PERMUTATION_HIGH: bufferPermutation_H |= param; break;
 				}
 			}
 			for (let i = 0; i < fixed.length; i++) {
@@ -154,7 +154,7 @@ class GFMesh {
 				fixed[i] = v;
 			}
 			
-			for (let i = 0; i < attrTotal; i++) {
+			for (let i = 0; i < attrCount; i++) {
 				// if (((BufferFormats >> (48 + Index)) & 1) != 0)
 				if (((bufferAttr_H >> (16 + i)) & 1) !== 0) {
 					// PICAAttributeName Name = (PICAAttributeName)((BufferPermutation >> Index * 4) & 0xf);
