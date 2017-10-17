@@ -18,32 +18,32 @@ function parse(data, header, out={}) {
 	let magicNum = data.readUint32();
 	
 	switch(magicNum) {
-		case GFModelPack.MAGIC_NUMBER: {
+		case GFModel.MAGIC_NUMBER: {
 			let modelpack = out.modelpack || new GFModelPack();
 			
 			// High Poly Pokemon model
-			data.offset = header.entries[0].addr;
+			data.offset = header.entries[0].address;
 			modelpack.models.push(new GFModel(data, "PM_HighPoly"));
 			
 			// Low Poly Pokemon model
-			data.offset = header.entries[1].addr;
+			data.offset = header.entries[1].address;
 			modelpack.models.push(new GFModel(data, "PM_LowPoly"));
 			
 			// Pokemon Shader package
-			data.offset = header.entries[2].addr;
+			data.offset = header.entries[2].address;
 			let psHeader = GFPackage.parseHeader(data);
 			
 			for (let entry of psHeader.entries) {
-				data.offset = entry.addr;
+				data.offset = entry.address;
 				modelpack.shaders.push(new GFShader(data));
 			}
 			
 			// More shaders
-			data.offset = header.entries[3].addr;
+			data.offset = header.entries[3].address;
 			let pcHeader = GFPackage.parseHeader(data);
 			if (pcHeader) {
 				for (let entry of pcHeader.entries) {
-					data.offset = entry.addr;
+					data.offset = entry.address;
 					modelpack.shaders.push(new GFShader(data));
 				}
 			}
@@ -53,7 +53,7 @@ function parse(data, header, out={}) {
 			out.modelpack = out.modelpack || new GFModelPack();
 			let textures = out.modelpack.textures;
 			for (let entry of header.entries) {
-				data.offset = entry.addr;
+				data.offset = entry.address;
 				textures.push(new GFTexture(data));
 			}
 		} break;
@@ -64,7 +64,7 @@ function parse(data, header, out={}) {
 			
 			for (let i = 0; i < header.entries.length; i++) {
 				let entry = header.entries[i];
-				data.offset = entry.addr;
+				data.offset = entry.address;
 				
 				if (data.offset + 4 > data.length) break;
 				if (data.readUint32(data.offset) !== GFMotion.MAGIC_NUMBER) continue;

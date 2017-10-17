@@ -5,7 +5,7 @@ const { PICARegister } = require('./PICARegister');
 
 function toFloat(val) {
 	let buf = Buffer.alloc(4);
-	buf.writeInt32LE(val, 0);
+	buf.writeUInt32LE(val, 0);
 	return buf.readFloatLE(0);
 }
 
@@ -24,6 +24,7 @@ class PICACommand {
 class UniformManager {
 	constructor() {
 		this.uniforms = new Array(96); /** @type {Vector4[]} */
+		for (let i = 0; i < this.uniforms.length; i++) this.uniforms[i] = new Vector4();
 		this.usedUniforms = new Set(); /** @type {HashSet<uint>} */
 		// this.vectorF24 = null; /** @type {PICAVectorFloat24} */
 		this.uniformIndex = 0;
@@ -38,7 +39,7 @@ class UniformManager {
 		for (let param of params) {
 			let uidx = (this.uniformIndex >> 2) & 0x5F;
 			this.usedUniforms.add(uidx);
-			this.uniforms[uidx] = this.uniforms[uidx] || new Vector4();
+			// this.uniforms[uidx] = this.uniforms[uidx] || new Vector4();
 			
 			if (this.uniform32Bits) {
 				let val = toFloat(param);
@@ -67,7 +68,7 @@ class UniformManager {
 	getAllUsedUniforms() {
 		let out = {};
 		for (let uidx of this.usedUniforms) {
-			out[uidx] = this.uniforms[udx];
+			out[uidx] = this.uniforms[uidx];
 		}
 		return out;
 	}

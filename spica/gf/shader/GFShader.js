@@ -6,7 +6,7 @@ const {
 	PICATexEnvStage, PICATexEnvSource, PICATexEnvOperand, PICATexEnvCombiner, PICATexEnvScale,
 } = require('../../pica/commands');
 const {
-	ShaderProgram, ShaderOutputReg, ShaderOutputRegName, ShaderLabel,
+	ShaderProgram, ShaderOutputReg, ShaderOutputRegName, ShaderLabel, ShaderOpCode,
 } = require('../../pica/shader');
 
 class GFShader {
@@ -188,8 +188,8 @@ class GFShader {
 				}
 			}
 			
-			if (!this.vtxShader) this.vtxShader.outputRegs[i] = reg;
-			if (!this.geoShader) this.geoShader.outputRegs[i] = reg;
+			if (this.vtxShader) this.vtxShader.outputRegs[i] = reg;
+			if (this.geoShader) this.geoShader.outputRegs[i] = reg;
 		}
 		let dsts = new Set();
 		let lblId = 0;

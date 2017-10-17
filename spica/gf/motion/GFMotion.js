@@ -46,6 +46,8 @@ class GFMotion {
 		this.animRegionMax = data.readVector3();
 		let animHash = data.readUint32();
 		
+		if (console.PARSE_DEBUG) console.PARSE_DEBUG['animNum'] = index;
+		
 		// Content
 		for (let anim = 1; anim < animSects.length; anim++) {
 			data.offset = pos + animSects[anim].addr;

@@ -20,23 +20,31 @@ class GFMotBoneTransform {
 		if (!data) return this;
 		let flags = data.readUint32();
 		let len = data.readUint32();
+		let end = data.offset + len;
+		
+		if (console.PARSE_DEBUG) console.PARSE_DEBUG['motType'] = 'Skeletal';
+		if (console.PARSE_DEBUG) console.PARSE_DEBUG['name'] = name;
 		
 		this.isAxisAngle = (flags >> 31) === 0;
 		for (let i = 0; i < 9; i++) {
+			if (console.PARSE_DEBUG) console.PARSE_DEBUG['channel'] = ['scaleX','scaleY','scaleZ','rotX','rotY','rotZ','transX','transY','transZ'][i];
 			switch(i) {
-				case 0: GFMotKeyFrame.setList(this.scaleX, data, flags, frameCount); break;
-				case 1: GFMotKeyFrame.setList(this.scaleY, data, flags, frameCount); break;
-				case 2: GFMotKeyFrame.setList(this.scaleZ, data, flags, frameCount); break;
+				case 0: GFMotKeyFrame.setList(this.scaleX, data, flags, frameCount, end-data.offset); break;
+				case 1: GFMotKeyFrame.setList(this.scaleY, data, flags, frameCount, end-data.offset); break;
+				case 2: GFMotKeyFrame.setList(this.scaleZ, data, flags, frameCount, end-data.offset); break;
 				
-				case 3: GFMotKeyFrame.setList(this.rotX, data, flags, frameCount); break;
-				case 4: GFMotKeyFrame.setList(this.rotY, data, flags, frameCount); break;
-				case 5: GFMotKeyFrame.setList(this.rotZ, data, flags, frameCount); break;
+				case 3: GFMotKeyFrame.setList(this.rotX, data, flags, frameCount, end-data.offset); break;
+				case 4: GFMotKeyFrame.setList(this.rotY, data, flags, frameCount, end-data.offset); break;
+				case 5: GFMotKeyFrame.setList(this.rotZ, data, flags, frameCount, end-data.offset); break;
 				
-				case 6: GFMotKeyFrame.setList(this.transX, data, flags, frameCount); break;
-				case 7: GFMotKeyFrame.setList(this.transY, data, flags, frameCount); break;
-				case 8: GFMotKeyFrame.setList(this.transZ, data, flags, frameCount); break;
+				case 6: GFMotKeyFrame.setList(this.transX, data, flags, frameCount, end-data.offset); break;
+				case 7: GFMotKeyFrame.setList(this.transY, data, flags, frameCount, end-data.offset); break;
+				case 8: GFMotKeyFrame.setList(this.transZ, data, flags, frameCount, end-data.offset); break;
 			}
 			flags >>= 3;
+		}
+		if (console.PARSE_DEBUG && data.offset < end) {
+			console.log(`[${console.PARSE_DEBUG.motType} ${console.PARSE_DEBUG.animNum}] Remaining data for '${console.PARSE_DEBUG.name}': `, data.readBytes(len));
 		}
 	}
 	
