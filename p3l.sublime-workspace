@@ -1,0 +1,980 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"crea",
+				"createSides"
+			],
+			[
+				"load",
+				"loadedMeta"
+			],
+			[
+				"loop",
+				"loopRegion"
+			],
+			[
+				"par",
+				"parseTimestamp"
+			],
+			[
+				"wavesu",
+				"wavesurfer"
+			],
+			[
+				"loo",
+				"loopRegion"
+			],
+			[
+				"get",
+				"getCurrentTime"
+			],
+			[
+				"waves",
+				"wavesurfer"
+			],
+			[
+				"pai",
+				"paintBackground"
+			],
+			[
+				"d",
+				"dustCounter"
+			],
+			[
+				"add",
+				"addClass"
+			],
+			[
+				"ver",
+				"vertical-align"
+			],
+			[
+				"pa",
+				"partyStatuses"
+			],
+			[
+				"ite",
+				"itemMenu"
+			],
+			[
+				"ref",
+				"refreshLayerList"
+			],
+			[
+				"no",
+				"node_lights"
+			],
+			[
+				"appe",
+				"appendTo"
+			],
+			[
+				"con",
+				"controls"
+			],
+			[
+				"re",
+				"require"
+			],
+			[
+				"table",
+				"table-cell"
+			],
+			[
+				"padd",
+				"padding-left"
+			],
+			[
+				"ab",
+				"absolute"
+			],
+			[
+				"padding-",
+				"padding-right"
+			],
+			[
+				"back",
+				"background-color"
+			],
+			[
+				"upd",
+				"updateTreebox"
+			],
+			[
+				"curr",
+				"currView"
+			],
+			[
+				"lo",
+				"logicFunctions"
+			],
+			[
+				"file",
+				"filepipe"
+			],
+			[
+				"p",
+				"parentdir"
+			],
+			[
+				"getT",
+				"getTextureFile"
+			],
+			[
+				"pro",
+				"progressCallback"
+			],
+			[
+				"suc",
+				"successCallback"
+			],
+			[
+				"s",
+				"success"
+			],
+			[
+				"i",
+				"inherits"
+			],
+			[
+				"ma",
+				"mapmodel"
+			],
+			[
+				"M",
+				"MapParkView"
+			],
+			[
+				"w",
+				"warp_exit"
+			],
+			[
+				"wa",
+				"warp_enter"
+			],
+			[
+				"warp",
+				"warp_enter"
+			],
+			[
+				"inp",
+				"inputContext"
+			],
+			[
+				"Objec",
+				"Object3D"
+			],
+			[
+				"index",
+				"indexOf"
+			]
+		]
+	},
+	"buffers":
+	[
+		{
+			"file": "spica/gfCharacterModel.js",
+			"settings":
+			{
+				"buffer_size": 1219,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "spica/gfPkmnModel.js",
+			"settings":
+			{
+				"buffer_size": 2480,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "spica/ThreeConverter.js",
+			"settings":
+			{
+				"buffer_size": 2227,
+				"line_ending": "Windows",
+				"name": "// ThreeConverter.js"
+			}
+		},
+		{
+			"file": "spica/index.js",
+			"settings":
+			{
+				"buffer_size": 4948,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "spica/BufferedReader.js",
+			"settings":
+			{
+				"buffer_size": 4454,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "spica/gf/motion/GFMotKeyFrame.js",
+			"settings":
+			{
+				"buffer_size": 1766,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "spica/gf/motion/GFMotion.js",
+			"settings":
+			{
+				"buffer_size": 2231,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "spica/gf/GFMotionPack.js",
+			"settings":
+			{
+				"buffer_size": 791,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "spica/gf/GFModelPack.js",
+			"settings":
+			{
+				"buffer_size": 1380,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "spica/gf/model/GFModel.js",
+			"settings":
+			{
+				"buffer_size": 2496,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "spica/gf/index.js",
+			"settings":
+			{
+				"buffer_size": 263,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "spica/gf/model/GFMaterial.js",
+			"settings":
+			{
+				"buffer_size": 9435,
+				"line_ending": "Windows"
+			}
+		}
+	],
+	"build_system": "Run Maptool",
+	"command_palette":
+	{
+		"height": 127.0,
+		"selected_items":
+		[
+		],
+		"width": 400.0
+	},
+	"console":
+	{
+		"height": 0.0
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"file_history":
+	[
+		"/C/Users/tpittman/github-projects/PkmnThreeLoader/spica/gf/motion/GFMaterialMot.js",
+		"/C/Users/tpittman/github-projects/PkmnThreeLoader/spica/gf/motion/GFSkeletonMot.js",
+		"/C/Users/tpittman/.ssh/work-repokey.priv",
+		"/C/Users/tpittman/.ssh/work-reposerv2.ppk",
+		"//harrison/tpittman/.ssh/authorized_keys",
+		"/C/Users/tpittman/Music/PTU Music/Pokemon Remix/CatchSoundOST/02-world-of-pok-mon.mp3.meta",
+		"/C/Users/tpittman/Dropbox/DnD/PTU Syntu/OverheadDisplay/node_modules/three/src/helpers/BoxHelper.js",
+		"/C/Users/tpittman/Dropbox/DnD/PTU Syntu/OverheadDisplay/node_modules/three/src/objects/Mesh.js",
+		"/C/Users/tpittman/Music/PTU Music/soundboard.info",
+		"/C/Users/tpittman/Dropbox/DnD/PTU Syntu/OverheadDisplay/screen/music/music.js",
+		"/C/Users/tpittman/Dropbox/DnD/PTU Syntu/OverheadDisplay/screen/music/music.css",
+		"/C/Users/tpittman/Music/PTU Music/.sync/StreamsList",
+		"/C/Users/tpittman/Music/PTU Music/.sync/IgnoreList",
+		"/C/Users/tpittman/Music/PTU Music/.sync/ID",
+		"/C/Users/tpittman/Dropbox/DnD/PTU Syntu/OverheadDisplay/screen/overhead/overhead.css",
+		"/C/Users/tpittman/Dropbox/Current Projects/WiimoteWhiteboard/src/org/uweschmidt/wiimote/whiteboard/WiimoteConnector.java",
+		"/C/Users/tpittman/Dropbox/Current Projects/WiimoteWhiteboard/README.txt",
+		"/C/Users/tpittman/Dropbox/Current Projects/WiimoteWhiteboard/src/org/uweschmidt/wiimote/whiteboard/WiimoteWhiteboard.java",
+		"/C/Users/tpittman/Dropbox/DnD/PTU Syntu/OverheadDisplay/screen/tabletop/tabletop.css",
+		"/C/Users/tpittman/Dropbox/DnD/PTU Syntu/OverheadDisplay/screen/overhead/scene.js",
+		"/C/Users/tpittman/.atom/storage/application.json",
+		"/C/Users/tpittman/VIEWS/pitt_GTX_v17.02_featB/Keysets/Keysets_GTO/resources/layouts/x01_layout.xml",
+		"/C/Users/tpittman/Music/PTU Music/CueWorkspace.cues",
+		"/C/Users/tpittman/VIEWS/pitt_GTX_v17.02_feats/Keysets/Keysets_GTO/src/com/compunetix/fsd/instrument/common/ibon/IbonObject.java",
+		"/C/CommonKeysetBuild/CommonKeyset/16.3/test_tdi-7_PC/properties/usr/KeysetSystemSettings.properties",
+		"/C/CommonKeysetBuild/CommonKeyset/16.3/test_sri-d6_PC/properties/usr/KeysetSystemSettings.properties",
+		"/C/CommonKeysetBuild/CommonKeyset/16.3/test_sdi-12_PC/properties/usr/KeysetSystemSettings.properties",
+		"/C/Users/tpittman/Downloads/httrack-noinst-3.48.22.zip",
+		"/C/Users/tpittman/Dropbox/DnD/FATE Calamity/partyinfo.js",
+		"/C/Users/tpittman/Dropbox/DnD/FATE Calamity/RandomThingGenerator.html",
+		"/C/Users/tpittman/Dropbox/DnD/FATE Calamity/randinfo.js",
+		"/C/Users/tpittman/VIEWS/pitt_GTX_v15.01.00/Keysets/Keysets_GTO/resources/layouts/1920x1080_layout.xml",
+		"/C/Users/tpittman/VIEWS/pitt_MV_v15.02.02/Keysets/Keysets_GTO/resources/layouts/1920x1080_layout.xml",
+		"/C/Users/tpittman/VIEWS/pitt_GTX_v15.02.01/Keysets/Keysets_GTO/resources/layouts/1920x1080_layout.xml",
+		"/C/Users/tpittman/VIEWS/pitt_GT_v15.02.01/Keysets/Keysets_GT/CoreSources/src/com/compunetix/fsd/keysets/impl/ui/images/GT_4x24_1280x240_LAYOUT/GT_4x24_1280x240_LAYOUT_files.txt",
+		"/C/Users/tpittman/Downloads/OrangeTimeSystem.js",
+		"/C/CommonKeysetBuild/CommonKeyset/build.properties",
+		"/C/Users/tpittman/VIEWS/pitt_GT_v15.02.01/Keysets/Keysets_GT/CoreSources/src/com/compunetix/fsd/keysets/impl/ui/images/GT_4x24_800x600_LAYOUT/GT_4x24_800x600_LAYOUT_files.txt",
+		"/C/Users/tpittman/VIEWS/pitt_GTX_v15.02/Keysets/Keysets_GTO/resources/layouts/640x240_layout.xml",
+		"/C/Users/tpittman/Desktop/New folder/net.sourceforge.eclipseccase.ui_2.2.37.201504281614/plugin.xml",
+		"/C/Users/tpittman/workspace/.metadata/.plugins/org.eclipse.core.runtime/.settings/net.sourceforge.eclipseccase.prefs",
+		"/C/Users/tpittman/VIEWS/pitt_GTX_v15.02/Keysets/Keysets_GTO/resources/layouts/480x800_layout.xml",
+		"/C/Users/tpittman/VIEWS/pitt_GT_v15.02_take2/Third_Party_Components/alpha/IBM/JCE_FIPS/deploy/java.security",
+		"/C/Users/tpittman/VIEWS/pitt_GTX_v15.02/Keysets/Keysets_GTO/resources/layouts/1920x1080_layout.xml",
+		"/C/Users/tpittman/Desktop/New folder/net.sourceforge.eclipseccase.ui_2.2.37.201504281614/plugin.properties",
+		"/C/Program Files/Java/jre7/lib/security/java.security",
+		"/C/CommonKeysetBuild/CommonKeyset/15.2/test_tri-17_PC/CommonKeyset.security",
+		"/C/Users/tpittman/Desktop/New folder/net.sourceforge.eclipseccase_2.2.37.201504281614/.options",
+		"/C/Users/tpittman/Desktop/New folder/net.sourceforge.eclipseccase_2.2.37.201504281614/about.html",
+		"/C/Users/tpittman/Desktop/New folder/net.sourceforge.eclipseccase_2.2.37.201504281614/plugin.xml",
+		"/C/Users/tpittman/Desktop/New folder/net.sourceforge.eclipseccase_2.2.37.201504281614/plugin.properties",
+		"/C/Users/tpittman/Desktop/New folder/net.sourceforge.eclipseccase_2.2.37.201504281614/about.properties",
+		"/C/Users/tpittman/Desktop/New folder/net.sourceforge.eclipseccase_2.2.37.201504281614/about.ini",
+		"/C/Users/tpittman/Desktop/New folder/net.sourceforge.eclipseccase.ui_2.2.37.201504281614/.options",
+		"/C/Users/tpittman/Desktop/New folder/net.sourceforge.eclipseccase_2.2.37.201504281614/net/sourceforge/eclipseccase/ClearCasePreferences.class",
+		"/C/Program Files/EclipseMars/features/net.sourceforge.eclipseccase_2.2.37.201504281614/feature.xml",
+		"/C/Program Files/EclipseMars/features/net.sourceforge.eclipseccase_2.2.37.201504281614/feature.properties",
+		"/C/Program Files/EclipseMars/configuration/.settings/org.eclipse.ui.ide.prefs",
+		"/C/Program Files/EclipseMars/plugins/net.sourceforge.clearcase_2.2.37.201504281614/plugin.properties",
+		"/C/Users/tpittman/github-projects/RPGParkDev/tools/maptool/style.css",
+		"/C/Users/tpittman/github-projects/RPGParkDev/tools/maptool/index.html",
+		"/C/Users/Tim/github-projects/RPGParkDev/client/client-main/src/js/file/filepipe.js",
+		"/C/Users/Tim/github-projects/RPGParkDev/client/client-main/package.json",
+		"/C/Users/Tim/github-projects/RPGParkDev/tools/maptool/package.json",
+		"/C/Users/Tim/Documents/GitHub/TPPParkDev/src/maps/eSouthSurldab/events.js",
+		"/C/Users/Tim/Documents/GitHub/TPPParkDev/src/maps/eSouthSurldab/eSouthSurldab.obj",
+		"/C/Users/Tim/Documents/GitHub/TPPParkDev/src/js/polyfill.js",
+		"/C/Users/Tim/github-projects/RPGParkDev/tools/maptool/module_paths.js",
+		"/C/Users/Tim/github-projects/RPGParkDev/client/client-main/src/js/view/mtl-loader.js",
+		"/C/Users/Tim/github-projects/RPGParkDev/client/client-main/src/js/view/obj-loader.js",
+		"/C/Users/Tim/github-projects/RPGParkDev/client/client-main/node_modules/three.orbitcontrols/index.js",
+		"/C/Users/Tim/github-projects/RPGParkDev/package.json",
+		"/C/Users/Tim/github-projects/RPGParkDev/client/client-main/src/js/managers/garbage-collector.js",
+		"/C/Users/Tim/github-projects/RPGParkDev/client/client-main/src/js/vfs/vfs-plugin.js",
+		"/C/Users/Tim/github-projects/RPGParkDev/tools/maptool/file-webkit/webkit-filepipe.js",
+		"/C/Users/Tim/Documents/GitHub/TPPParkDev/src/js/managers/garbage-collector.js",
+		"/C/Users/tpittman/Desktop/xml/1493172273.xml",
+		"//blackmore/publicshare/tjp/psplash/psplash.c",
+		"//blackmore/publicshare/tjp/psplash/README",
+		"/C/Users/tpittman/github-projects/TPPParkDev/src/events/meta.streamers/DekuNukem.streamer/base.js",
+		"/C/Users/tpittman/github-projects/TPPParkDev/src/old_events/streamer/deku.js",
+		"/C/Users/tpittman/github-projects/TPPParkDev/src/events/meta.streamers/DekuNukem.streamer/dialog.js",
+		"/C/Users/tpittman/github-projects/TPPParkDev/src/events/meta.streamers/EliteAnax17.streamer/base.js",
+		"/C/Users/tpittman/github-projects/TPPParkDev/src/old_events/streamer/revo.js",
+		"/C/Users/tpittman/github-projects/TPPParkDev/src/events/meta.streamers/Twitchplayspokemon.streamer/base.js",
+		"/C/Users/tpittman/github-projects/TPPParkDev/src/events/meta.streamers/Twitchplayspokemon.streamer/dialog.js",
+		"/C/Users/tpittman/github-projects/TPPParkDev/src/old_events/streamer/streamer.js",
+		"/C/Users/tpittman/github-projects/TPPParkDev/build/build.js",
+		"/C/Users/tpittman/github-projects/TPPParkDev/_out/index.html",
+		"/C/Users/tpittman/github-projects/TPPParkDev/_test/game.html",
+		"/C/Users/tpittman/github-projects/TPPParkDev/_out/game.html",
+		"/C/Users/tpittman/github-projects/TPPParkDev/build/transform-streams.js"
+	],
+	"find":
+	{
+		"height": 34.0
+	},
+	"find_in_files":
+	{
+		"height": 0.0,
+		"where_history":
+		[
+			"",
+			"C:\\Users\\tpittman\\Desktop\\xml",
+			"C:\\Users\\tpittman\\github-projects\\TPPParkDev\\src",
+			""
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+			"out",
+			"GFSkeletonMot",
+			"return",
+			"out",
+			"clean",
+			"tags",
+			"vertexCounter",
+			"mat",
+			"Mat",
+			"mat",
+			"Float32BufferAttribute",
+			"this",
+			"(0, 1, 0)",
+			"5);",
+			"5,",
+			"1.5,",
+			"1,",
+			"0,",
+			"0.5,",
+			"this",
+			"_submodels",
+			"l_geom",
+			"material",
+			"render",
+			"render(",
+			"geom",
+			"createCanvases",
+			"removeOldCanvases",
+			"_onReady",
+			"val",
+			"_file",
+			"unlooped",
+			"'out'",
+			"out",
+			"play",
+			"update",
+			"value",
+			"overhead",
+			"light.shadow.camera",
+			"cam",
+			"min",
+			"array",
+			"boundingBox",
+			"bounding",
+			"overhead",
+			"100",
+			"renderOrder",
+			"\"info",
+			"info",
+			"pageSet",
+			"button text",
+			"text=\"dialog",
+			"alignx=\"0.5\"",
+			"width=\"40",
+			"width",
+			"axis=\"x",
+			"height=\"65\"",
+			"restoreSe",
+			"restore",
+			"30",
+			"north",
+			"south",
+			"15",
+			"top=\"10",
+			"460",
+			"363",
+			"161",
+			"8",
+			"9",
+			"49",
+			"SummaryPageBehavior.onRingingMenuItemSelected",
+			"SummaryPageBehavior.onMaintenanceMenuItemSelected",
+			"SummaryPageBehavior.onUnavailableMenuItemSelected",
+			"SummaryPageBehavior.onTagoutMenuItemSelected",
+			"SummaryPageBehavior.onMonitorMenuItemSelected",
+			"SummaryPageBehavior.onTalkListenMenuItemSelected",
+			"text-literal=\"Refresh\"",
+			"text_block",
+			"218",
+			"40",
+			"30",
+			"79",
+			"450",
+			"width=\"1920",
+			"-> a",
+			"a",
+			"-> a",
+			"id: '[\\w-]+',",
+			"skills",
+			"dexid",
+			"capabilities",
+			"habitats",
+			"eggGroups",
+			"size:\"",
+			"legendary",
+			"evolution",
+			"captureRate",
+			"genderRatio",
+			"types: [",
+			"stats: {",
+			"id: '",
+			"id",
+			"name",
+			"athletics",
+			"^\\d",
+			"^-",
+			"-",
+			"X':true-Ray Vision",
+			",-",
+			"\\t",
+			"\\t([\\w ]+)",
+			"\\['(\\w+)\\, (\\w+)', ''\\]",
+			"\\['(\\w+)\\, (\\w+)'\\]",
+			"\\t([\\w]+) (\\d)",
+			"\\t([\\w ]+)",
+			"\\t(\\w+) \\(([\\w]+, \\w+)\\)",
+			"\\t(\\w+) \\(([\\w ]+)\\)",
+			"	Alluring (while in Rain only)",
+			"\\t(\\w+) \\(([\\w ]+)\\)",
+			"\\t(\\w+) \\(([\\w]+)\\)",
+			"\\w+:0, ",
+			"\\t",
+			"-:1,",
+			"\\t",
+			"0",
+			", \"-\"",
+			"\\t",
+			"and"
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+			"SummaryPageBehavior.showSummaryPage(RINGING)",
+			"SummaryPageBehavior.showSummaryPage(MAINTENANCE)",
+			"SummaryPageBehavior.showSummaryPage(UNAVAILABLE)",
+			"SummaryPageBehavior.showSummaryPage(TAG_OUT)",
+			"SummaryPageBehavior.showSummaryPage(MONITOR)",
+			"SummaryPageBehavior.showSummaryPage(TALK_LISTEN)",
+			"text=\"common.paging.refresh\"",
+			"\\t'\\1':true",
+			"['\\1', '\\2']",
+			"\\t'\\1':\\2",
+			"\\t'\\1':1",
+			"\\t'\\1':['\\2', '\\3']",
+			"\\t'\\1':'\\2'",
+			"\\t'\\1':['\\2']",
+			"",
+			"-",
+			"connection: \"\\1\",\\neffect: \""
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"selected": 2,
+			"sheets":
+			[
+				{
+					"buffer": 0,
+					"file": "spica/gfCharacterModel.js",
+					"settings":
+					{
+						"buffer_size": 1219,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1219,
+								1192
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScriptNext/JavaScriptNext.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 135.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "spica/gfPkmnModel.js",
+					"settings":
+					{
+						"buffer_size": 2480,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								2480,
+								2480
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScriptNext/JavaScriptNext.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "spica/ThreeConverter.js",
+					"settings":
+					{
+						"buffer_size": 2227,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								835,
+								835
+							]
+						],
+						"settings":
+						{
+							"auto_name": "// ThreeConverter.js",
+							"syntax": "Packages/JavaScriptNext/JavaScriptNext.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "spica/index.js",
+					"settings":
+					{
+						"buffer_size": 4948,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								2178,
+								2178
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScriptNext/JavaScriptNext.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 855.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "spica/BufferedReader.js",
+					"settings":
+					{
+						"buffer_size": 4454,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								3131,
+								3131
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScriptNext/JavaScriptNext.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 1530.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 5,
+					"file": "spica/gf/motion/GFMotKeyFrame.js",
+					"settings":
+					{
+						"buffer_size": 1766,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScriptNext/JavaScriptNext.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				}
+			]
+		},
+		{
+			"selected": 5,
+			"sheets":
+			[
+				{
+					"buffer": 6,
+					"file": "spica/gf/motion/GFMotion.js",
+					"settings":
+					{
+						"buffer_size": 2231,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								486,
+								486
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScriptNext/JavaScriptNext.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 90.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 7,
+					"file": "spica/gf/GFMotionPack.js",
+					"settings":
+					{
+						"buffer_size": 791,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								524,
+								524
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScriptNext/JavaScriptNext.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 8,
+					"file": "spica/gf/GFModelPack.js",
+					"settings":
+					{
+						"buffer_size": 1380,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								285,
+								291
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScriptNext/JavaScriptNext.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 9,
+					"file": "spica/gf/model/GFModel.js",
+					"settings":
+					{
+						"buffer_size": 2496,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1468,
+								1468
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScriptNext/JavaScriptNext.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 495.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 10,
+					"file": "spica/gf/index.js",
+					"settings":
+					{
+						"buffer_size": 263,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								54,
+								54
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScriptNext/JavaScriptNext.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 11,
+					"file": "spica/gf/model/GFMaterial.js",
+					"settings":
+					{
+						"buffer_size": 9435,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScriptNext/JavaScriptNext.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 3069.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				}
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 0.0
+	},
+	"input":
+	{
+		"height": 31.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			],
+			[
+				1,
+				0,
+				2,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			0.5,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.exec":
+	{
+		"height": 203.0
+	},
+	"replace":
+	{
+		"height": 62.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 0.0,
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"show_minimap": true,
+	"show_open_files": false,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 235.0,
+	"status_bar_visible": true
+}

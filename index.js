@@ -16,6 +16,7 @@ if (inNW()) {
 	// 	width: 640, height: 480,
 	// 	resizable: true,
 	// });
+	console.PARSE_DEBUG = {};
 	chrome.developerPrivate.openDevTools({
 	    renderViewId: -1,
 	    renderProcessId: -1,

@@ -18,15 +18,20 @@ class GFMotUVTransform {
 		
 		let flags = data.readUint32();
 		let len = data.readUint32();
+		
+		if (console.PARSE_DEBUG) console.PARSE_DEBUG['motType'] = 'Material';
+		if (console.PARSE_DEBUG) console.PARSE_DEBUG['name'] = name;
+		
 		for (let i = 0; i < 5; i++) {
+			if (console.PARSE_DEBUG) console.PARSE_DEBUG['channel'] = ['scaleU','scaleV','rot','transU','transV'][i];
 			switch(i) {
-				case 0: GFMotKeyFrame.setList(this.scaleX, data, flags, frameCount); break;
-				case 1: GFMotKeyFrame.setList(this.scaleY, data, flags, frameCount); break;
+				case 0: GFMotKeyFrame.setList(this.scaleX, data, flags, frameCount, len); break;
+				case 1: GFMotKeyFrame.setList(this.scaleY, data, flags, frameCount, len); break;
 				
-				case 2: GFMotKeyFrame.setList(this.rotX, data, flags, frameCount); break;
+				case 2: GFMotKeyFrame.setList(this.rotX, data, flags, frameCount, len); break;
 				
-				case 3: GFMotKeyFrame.setList(this.transX, data, flags, frameCount); break;
-				case 4: GFMotKeyFrame.setList(this.transY, data, flags, frameCount); break;
+				case 3: GFMotKeyFrame.setList(this.transX, data, flags, frameCount, len); break;
+				case 4: GFMotKeyFrame.setList(this.transY, data, flags, frameCount, len); break;
 			}
 			flags >>= 3;
 		}
@@ -34,7 +39,7 @@ class GFMotUVTransform {
 }
 
 class GFMaterialMot {
-	constructor(data, frameCount) {
+	constructor(data, frameCount, len) {
 		this.materials = []; /** @type {List<GFMotUVTransform>} */
 		if (!data) return this;
 		

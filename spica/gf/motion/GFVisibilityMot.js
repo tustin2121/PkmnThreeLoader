@@ -8,8 +8,8 @@ class GFMotBoolean {
 		
 		if (!data) return this;
 		let val = 0;
-		for (let i = 0; i < count; i++) {
-			let bit = index & 7;
+		for (let i = 0; i < frameCount; i++) {
+			let bit = i & 7;
 			if (bit === 0) val = data.readUint8();
 			this.values.push((val & (1 << bit)) != 0);
 		}

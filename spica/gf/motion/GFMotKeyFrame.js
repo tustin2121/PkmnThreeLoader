@@ -18,9 +18,13 @@ class GFMotKeyFrame {
 	 * @param {uint} flags
 	 * @param {uint} frameCount
 	 */
-	static setList(keyframes, data, flags, frameCount) {
+	static setList(keyframes, data, flags, frameCount, len) {
 		switch (flags & 7) {
-			case 3: keyframes.push(new GFMotKeyFrame(0, data.readFloat32(), 0)); break;
+			case 0: break; //No keyframes for this track
+			
+			case 3: // One keyframe, a constant
+				keyframes.push(new GFMotKeyFrame({ frame:0, value:data.readFloat32(), slope:0 })); 
+				break; 
 			
 			// Key Frame List
 			case 4:
@@ -60,6 +64,13 @@ class GFMotKeyFrame {
 					}
 				}
 			} break;
+			
+			case 1: //Unknown, used in Mega Steelix's floating Feelers, rotX and rotY
+			case 2: //Unknown, used in Mega Steelix's eye UV translation motions
+			default: //Not yet seen
+				if (console.PARSE_DEBUG) 
+					console.log(`[${console.PARSE_DEBUG.motType} ${console.PARSE_DEBUG.animNum}] case ${flags&7} for '${console.PARSE_DEBUG.name}':${console.PARSE_DEBUG.channel} : `, data.readBytes(len));
+				break; 
 		}
 	}
 }

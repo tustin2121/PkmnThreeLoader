@@ -10,7 +10,11 @@ class BufferedReader {
 	get length() { return this.data.limit; }
 	
 	get offset() { return this.data.offset; }
-	set offset(val) { this.data.offset = val; }
+	set offset(val) { 
+		if (val === undefined) throw new TypeError('Offset is being set to undefined!');
+		if (typeof val !== 'number') throw new TypeError(`Illegal value for offset: ${val}!`);
+		this.data.offset = val; 
+	}
 	
 	readFloat(offset) { return this.data.readFloat32(offset); }
 	readFloat32(offset) { return this.data.readFloat32(offset); }
