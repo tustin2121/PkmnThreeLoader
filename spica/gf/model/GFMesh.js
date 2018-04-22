@@ -87,6 +87,7 @@ class GFMesh {
 			for (let bone = 0; bone < boneIndices.length; bone++) {
 				boneIndices[bone] = data.readUint8();
 			}
+			boneIndices.length = boneIndicesCount;
 			
 			this.submeshes.push(new GFSubMesh({
 				boneIndices, boneIndicesCount,

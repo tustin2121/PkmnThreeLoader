@@ -31,7 +31,7 @@ function convertModel(gf_model) {
 }
 
 function convertMesh(gf_mesh, pack) {
-	let skeleton, mats, geom, mesh;
+	let skeleton;
 	{
 		let boneHash = {};
 		skeleton = [];
@@ -51,7 +51,7 @@ function convertMesh(gf_mesh, pack) {
 		skeleton = new Skeleton(skeleton);
 	}
 	
-	mats = {};
+	let mats = {};
 	for (let gf_mat of gf_mesh.materials) {
 		// TODO ShaderMaterial
 		let mat = { name: gf_mat.matName.trim() };
@@ -81,6 +81,7 @@ function convertMesh(gf_mesh, pack) {
 		mats[mat.name] = mat;
 	}
 	
+	let submeshes = [];
 	for (let gf_sub of gf_mesh.submeshes) {
 		let vbo = (()=>{
 			let f = gf_sub.attributes[0].format;
@@ -109,13 +110,13 @@ function convertMesh(gf_mesh, pack) {
 				case PICAAttributeName.TexCoord0:	geom.addAttribute('uv', t_attr); break;
 				case PICAAttributeName.TexCoord1:	geom.addAttribute('uv2', t_attr); break;
 				case PICAAttributeName.TexCoord2:	geom.addAttribute('uv3', t_attr); break;
-				case PICAAttributeName.BoneIndex:	geom.addAttribute('skinIndices', t_attr); break;
-				case PICAAttributeName.BoneWeight:	geom.addAttribute('skinWeights', t_attr); break;
+				case PICAAttributeName.BoneIndex:	geom.addAttribute('skinIndex', t_attr); break;
+				case PICAAttributeName.BoneWeight:	geom.addAttribute('skinWeight', t_attr); break;
 			}
 			attrOff += attr.elements;
 		}
 		geom.setIndex(gf_sub.indices);
-		
+		submeshes.push(new SkinnedMesh(geom, mats[gf_sub.name.trim()]));
 	}
 	
 	let t_mesh = {};
