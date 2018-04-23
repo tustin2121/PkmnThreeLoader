@@ -1,0 +1,132 @@
+MotionPack Index
+===========================================================================================
+Notes:
+- Astricks (*) denote required animations.
+- If a Pokemon stands, Animations #3, #4, and #5 are required.
+- If a Pokemon floats or files, Animation #6 is required.
+- The Expression Blend animations are material or bone animations which only manipulate
+  parts of the face. Different frames of the animation can be overlayed on top of other 
+  animations to provide expressions to the Pokemon. This is most visible in-game in Amie,
+  where a Pokemon's eyes display what it thinks is a good petting spot. It's also visible
+  in battle when a Pokemon is put to sleep: animations still play, but the Pokemon's eyes
+  are closed.
+  More research needs to be done to determine which frames are what kinds of expressions.
+
+Pokemon Animations (Pak 4 - Battle):
+ 0 - *Idle (Looping)
+ 1 - Occasional Idle 1 (One off, go to #0)
+ 2 - 
+ 3 - Appear from Pokeball and Fall (One off, go to #4)
+ 4 - Falling (Looping, return via #5)
+ 5 - Landing (One off, go to #0)
+ 6 - Appear from Pokeball in Midair (One off, go to #0)
+ 7 - After Mega Evolving Roar (*Required for Mega Evolutions only)
+ 8 - *Physical Attack 1
+ 9 - Physical Attack 2
+10 - Physical Attack 3
+11 - Physical Attack 4
+12 - *Special Attack 1
+13 - Special Attack 2
+14 - Special Attack 3 (Usually reserved for signitures moves) [Jarachi's Doom Desire]
+15 - Special Attack 4
+16 - *Take Hit 1
+17 - *Faint
+18 - 
+19 - Right/Both Eye Expression Blend
+20 - Left Eye Expression Blend
+21 - 
+22 - Mouth Expression Blend
+23 - 
+24 - 
+25 - Constant Overlay? (Used by Mega Steelix to constantly spin its crystals)
+
+Pokemon Animations (Pak 5 - Amie):
+ 0 - *Idle (Looping)
+ 1 - (?) [Magnemite: Insane Jittering]
+ 2 - (?) [Magnemite: Spin and stop suddenly]
+ 3 - 
+ 4 - *Start sleeping (One off, go to #5)
+ 5 - *Sleeping (Looping, return via #6)
+ 6 - *Stop sleeping (One off, go to #0)
+ 7 - Sleeping or Unaware (Looping, go to #8, used for Amie's Unaware intro)
+ 8 - Become Aware (One off, no smooth return, used for Amie's Unaware intro)
+ 9 - *Unhappy Response (from petting)
+10 - Confused Response
+11 - Happy Response
+12 - *Happy Response (from petting)
+13 - Happy Response
+14 - Clean Self 1, Occasional Idle (?) [Pikachu: Clean both cheeks]
+15 - Clean Self 2 (?) [Pikachu: Clean right cheek]
+16 - *Occasional Idle 1 (One off, return to #0)
+17 - Occasional Idle 2 (One off, return to #0)
+18 - Sad turn to Happy (One off, return to #0, used for Amie's Sad intro)
+19 - Wave (One off, return to #0)
+20 - Happy Jumping (?)
+21 - *Angry Outburst 1
+22 - *Begin eating (One off, go to #23)
+23 - *Eating (Looping, return via #24, sped down about 75% in-game)
+24 - *End eating (One off, go to #0)
+25 - High Five (if animation is missing, Pokemon cannot high five)
+26 - 
+27 - Right/Both Eye Expression Blend
+28 - Left Eye Expression Blend
+29 - 
+30 - Mouth Expression Blend
+
+Pokemon Animations (Pak 6 - Other):
+ 0 - *Idle (Looping)
+ 1 - 
+ 2 - *Walking (Looping)
+ 3 - *Running (Looping)
+ 4 - 
+ 5 - 
+ 6 - 
+ 7 - 
+ 8 - 
+ 9 - 
+10 - 
+11 - 
+12 - 
+13 - 
+14 - Right/Both Eye Expression Blend
+15 - Left Eye Expression Blend
+16 - 
+17 - Mouth Expression Blend
+
+Battler Animations:
+ 0 - *Introduction Pose (One off, freeze at end)
+ 1 - *Battle Start Pokeball Throw (One off, no smooth return)
+ 2 - *Give Command (One off, return to #4)
+ 3 - *Losing Pose (One frame, looping)
+ 4 - *Idle (Looping)
+ 5 - *Occasional Idle (One off, return to #4)
+ 6 - Before Battle Introduction (One off, freeze at end, go to #7)
+ 7 - Before Battle Throw Pokeball (One off, no smooth return)
+ 8 - After Battle Losing Animation (One off, freeze at end)
+ 9 - 
+10 - *Throw Pokeball (One off, no smooth return)
+11 - Alternate Intro?
+12 - Alternate Throw Pokeball
+13 - Alternate Defeat?
+14 - Z-Move
+
+===========================================================================================
+
+Exceptions:
+- Mimikyu - Battle Anim 9 is the "Breaking" animation
+
+===========================================================================================
+
+Expressions: (?)
+Expressions seem to take up 10 frames each, and it is a hard transition between them. 
+The animation is always 80 frames long, and most pokemon don't support beyond frame 69.
+
+frame  0 - Neutral
+frame 10 - Out-of-it (Eyes half-closed, mouth ajar)
+frame 20 - Sleeping (Eyes closed, mouth open)
+frame 30 - Pained (Eyes shut tight, mouth closed tight)
+frame 40 - Determined (Eyes angry, mouth ajar)
+frame 50 - Pleased (Eyes closed happy, mouth closed)
+frame 60 - Sad (Eyes open sad, mouth closed)
+frame 70 - Dead (Crossed out eyes) [Unsupported on many pokemon]
+frame 80 - [Unsupported] (Eyes in red textureless space, mouth ajar)

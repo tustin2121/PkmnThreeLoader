@@ -64,6 +64,7 @@ function parse(data, header, out={}) {
 			
 			for (let i = 0; i < header.entries.length; i++) {
 				let entry = header.entries[i];
+				if (entry.length === 0) continue;
 				data.offset = entry.address;
 				
 				if (data.offset + 4 > data.length) break;

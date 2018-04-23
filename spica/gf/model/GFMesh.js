@@ -9,9 +9,9 @@ const {
 const SCALES = [ 1/127, 1/255, 1/65535, 1 ];
 
 class GFSubMesh {
-	constructor(obj) {
+	constructor(obj={}) {
 		this.hash = null;
-		this.name = null;
+		this.matName = null;
 		
 		this.boneIndicesCount = null;
 		this.boneIndices = null;
@@ -81,7 +81,7 @@ class GFMesh {
 		// The rest is added latter (because the data is split inside the file) --gdkchan
 		for (let i = 0; i < submeshCount; i++) {
 			let hash = data.readUint32();
-			let name = data.readIntLenString();
+			let matName = data.readIntLenString().trim();
 			let boneIndicesCount = data.readUint8();
 			let boneIndices = new Array(0x1F);
 			for (let bone = 0; bone < boneIndices.length; bone++) {
@@ -97,7 +97,7 @@ class GFMesh {
 				verticesLength: data.readUint32(),
 				indicesLength: data.readUint32(),
 				
-				hash, name,
+				hash, matName,
 			}));
 		}
 		
