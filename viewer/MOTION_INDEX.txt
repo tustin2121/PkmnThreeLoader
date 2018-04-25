@@ -39,6 +39,12 @@ Pokemon Animations (Pak 4 - Battle):
 23 - 
 24 - 
 25 - Constant Overlay? (Used by Mega Steelix to constantly spin its crystals)
+26 - 
+27 - 
+28 - 
+29 - [IK Data]
+30 - 
+31 - 
 
 Pokemon Animations (Pak 5 - Amie):
  0 - *Idle (Looping)
@@ -52,16 +58,16 @@ Pokemon Animations (Pak 5 - Amie):
  8 - Become Aware (One off, no smooth return, used for Amie's Unaware intro)
  9 - *Unhappy Response (from petting)
 10 - Confused Response
-11 - Happy Response
+11 - Happy Response? [Pikachu: short cry]
 12 - *Happy Response (from petting)
-13 - Happy Response
+13 - Happy Response? [Pikachu: happy hop]
 14 - Clean Self 1, Occasional Idle (?) [Pikachu: Clean both cheeks]
 15 - Clean Self 2 (?) [Pikachu: Clean right cheek]
 16 - *Occasional Idle 1 (One off, return to #0)
 17 - Occasional Idle 2 (One off, return to #0)
-18 - Sad turn to Happy (One off, return to #0, used for Amie's Sad intro)
-19 - Wave (One off, return to #0)
-20 - Happy Jumping (?)
+18 - Sad turn to Happy (One off, no intro, return to #0, used for Amie's Sad intro?)
+19 - (?) [Pikachu: Wave] (One off, return to #0)
+20 - (?) [Pikachu: Happy Jumping]
 21 - *Angry Outburst 1
 22 - *Begin eating (One off, go to #23)
 23 - *Eating (Looping, return via #24, sped down about 75% in-game)

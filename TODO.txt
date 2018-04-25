@@ -1,0 +1,12 @@
+Animation conversion
+===============================================================================
+
+Use the Amie sleep animations for in-battle sleep.
+Use the Amie angry responses for "Anticipation" and "Swagger".
+Use the Amie happy dancing for a battle victory.
+Use the eating animation when eating a berry.
+
+Exceptions:
+- Doublade is different between battle and amie (in amie, it is sheithed).
+	- Don't use the Amie responses in battle.
+	- When the battle ends, play 'appear_hover' at -0.5x speed to sheithe the sword(s), then play the celebratory animation.

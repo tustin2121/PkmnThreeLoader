@@ -13,6 +13,7 @@ const SECT_VISABILITY = 6;
 class GFMotion {
 	constructor(data, index) {
 		this.index = index || 0; /** @type {int} */
+		this.name = null;
 		this.frameCount = 0; /** @type {uint} */
 		this.isLooping = false;
 		this.isBlended = false;
