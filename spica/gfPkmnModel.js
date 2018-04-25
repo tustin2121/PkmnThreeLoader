@@ -9,7 +9,7 @@ const MAGIC_BCH 	= 0x00484342;
 const PARSE_PAK = [];
 // Parse Pak 0: Model
 PARSE_PAK[0] = function(data, header, out={}) {
-	if (header.entries.length !== 4) throw new ReferenceError('Invalid number of entries for Pack 0!');
+	if (header.entries.length !== 5) throw new ReferenceError('Invalid number of entries for Pack 0!');
 	let modelpack = out.modelpack || new GFModelPack();
 	
 	// High Poly Pokemon model
@@ -301,10 +301,11 @@ function parseMotionPack(data, header, names) {
 			case 5: motionpack.extradata[i] = true; break; //Unknown, no examples yet
 			case 6: motionpack.extradata[i] = true; break; //Unknown, no examples yet
 			case 7: {
-				// Constant motion animation (used for Mega Steelix's crystals)
+				// Constant motion animation - run constantly under all other animations, and some animations can override.
+				// Used for Koffing's smoke, Mega Steelix's crystals
 				let mot = new GFMotion(data, i);
 				motionpack.extradata[i] = mot;
-			}
+			} break;
 			case  8: motionpack.extradata[i] = true; break; //Unknown, no examples yet
 			case  9: motionpack.extradata[i] = true; break; //Unknown, no examples yet
 			case 10: motionpack.extradata[i] = true; break; //Unknown, no examples yet
