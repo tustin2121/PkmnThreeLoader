@@ -1,5 +1,6 @@
 // index.js
 //
+/*
 function inNW() {
 	try {
 		const n = require('nw.gui');
@@ -25,3 +26,4 @@ if (inNW()) {
 } else {
 	console.log('TODO: something');
 }
+*/

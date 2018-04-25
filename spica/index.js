@@ -87,8 +87,13 @@ function loadAll(files) {
 	}
 }
 
-function open(files) {
+function open(root, files) {
+	if (files === undefined && root !== undefined) {
+		files = root;
+		root = '';
+	}
 	if (!Array.isArray(files)) files = [files];
+	files = files.map(x=>path.join(root, x));
 	return Promise
 		.all( files.map((x)=>load(x)) )
 		.then((fs)=>{

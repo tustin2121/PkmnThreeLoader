@@ -84,4 +84,9 @@ function parse(data, header, out={}) {
 	return out;
 }
 
-module.exports = { parse };
+
+function toThree({ modelpack, motionpacks }) {
+	// modelpack
+}
+
+module.exports = { parse, toThree };
