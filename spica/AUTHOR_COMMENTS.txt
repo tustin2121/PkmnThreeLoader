@@ -1,0 +1,75 @@
+
+
+=========================================================================================
+== https://www.vg-resource.com/thread-25872-post-635800.html#pid635800
+=========================================================================================
+
+For those interested in the overworld animation from Pokémon X/Y (and maybe OR/AS too, but mainly X/Y), you probably noticed that they have... issues.
+
+So on the old version it looked like this:
+
+[+]Spoiler
+not very good. I used to call this issue the feet issue because it only seems to affect the characters feet.
+
+[+]Some technical talk you may find boring
+I decided to look closely into this issue recently, and by analysing the animation key frames, I noticed that the affected bones had some weird values on the translation, even through they still seemed to be valid values, and not just garbage. After some time thinking I concluded that they were most likely absolute (or world) positions of the animated bone, without rotation. Bones are usually represented in local space (that is, the position and rotation are relative to the parent bone). But it turns out that the old animation format used on Pokémon actually supports both!
+
+So, the problem seemed to be something easy to fix. Just transform from world to local space and it should work. It ended being not that simple through. For all bones that had the "world space position" flag set, I had to build a transformation matrix up to the parent bone. By calculating the inverse of this matrix, I was able to transform the position from world to local space (relative to the parent bone). This kind of worked, but also kind of didn't, because rotations were still missing, so I still had stuff moving to weird positions, but it was already better. So the only thing missing was calculating the euler rotation of the new bone, and doing that was just a matter of finding the rotation between the bone and it's parent. Finding said rotation can be easily archieved by doing the cross product between the vectors to find the rotation axis, and an dot product with an arccos to find the angle. With this we can easily build a quaternion, and by transforming our bone position with the inverse of this quaternion, is possible to "unrotate" it and keep only the translation, that is what we want. The last step is attaching the rotation we just calculated to the parent bone, and we should have a working animation!
+So after the above fixes the animation looks much better:
+
+[+]Spoiler
+A video tag that work with direct video urls would be nice Tongue
+https://gfycat.com/EvergreenCraftyAlligatorgar
+I think they are correct now. But if anyone find issues just let me know. 
+
+
+
+=========================================================================================
+== https://www.vg-resource.com/thread-25872-post-636221.html#pid636221
+=========================================================================================
+
+I've been investigating issues with the models, and one of the broken Pokémon models on OR/AS/X/Y was Koffing. It looked like this:
+
+[+]Spoiler
+The Pokémon looks OK actually but the smoke effect is all messed up. The same problem also affects other Pokémon like Cosmog on Sun/Moon. At some point I decided that adding "hacks" on the shader to make specific effects for different Pokémon work was not feasible, so I just decided to translate the original game shaders (they are compiled into PICA GPU machine code) to GLSL (OpenGL Shading Language). Writing the translator was not too complicated, but took a few days, and theres still a lot of work to be done, but with the original shader translated to GLSL, I got way better results:
+
+[-]Spoiler
+https://gfycat.com/PolishedFoolhardyBordercollie
+
+As a bonus, projected shadows started to show up correctly with the shaders aswell. By analysing the shader code, we can solve the mistery:
+
+- On the messed up geometry on the model, each triangle going trough the Pokémon needs to have all its 3 vertices treated as individual points. The geometry shader will use the position of each point to create a square sprite quad. So, basically they are point sprites.
+- The vertex shader calculates the position of each point on the quad, and they are also "billboarded", which means that they will always face the camera.
+- Each PC Pokémon model contains 2 meshes. One is the normal, high poly Pokémon. The other is a low poly version without textures, that are projected on the ground with some shader aswell to create the shadow effect.
+
+Now the work continues to clean up the mess I just made on the code after the new shader implementation and fixing possible regressions, and after that supporting shaders on Sun/Moon aswell (finding them on all those nameless files will be reaaaally boring). For those using the models to create fan games or just playing around, I think the shaders may be of some help, so I'll try exposing a option to export them as GLSL shaders later. I also hope that this is of some help to someone ripping this Pokémon model. Wink
+
+
+
+=========================================================================================
+== https://www.vg-resource.com/thread-25872-post-636452.html#pid636452
+=========================================================================================
+
+Thank you. I don't think that GLSL is widely supported through, mainly because it's tied to OpenGL, and I think that most engines supports both DirectX and OpenGL, so they use something else that supports both and compiles as needed.
+
+At this point I kind of regret working on this, since it probably won't find much use, but anyway since I already started this, I just decided to make the changes also work on Sun/Moon models, where some had the same problems affecting the Koffing model. One example is Cosmog:
+
+[+]Spoiler
+Same problem Koffing had. Point sprites being treated as triangles.
+
+[+]Some maybe boring talk about how I implemented what you see on the gif below
+The first thing I did was search for the shaders on Sun/Moon files. This was easy, they are located inside the same PC model file of the Pokémon model (so, each Pokémon also have theirs shaders inside). They are not using he SHBIN format like OR/AS shaders however, instead it stores a buffer with commands to the GPU, and the shader code is inside one of those commands. Loading the shader was not very complicated actually, and I managed to make it work more or less. The main problem is the ID of the uniform registers, their mapping is totally different from OR/AS, so to make it totally work I would need to implement two maps on the renderer, one for OR/AS (which also applies to most BCH models since OR/AS shaders are based on the default BCH shader), and one for Sun/Moon, and choose the correct one as appropriate. I really didn't wanted to go this way, so I just used OR/AS shaders instead.
+
+Also, another annoying thing. Sun/Moon uses -1 (0xff) value for unused bones. Shader will try to access value on the bone transform matrix array at this position, and this is an illegal memory access since the array is not this big. On my GPU, this makes the model randomly disappear, so I had to add checks on the shader to prevent this sort of thing from happening, and I think that it made the shader a bit slower.
+
+So, luckely, Sun/Moon models uses (mostly...) the same shader names that OR/AS uses, and the shaders are also pretty much the same, so just loading OR/AS shaders actually works!
+[+]Cosmog fixed (gif)
+http://i.imgur.com/AS8gYoM.gifv
+So here a few things I discovered with this:
+
+- Sun/Moon shaders are mostly the same compared to OR/AS ones, main change is shader uniform ids, some code related to matrix transform, and when the point sprite size is calculated, it multiplies the color by 3 (!), and OR/AS doesn't have such multiplication.
+- Shader have a uniform called "PressDir" that controls the direction of the projected shadow. This direction is stored inside the model file, on OR/AS as a uniform command and meta data, on Sun/Moon directly inside the material section.
+- The name of the shader used to project shadow is called "PressShadow". The shader used for billboarded effects like Cosmog stars and Koffing smoke is "PokeFire", and the one for projected shadows is called "PokeFireShadow". The "normal" shader for Pokémon is called "PokePack" on OR/AS, and just "Poke" on Sun/Moon.
+- Like on OR/AS, the low res Pokémon model is ALSO used on the projected shadow. I also suspect that the projected shadow model is using the stencil buffer to render the entire model as a single plain color, but I didn't made any analysis on this yet.
+
+It's probably worth noting that the above fix only works when using the original shaders from Pokémon OR/AS, because the default shader supplied with SPICA isn't capable of rendering those effects. 
