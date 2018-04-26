@@ -8,7 +8,7 @@ require('./OrbitControls');
 const raf = window.requestAnimationFrame;
 
 let renderer = new THREE.WebGLRenderer();
-renderer.setClearColor(new THREE.Color(0x0000DD), 1.0);
+renderer.setClearColor(new THREE.Color(0x325d82), 1.0);
 document.getElementById('view').appendChild(renderer.domElement);
 
 let scene = new THREE.Scene();
@@ -16,8 +16,11 @@ scene.add(new THREE.GridHelper(20, 20));
 scene.add(new THREE.AxesHelper(5));
 
 let camera = new THREE.PerspectiveCamera(45, 1, 0.5, 1000);
-camera.position.set(10, 10, 0);
+camera.position.set(20, 20, 16);
 scene.add(camera);
+
+let root = new THREE.Object3D();
+scene.add(root);
 
 let trackball = new THREE.OrbitControls(camera, renderer.domElement);
 

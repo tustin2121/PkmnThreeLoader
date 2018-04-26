@@ -6,6 +6,10 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "window": {
+	"width": 1024,
+	"height": 768
+  },
   "author": "tustin2121",
   "license": "ISC"
 }
