@@ -48,9 +48,9 @@ Pokemon Animations (Pak 4 - Battle):
 
 Pokemon Animations (Pak 5 - Amie):
  0 - *Idle (Looping)
- 1 - (?) [Magnemite: Insane Jittering]
+ 1 - (?) [Magnemite: Insane Jittering][Pikachu: Start looking up]
  2 - (?) [Magnemite: Spin and stop suddenly]
- 3 - 
+ 3 - (?) [Pikachu: Look up and to the right]
  4 - *Start sleeping (One off, go to #5)
  5 - *Sleeping (Looping, return via #6)
  6 - *Stop sleeping (One off, go to #0)

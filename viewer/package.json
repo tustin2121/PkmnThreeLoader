@@ -7,7 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "window": {
-	"width": 1024,
+	"width": 1280,
 	"height": 768
   },
   "author": "tustin2121",
