@@ -1,53 +1,31 @@
 <html>
 <head>
-	<style>
-	html { width:100vw; height:100vh; }
-	body { 
-		display: grid;
-		grid-template: "display props" / 4fr 1.2fr;
-		margin:0; padding:0; 
-		width:100vw; height:100vh;
-	}
-	#view {
-		grid-area: display;
-		overflow: hidden;
-	}
-	#props {
-		grid-area: props;
-		overflow-y: scroll;
-	}
-	#props > nav {
-		position: absolute;
-		display: block;
-	    height: 21px; width: 300px;
-	    top: 300px; left: -1px;
-	    transform-origin: top left;
-	    transform: rotate(-90deg);
-	    font-family: monospace;
-	}
-	#props > nav li {
-		float: right;
-		list-style: none;
-		margin: 0;
-		padding: 2px 10px;
-		border: 1px solid black;
-		border-radius: 0px 0px 6px 6px;
-		margin-left: -1px;
-		cursor: pointer;
-		background-color: white;
-	}
-	#props > nav li.selected {
-		color: white;
-		background-color: #525252;
-	}
-	</style>
+	<link rel="stylesheet" href="main.css" />
 	<title>GF Bin Viewer / Converter</title>
 </head>
 <body>
 	<div id="view"></div>
 	<div id="props">
-		<nav></nav>
-		<section></section>
+		<nav>
+			<li class="load">Loading</li>
+		</nav>
+		<section>
+			<div class="load">
+				<div class="group" group-name="Load Pokemon">
+					<label>Pokemon Binary Packs:</label>
+					<label>Pack 0: <input type="file" name="pkmnFile0" /></label>
+					<label>Pack 1: <input type="file" name="pkmnFile1" /></label>
+					<label>Pack 2: <input type="file" name="pkmnFile2" /></label>
+					<label>Pack 3: <input type="file" name="pkmnFile3" /></label>
+					<label>Pack 4: <input type="file" name="pkmnFile4" /></label>
+					<label>Pack 5: <input type="file" name="pkmnFile5" /></label>
+					<label>Pack 6: <input type="file" name="pkmnFile6" /></label>
+					<label>Pack 7: <input type="file" name="pkmnFile7" /></label>
+					<label>Pack 8: <input type="file" name="pkmnFile8" /></label>
+				</div>
+			</div>
+			
+		</section>
 	</div>
 	
 	<script src="main.js"></script>
