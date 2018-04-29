@@ -13,6 +13,8 @@ body {
 	grid-area: props;
 	overflow-y: scroll;
 	position: relative;
+	font-size: 10pt;
+	font-family: sans-serif;
 }
 #props > nav {
 	position: absolute;
@@ -56,9 +58,43 @@ body {
 	display: block;
 }
 
-#props > section > div label {
+/* #props > section > div label {
     display: block;
 }
 #props > section > div label input {
     display: block;
+} */
+#props p {
+    margin: 2px 0px;
 }
+
+#props .group {
+    margin: 10px 6px 6px 6px;
+    border: 1px solid #909090;
+    padding: 10px 6px 6px 6px;
+    position: relative;
+}
+#props .group::before {
+    content: attr(group-name);
+    position: absolute;
+    top: -0.5em; left: 1em;
+    background-color: #efefef;
+    padding: 0px 2px;
+}
+
+#props label.file input[type=file] {
+	margin-left: -88px;
+    margin-top: -3px;
+	width: calc( 100% + 88px );
+}
+#props label.file {
+	width: 80%;
+	height: 1.3em;
+	background-color: white;
+	display: inline-block;
+	-webkit-appearance: textfield;
+	border: 1px black solid;
+	overflow: hidden;
+	vertical-align: bottom;
+}
+

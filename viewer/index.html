@@ -7,27 +7,29 @@
 	<div id="view"></div>
 	<div id="props">
 		<nav>
-			<li class="load">Loading</li>
+			<li class="load selected">Loading</li>
 		</nav>
 		<section>
-			<div class="load">
+			<div class="load selected">
 				<div class="group" group-name="Load Pokemon">
-					<label>Pokemon Binary Packs:</label>
-					<label>Pack 0: <input type="file" name="pkmnFile0" /></label>
-					<label>Pack 1: <input type="file" name="pkmnFile1" /></label>
-					<label>Pack 2: <input type="file" name="pkmnFile2" /></label>
-					<label>Pack 3: <input type="file" name="pkmnFile3" /></label>
-					<label>Pack 4: <input type="file" name="pkmnFile4" /></label>
-					<label>Pack 5: <input type="file" name="pkmnFile5" /></label>
-					<label>Pack 6: <input type="file" name="pkmnFile6" /></label>
-					<label>Pack 7: <input type="file" name="pkmnFile7" /></label>
-					<label>Pack 8: <input type="file" name="pkmnFile8" /></label>
+					<p><label><input type="checkbox" name="pkmnFileAuto" checked />Autofill from Pack 0</label></p>
+					<p>Pack 0: <label class="file"><input type="file" name="pkmnFile0" /></label></p>
+					<p>Pack 1: <label class="file"><input type="file" name="pkmnFile1" /></label></p>
+					<p>Pack 2: <label class="file"><input type="file" name="pkmnFile2" /></label></p>
+					<p>Pack 3: <label class="file"><input type="file" name="pkmnFile3" /></label></p>
+					<p>Pack 4: <label class="file"><input type="file" name="pkmnFile4" /></label></p>
+					<p>Pack 5: <label class="file"><input type="file" name="pkmnFile5" /></label></p>
+					<p>Pack 6: <label class="file"><input type="file" name="pkmnFile6" /></label></p>
+					<p>Pack 7: <label class="file"><input type="file" name="pkmnFile7" /></label></p>
+					<p>Pack 8: <label class="file"><input type="file" name="pkmnFile8" /></label></p>
+					<p><button name="loadPkmnFile">Load Pokemon</button></p>
 				</div>
 			</div>
 			
 		</section>
 	</div>
 	
+	<script src="jquery-3.1.1.min.js"></script>
 	<script src="main.js"></script>
 </body>
 </html>
