@@ -191,7 +191,7 @@ class GFMesh {
 						elements : (attrFmt >> 2) + 1,
 						scale : SCALES[attrFmt & 3],
 					});
-					if (attrib.Name == PICAAttributeName.BoneIndex) attrib.scale = 1;
+					if (attrib.Name === PICAAttributeName.BoneIndex) attrib.scale = 1;
 					SM.attributes.push(attrib);
 				}
 			}

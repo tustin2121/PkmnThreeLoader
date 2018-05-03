@@ -4,6 +4,7 @@
 	<title>GF Bin Viewer / Converter</title>
 </head>
 <body>
+	<div id="hidden"><input type="file" id="fileChooser" /></div>
 	<div id="view"></div>
 	<div id="props">
 		<nav>
@@ -13,15 +14,15 @@
 			<div class="load selected">
 				<div class="group" group-name="Load Pokemon">
 					<p><label><input type="checkbox" name="pkmnFileAuto" checked />Autofill from Pack 0</label></p>
-					<p>Pack 0: <label class="file"><input type="file" name="pkmnFile0" /></label></p>
-					<p>Pack 1: <label class="file"><input type="file" name="pkmnFile1" /></label></p>
-					<p>Pack 2: <label class="file"><input type="file" name="pkmnFile2" /></label></p>
-					<p>Pack 3: <label class="file"><input type="file" name="pkmnFile3" /></label></p>
-					<p>Pack 4: <label class="file"><input type="file" name="pkmnFile4" /></label></p>
-					<p>Pack 5: <label class="file"><input type="file" name="pkmnFile5" /></label></p>
-					<p>Pack 6: <label class="file"><input type="file" name="pkmnFile6" /></label></p>
-					<p>Pack 7: <label class="file"><input type="file" name="pkmnFile7" /></label></p>
-					<p>Pack 8: <label class="file"><input type="file" name="pkmnFile8" /></label></p>
+					<p>Pack 0: <input type="text" readonly name="pkmnFile0" class="file"></input></p>
+					<p>Pack 1: <input type="text" readonly name="pkmnFile1" class="file"></input></p>
+					<p>Pack 2: <input type="text" readonly name="pkmnFile2" class="file"></input></p>
+					<p>Pack 3: <input type="text" readonly name="pkmnFile3" class="file"></input></p>
+					<p>Pack 4: <input type="text" readonly name="pkmnFile4" class="file"></input></p>
+					<p>Pack 5: <input type="text" readonly name="pkmnFile5" class="file"></input></p>
+					<p>Pack 6: <input type="text" readonly name="pkmnFile6" class="file"></input></p>
+					<p>Pack 7: <input type="text" readonly name="pkmnFile7" class="file"></input></p>
+					<p>Pack 8: <input type="text" readonly name="pkmnFile8" class="file"></input></p>
 					<p><button name="loadPkmnFile">Load Pokemon</button></p>
 				</div>
 			</div>

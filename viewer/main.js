@@ -23,6 +23,7 @@ let root = new THREE.Object3D();
 scene.add(root);
 
 let trackball = new THREE.OrbitControls(camera, renderer.domElement);
+global.loadedFiles = null;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -34,12 +35,28 @@ $('#props > nav > li').on('click', function(){
 	$('#props .selected').removeClass('selected');
 	$('#props .'+this.className).addClass('selected');
 });
-// $('#props input[type=file]').on('change', function(){
-//
-// });
-$('#props input[name=pkmnFile0]').on('change', function(){
-	if (!$('#props input[name=pkmnFileAuto]').is(':checked')) return;
-	fillPkmnFilePaths($(this).val());
+$('#props .file').on('dblclick', function(){
+	let chooser = $('#fileChooser');
+	chooser.unbind('change').val('').on('change', ()=>{
+		let file = chooser.val();
+		$(this).val(file);
+		if ($(this).attr('name') === 'pkmnFile0') {
+			if (!$('#props input[name=pkmnFileAuto]').is(':checked')) return;
+			fillPkmnFilePaths(file);
+		}
+	});
+	chooser.trigger('click');
+});
+$('#props button[name=loadPkmnFile]').on('click', async function(){
+	global.loadedFiles = [];
+	for (let i = 0; i <= 8; i++) {
+		let file = $(`#props input[name=pkmnFile${i}]`).val();
+		console.log(i, file);
+		if (!file) continue;
+		let data = await SPICA.open(file);
+		global.loadedFiles[i] = data;
+		console.log(i, data);
+	}
 });
 
 function resize() {
@@ -65,31 +82,31 @@ function fillPkmnFilePaths(file0) {
 		'6 (Amie Anim)', '7 (Basic Anim)', '8 (Misc Anim)', '9 (Extra)',
 	];
 	let comp = PATH.parse(file0);
+	delete comp.base;
 	
+	let pathset = [];
 	if (comp.name === '0') {
-		for (let i = 1; i < 8; i++) {
-			let npath = PATH.format( Object.assign({}, comp, { name:`${i}`}) );
-			if (!fs.existsSync(npath)) continue;
-			$(`#props input[name=pkmnFile${i}]`).val(npath);
-		}
-		return;
+		for (let i = 1; i <= 8; i++) pathset.push( Object.assign({}, comp, { name:`${i}`}) );
 	}
 	else if (comp.name.endsWith('0')) {
 		const name = comp.name.slice(0, -1);
-		for (let i = 1; i < 8; i++) {
-			let npath = PATH.format( Object.assign({}, comp, { name:`${name}${i}`}) );
-			if (!fs.existsSync(npath)) continue;
-			$(`#props input[name=pkmnFile${i}]`).val(npath);
-		}
-		return;
+		for (let i = 1; i <= 8; i++) pathset.push( Object.assign({}, comp, { name:`${name}${i}`}) );
+	}
+	else if (comp.name === '1') {
+		for (let i = 2; i <= 9; i++) pathset.push( Object.assign({}, comp, { name:`${i}`}) );
+	}
+	else if (comp.name.endsWith('1')) {
+		const name = comp.name.slice(0, -1);
+		for (let i = 2; i <= 9; i++) pathset.push( Object.assign({}, comp, { name:`${name}${i}`}) );
 	}
 	else if (comp.dir.endsWith(folders[0])) {
 		const dir = comp.dir.slice(0, -(folders[0].length));
-		for (let i = 1; i < 8; i++) {
-			let npath = PATH.format( Object.assign({}, comp, { dir:`${dir}${folders[i]}`}) );
-			if (!fs.existsSync(npath)) continue;
-			$(`#props input[name=pkmnFile${i}]`).val(npath);
-		}
+		for (let i = 1; i <= 8; i++) pathset.push( Object.assign({}, comp, { dir:`${dir}${folders[i]}`}) );
 	}
-	//TODO handle folders above
+	
+	if (pathset.length === 0) return;
+	pathset.map(x=> PATH.format(x) ).forEach((val, i)=>{
+		if (!fs.existsSync(val)) return; //skip
+		$(`#props .file[name=pkmnFile${i+1}]`).val(val);
+	});
 }

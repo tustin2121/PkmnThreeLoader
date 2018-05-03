@@ -5,6 +5,9 @@ body {
 	margin:0; padding:0;
 	width:100vw; height:100vh;
 }
+#hidden {
+	display: none;
+}
 #view {
 	grid-area: display;
 	overflow: hidden;
@@ -87,14 +90,12 @@ body {
     margin-top: -3px;
 	width: calc( 100% + 88px );
 }
-#props label.file {
+#props input.file {
 	width: 80%;
-	height: 1.3em;
 	background-color: white;
 	display: inline-block;
-	-webkit-appearance: textfield;
-	border: 1px black solid;
 	overflow: hidden;
 	vertical-align: bottom;
+	direction: rtl;
 }
 

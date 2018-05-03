@@ -1,20 +1,14 @@
 // ESLint default configuration from c9
 module.exports = {
 	env: {
-		"browser": false,
-		"amd": true,
-		"builtin": true,
 		"node": true,
-		"jasmine": false,
-		"mocha": true,
 		"es6": true,
 		"jquery": false,
-		"meteor": false,
 	},
 	parserOptions: {
 		ecmaFeatures: {
-	        globalReturn: true, // allow return statements in the global scope
-	        jsx: true, // enable JSX
+	        globalReturn: false, // allow return statements in the global scope
+	        jsx: false, // enable JSX
 	        experimentalObjectRestSpread: true,
 	    },
 	    ecmaVersion: 2017,

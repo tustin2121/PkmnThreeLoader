@@ -6,7 +6,7 @@ const {
 	PICATexEnvStage, PICATexEnvSource, PICATexEnvOperand, PICATexEnvCombiner, PICATexEnvScale,
 } = require('../../pica/commands');
 const {
-	ShaderProgram, ShaderOutputReg, ShaderOutputRegName, ShaderLabel, ShaderOpCode,
+	ShaderBinary, ShaderProgram, ShaderOutputReg, ShaderOutputRegName, ShaderLabel, ShaderOpCode,
 } = require('../../pica/shader');
 
 class GFShader {

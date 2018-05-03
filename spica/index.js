@@ -67,7 +67,8 @@ function load(file) {
 			}
 			else {
 				// interpret as path
-				fs.readFile(path.join(__dirname, "../../", file), (err, data)=>{
+				if (!path.isAbsolute(file)) file = path.join(__dirname, "../../", file);
+				fs.readFile(file, (err, data)=>{
 					if (err) return reject(err);
 					resolve(ByteBuffer.wrap(data, 'binary', ByteBuffer.LITTLE_ENDIAN));
 				});

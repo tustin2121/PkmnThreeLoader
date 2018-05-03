@@ -1,7 +1,5 @@
 //
 
-const THREE = new require('three');
-
 const PICATestFunc = {
 	Never : 0,
 	Always : 1,
@@ -31,7 +29,8 @@ const PICABlendEquation = {
 	Min : 3,
 	Max : 4,
 	
-	convert3 : function(pica) {
+	toThree : function(pica) {
+		const THREE = require('three');
 		return pica + THREE.AddEquation; //+100
 	},
 };
@@ -53,23 +52,24 @@ const PICABlendFunc = {
 	OneMinusConstantAlpha : 13,
 	SourceAlphaSaturate : 14,
 	
-	convert3 : function(pica) {
+	toThree : function(pica) {
+		const THREE = require('three');
 		switch (pica) {
-			case Zero: return THREE.ZeroFactor;
-			case One: return THREE.OneFactor;
-			case SourceColor: return THREE.SrcColorFactor;
-			case OneMinusSourceColor: return THREE.OneMinusSrcColorFactor;
-			case DestinationColor: return THREE.DstColorFactor;
-			case OneMinusDestinationColor: return THREE.OneMinusDstColorFactor;
-			case SourceAlpha: return THREE.SrcAlphaFactor;
-			case OneMinusSourceAlpha: return THREE.OneMinusSrcAlphaFactor;
-			case DestinationAlpha: return THREE.DstAlphaFactor;
-			case OneMinusDestinationAlpha: return THREE.OneMinusDstAlphaFactor;
-			case ConstantColor: throw new TypeError('Unsupported blend funciton: ConstantColor');
-			case OneMinusConstantColor: throw new TypeError('Unsupported blend funciton: OneMinusConstantColor');
-			case ConstantAlpha: throw new TypeError('Unsupported blend funciton: ConstantAlpha');
-			case OneMinusConstantAlpha: throw new TypeError('Unsupported blend funciton: OneMinusConstantAlpha');
-			case SourceAlphaSaturate: return THREE.SrcAlphaSaturateFactor;
+			case PICABlendFunc.Zero: return THREE.ZeroFactor;
+			case PICABlendFunc.One: return THREE.OneFactor;
+			case PICABlendFunc.SourceColor: return THREE.SrcColorFactor;
+			case PICABlendFunc.OneMinusSourceColor: return THREE.OneMinusSrcColorFactor;
+			case PICABlendFunc.DestinationColor: return THREE.DstColorFactor;
+			case PICABlendFunc.OneMinusDestinationColor: return THREE.OneMinusDstColorFactor;
+			case PICABlendFunc.SourceAlpha: return THREE.SrcAlphaFactor;
+			case PICABlendFunc.OneMinusSourceAlpha: return THREE.OneMinusSrcAlphaFactor;
+			case PICABlendFunc.DestinationAlpha: return THREE.DstAlphaFactor;
+			case PICABlendFunc.OneMinusDestinationAlpha: return THREE.OneMinusDstAlphaFactor;
+			case PICABlendFunc.ConstantColor: throw new TypeError('Unsupported blend funciton: ConstantColor');
+			case PICABlendFunc.OneMinusConstantColor: throw new TypeError('Unsupported blend funciton: OneMinusConstantColor');
+			case PICABlendFunc.ConstantAlpha: throw new TypeError('Unsupported blend funciton: ConstantAlpha');
+			case PICABlendFunc.OneMinusConstantAlpha: throw new TypeError('Unsupported blend funciton: OneMinusConstantAlpha');
+			case PICABlendFunc.SourceAlphaSaturate: return THREE.SrcAlphaSaturateFactor;
 		}
 	},
 };
@@ -130,19 +130,24 @@ class PICAAlphaTest {
 	// TODO ? https://github.com/gdkchan/SPICA/blob/master/SPICA/PICA/Commands/PICAAlphaTest.cs#L20
 	toUint32() { throw new Error('Not implemented'); }
 	/** Convert to a Three.js alpha test number */
-	convert3() {
-		if (!this.enabled) return 0;
-		switch (this.function) {
-			case PICATestFunc.Never: return 0;
-			case PICATestFunc.Always: return 1;
-			case PICATestFunc.Equal: throw new TypeError('Invalid operation for AlphaTest: Equal');
-			case PICATestFunc.Notequal: throw new TypeError('Invalid operation for AlphaTest: NotEqual');
-			case PICATestFunc.Less: return this.reference/255;
-			case PICATestFunc.Lequal: return (this.reference+1)/255;
-			case PICATestFunc.Greater: return 1 - (this.reference/255)
-			case PICATestFunc.Gequal: return 1 - ((this.reference+1)/255)
-		}
-		return 0;
+	toThree() {
+		if (!this.enabled) return {};
+		return {
+			transparent:this.enabled,
+			alphaTest: (()=>{
+				switch (this.function) {
+					case PICATestFunc.Never: return 0;
+					case PICATestFunc.Always: return 1;
+					case PICATestFunc.Equal: throw new TypeError('Invalid operation for AlphaTest: Equal');
+					case PICATestFunc.Notequal: throw new TypeError('Invalid operation for AlphaTest: NotEqual');
+					case PICATestFunc.Less: return this.reference/255;
+					case PICATestFunc.Lequal: return (this.reference+1)/255;
+					case PICATestFunc.Greater: return 1 - (this.reference/255);
+					case PICATestFunc.Gequal: return 1 - ((this.reference+1)/255);
+					default: return 1;
+				}
+			})(),
+		};
 	}
 }
 
@@ -155,6 +160,9 @@ class PICAStencilOperation {
 	}
 	// TODO? https://github.com/gdkchan/SPICA/blob/master/SPICA/PICA/Commands/PICAStencilOperation.cs#L16
 	toUint32() { throw new Error('Not implemented'); }
+	toThree() {
+		return {}; //TODO
+	}
 }
 
 class PICAStencilTest {
@@ -167,6 +175,9 @@ class PICAStencilTest {
 	}
 	// TODO? https://github.com/gdkchan/SPICA/blob/master/SPICA/PICA/Commands/PICAStencilTest.cs#L20
 	toUint32() { throw new Error('Not implemented'); }
+	toThree() {
+		return {}; //TODO
+	}
 }
 
 class PICABlendFunction {
@@ -190,6 +201,19 @@ class PICABlendFunction {
 			this.alphaEquation == 0 && this.alphaSrcFunc == 1 && this.alphaDstFunc == 0
 		);
 	}
+	toThree() {
+		const THREE = require('three');
+		if (!this.isCustom()) return {};
+		return {
+			blending: THREE.CustomBlending,
+			blendEquation: PICABlendEquation.toThree(this.colorEquation),
+			blendSrc: PICABlendFunc.toThree(this.colorSrcFunc),
+			blendDst: PICABlendFunc.toThree(this.colorDstFunc),
+			blendEquationAlpha: PICABlendEquation.toThree(this.alphaEquation),
+			blendSrcAlpha: PICABlendFunc.toThree(this.alphaSrcFunc),
+			blendDstAlpha: PICABlendFunc.toThree(this.alphaDstFunc),
+		};
+	}
 }
 
 class PICAColorOperation {
@@ -201,6 +225,9 @@ class PICAColorOperation {
 	}
 	// TODO? https://github.com/gdkchan/SPICA/blob/master/SPICA/PICA/Commands/PICAColorOperation.cs#L14
 	toUint32() { throw new Error('Not implemented'); }
+	toThree() {
+		return {}; //TODO
+	}
 }
 
 class PICADepthColorMask {
@@ -216,6 +243,9 @@ class PICADepthColorMask {
 	}
 	// TODO? https://github.com/gdkchan/SPICA/blob/master/SPICA/PICA/Commands/PICADepthColorMask.cs#L28
 	toUint32() { throw new Error('Not implemented'); }
+	toThree() {
+		return {}; //TODO
+	}
 }
 
 module.exports = {

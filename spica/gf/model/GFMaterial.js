@@ -16,7 +16,8 @@ const GFTextureMappingType = {
     ProjectionMap : 3,
     Shadow : 4,
     ShadowBox : 5,
-	convert3 : function(pica) {
+	toThree : function(pica) {
+		const THREE = require('three');
 		switch (pica) {
 			case GFTextureMappingType.UvCoordinateMap: return THREE.UVMapping;
 			case GFTextureMappingType.CameraCubeEnvMap: return THREE.CubeReflectionMapping;
@@ -33,7 +34,8 @@ const GFTextureWrap = {
     ClampToBorder : 1,
     Repeat : 2,
     Mirror : 3,
-	convert3 : function(pica) {
+	toThree : function(pica) {
+		const THREE = require('three');
 		switch (pica) {
 			case GFTextureWrap.ClampToEdge: return THREE.ClampToEdgeWrapping;
 			case GFTextureWrap.ClampToBorder: return THREE.ClampToEdgeWrapping;
@@ -50,7 +52,8 @@ const GFMinFilter = {
     Linear : 3,
     LinearMipmapNearest : 4,
     LinearMipmapLinear : 5,
-	convert3 : function(pica) {
+	toThree : function(pica) {
+		const THREE = require('three');
 		switch (pica) {
 			case GFMinFilter.Nearest: return THREE.NearestFilter;
 			case GFMinFilter.NearestMipmapNearest: return THREE.NearestMipMapNearestFilter;
@@ -65,7 +68,8 @@ const GFMinFilter = {
 const GFMagFilter = {
     Nearest : 0,
     Linear : 1,
-	convert3 : function(pica) {
+	toThree : function(pica) {
+		const THREE = require('three');
 		switch (pica) {
 			case GFMagFilter.Nearest: return THREE.NearestFilter;
 			case GFMagFilter.Linear: return THREE.LinearFilter;
@@ -282,6 +286,26 @@ class GFMaterial {
 		this.textureSources[1] = cmdReader.vtxShaderUniforms[0].y;
 		this.textureSources[2] = cmdReader.vtxShaderUniforms[0].z;
 		this.textureSources[3] = cmdReader.vtxShaderUniforms[0].w;
+	}
+	
+	toThree() {
+		const THREE = require('three');
+		let opts = {
+			name: this.matName,
+		};
+		if (this.alphaTest) Object.assign(opts, this.alphaTest.toThree());
+		if (this.blendFunction) Object.assign(opts, this.blendFunction.toThree());
+		if (this.colorOperation) Object.assign(opts, this.colorOperation.toThree());
+		//TODO?
+		
+		opts.fragmentShader = this.fragShaderName;
+		opts.vertexShader = this.vtxShaderName;
+		
+		this.skinning = true;
+		this.lights = true;
+		this.fog = true;
+		
+		return new THREE.ShaderMaterial(opts);
 	}
 }
 

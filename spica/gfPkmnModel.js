@@ -1,6 +1,5 @@
 // https://github.com/gdkchan/SPICA/blob/master/SPICA.WinForms/Formats/GFPkmnModel.cs
 
-const { Skeleton } = require('three');
 const { GFModelPack, GFMotionPack, GFModel, GFTexture, GFMotion, GFShader } = require('./gf');
 const GFPackage = require('./gfPackage');
 
@@ -287,7 +286,7 @@ function parseMotionPack(data, header, names) {
 			case 0: {
 				// This is a "Model Pack", but does not have enough data to constitute a whole model pack.
 				// Plus the pack always has a bunch of sections 2 and 3, which are unknown.
-				// It has a bone name that is 0x40 long (null padded), followed by 1 int and 5 floats. 
+				// It has a bone name that is 0x40 long (null padded), followed by 1 int and 5 floats.
 				motionpack.extradata[i] = data.readBytes(entry.length);
 			} break;
 			case 1: // Right/Both Eye Expression Map
@@ -311,7 +310,7 @@ function parseMotionPack(data, header, names) {
 			case 10: motionpack.extradata[i] = true; break; //Unknown, no examples yet
 			case 11: {
 				// Possibly IK Data
-				// This section has no header information, and the header can claim it to be 
+				// This section has no header information, and the header can claim it to be
 				// longer than the rest of the file allows.
 				// This data is formatted into 0x30 length sections.
 				// A Null-terminated 0x20 length string with a bone name.
@@ -321,7 +320,7 @@ function parseMotionPack(data, header, names) {
 				while (data.offset < entry.address + entry.length && data.offset + 0x30 < data.length) {
 					let name = data.readPaddedString(0x20);
 					if (!name) break; //No more data
-					let e = { 
+					let e = {
 						name,
 						x: data.readFloat32(),
 						y: data.readFloat32(),
@@ -365,9 +364,55 @@ function parse(data, header, out={}) {
 	return out;
 }
 
-
+/**
+ *
+ */
 function toThree({ modelpack, motionpacks }) {
-	// modelpack
+	if (!modelpack) throw new ReferenceError('No modelpack provided!');
+	if (!modelpack.models || modelpack.models.length !== 2) throw new ReferenceError('No models provided!');
+	if (!modelpack.shaders || !modelpack.shaders.length) throw new ReferenceError('No shaders provided!');
+	if (!modelpack.textures || !modelpack.textures.length) throw new ReferenceError('No textures provided!');
+	
+	const {
+		Object3D, BufferGeometry, SkinnedMesh, Skeleton,
+	} = require('three');
+	
+	let pkmn = new Object3D();
+	
+	for (let gfModel of modelpack.models){
+		// Transpile Shaders
+		let vShaders = {}, fShaders = {};
+		for (let gfShader of gfModel.shaders) {
+			
+		}
+		
+		// Pull out materials
+		let mats = {};
+		for (let gfMat of gfModel.materials) {
+			let mat = gfMat.toThree();
+			mats[mat.name] = mat;
+			let opts = {
+				name: gfMat.matName,
+				transparent: gfMat.alphaTest.enabled,
+			};
+			
+		}
+		
+		for (let gfMesh of gfModel.submeshes) {
+			
+		}
+		
+		
+		let geom = new BufferGeometry();
+		
+		
+		
+		mainMesh = new SkinnedMesh();
+	}
+	
+	
+	
+	
 }
 
-module.exports = { parse, toThree };
+module.exports = { parse, parsePack:PARSE_PAK, toThree };
