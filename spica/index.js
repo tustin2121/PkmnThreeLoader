@@ -103,7 +103,29 @@ function open(root, files) {
 			return out;
 		});
 }
-module.exports = { load, loadAll, parse, parseAll, open };
+
+function openPokemonPack(files) {
+	if (!Array.isArray(files) || files.length !== 9) throw new TypeError('Must supply an array of 9 file names!');
+	files = files.map((x,i)=>{
+		if (!x) return Promise.resolve({});
+		return load(x).then(data=>{
+			let reader = new BufferedReader(data);
+			let header = GFPackage.parseHeader(reader);
+			let out = {};
+			try {
+				require('./gfPkmnModel').parsePack[i](reader, header, out);
+			} catch (e) {
+				console.error(`Error parsing pack ${i}!`, e);
+				console.error(`Last reader location: ${reader.offset.toString(16)}`);
+				return out;
+			}
+			return out;
+		});
+	});
+	return Promise.all(files);
+}
+
+module.exports = { load, loadAll, parse, parseAll, open, openPokemonPack };
 
 /*
 function open(file) {

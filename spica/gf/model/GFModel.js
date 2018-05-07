@@ -26,6 +26,7 @@ function readHashTable(data) {
 
 class GFModel {
 	constructor(data, name) {
+		this.unkDat = [];
 		this.skeleton = [];
 		this.luts = [];
 		this.materials = [];
@@ -50,6 +51,7 @@ class GFModel {
 		{ // Unknown data
 			let len = data.readUint32();
 			let off = data.readUint32();
+			this.unkDat.push({ off, len, __addr:data.offset.toString(16) });
 			data.skip(8); //skip padding
 			data.skip(off + len);
 		}

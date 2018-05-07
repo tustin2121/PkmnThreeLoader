@@ -144,6 +144,20 @@ class BufferedReader {
 		if (advance) this.data.skip(len);
 		return str;
 	}
+	readNullTerminatedString(offset) {
+		let advance = (offset === undefined);
+		offset = offset || this.data.offset;
+		
+		let str = '';
+		let i;
+		for (i = 0; true; i++) {
+			let char = this.data.readUint8(offset+i);
+			if (char === 0) break;
+			str += String.fromCharCode(char);
+		}
+		if (advance) this.data.skip(i+1);
+		return str;
+	}
 	readStringArray(count) {
 		let out = [];
 		for (let i = 0; i < count; i++) {
@@ -157,9 +171,17 @@ class BufferedReader {
 	skipPadding() {
 		while((this.data.offset & 0xF) != 0) this.data.offset++;
 		if (!this.data.noAssert) {
-            if (this.data.offset > this.data.buffer.length)
-                throw RangeError(`Skipped past end of data!`);
-        }
+			if (this.data.offset > this.data.buffer.length)
+				throw RangeError(`Skipped past end of data!`);
+		}
+	}
+	/** Skips until the offset is word-aligned again. */
+	realignToWord() {
+		while((this.data.offset & 0x3) != 0) this.data.offset++;
+		if (!this.data.noAssert) {
+			if (this.data.offset > this.data.buffer.length)
+				throw RangeError(`Skipped past end of data!`);
+		}
 	}
 	
 	readBytes(len) {

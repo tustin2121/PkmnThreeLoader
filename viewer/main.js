@@ -48,14 +48,20 @@ $('#props .file').on('dblclick', function(){
 	chooser.trigger('click');
 });
 $('#props button[name=loadPkmnFile]').on('click', async function(){
-	global.loadedFiles = [];
+	global.loadedFiles = null;
+	let filenames = new Array(9);
 	for (let i = 0; i <= 8; i++) {
 		let file = $(`#props input[name=pkmnFile${i}]`).val();
 		console.log(i, file);
 		if (!file) continue;
-		let data = await SPICA.open(file);
-		global.loadedFiles[i] = data;
-		console.log(i, data);
+		filenames[i] = file;
+		// let data = await SPICA.open(file);
+		// global.loadedFiles[i] = data;
+		// console.log(i, data);
+	}
+	global.loadedFiles = await SPICA.openPokemonPack(filenames);
+	for (let i = 0; i <= 8; i++) {
+		console.log(i, global.loadedFiles[i]);
 	}
 });
 
