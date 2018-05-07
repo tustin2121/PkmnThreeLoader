@@ -381,9 +381,20 @@ function toThree({ modelpack, motionpacks }) {
 	
 	for (let gfModel of modelpack.models){
 		// Transpile Shaders
-		let vShaders = {}, fShaders = {};
+		let vShader = {}, gShader = {}, fShader = {};
 		for (let gfShader of gfModel.shaders) {
-			
+			if (gfShader.vtxShader) {
+				// TODO generate a Vertex Shader from gfShader.vtxShader
+				vShader[gfShader.name] = true;
+			}
+			if (gfShader.geoShader) {
+				// TODO generate a Geometry Shader replacement from gfShader.geoShader
+				gShader[gfShader.name] = true;
+			}
+			if (gfShader.texEnvStages) {
+				// TODO generate a Fragment Shader from gfShader.texEnvStages
+				fShader[gfShader.name] = true;
+			}
 		}
 		
 		// Pull out materials
