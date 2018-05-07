@@ -164,7 +164,7 @@ class GFShader {
 			}
 		}
 		
-		this.executable = shaderExecutable;
+		this.executable = new Uint32Array(shaderExecutable);
 		this.swizzles = shaderSwizzles;
 		
 		for (let i = 0; i < outmap.length; i++) {
