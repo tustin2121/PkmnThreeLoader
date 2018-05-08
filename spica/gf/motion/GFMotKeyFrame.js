@@ -19,58 +19,69 @@ class GFMotKeyFrame {
 	 * @param {uint} frameCount
 	 */
 	static setList(keyframes, data, flags, frameCount, len) {
+		if (console.PARSE_DEBUG) {
+			console.log(`[${console.PARSE_DEBUG.motType} ${console.PARSE_DEBUG.animNum}] case ${flags&7} for '${console.PARSE_DEBUG.name}':${console.PARSE_DEBUG.channel} : `+
+				`keyframes=${keyframes} flags=${flags.toString(2)} frameCount=${frameCount}`);
+			// console.log(data.readBytes(len).buffer.toString('base64'));
+		}
+		
 		switch (flags & 7) {
 			case 0: break; //No keyframes for this track
+			case 1: break; //No keyframes for this track, even though there are keyframes for other x/y/z components on the same vector 3
+			case 2: break; //No keyframes for this track, even though there are keyframes for other u/v components on the same vector 2
 			
 			case 3: // One keyframe, a constant
 				keyframes.push(new GFMotKeyFrame({ frame:0, value:data.readFloat32(), slope:0 })); 
 				break; 
 			
 			// Key Frame List
-			case 4:
-			case 5: {
-				let kfCount = data.readUint32();
-				let frames = new Array(kfCount);
-				for (let i = 0; i < kfCount; i++) {
-					if (frameCount > 0xFF) {
-						frames[i] = data.readUint16();
-					} else {
-						frames[i] = data.readUint8();
-					}
+			// case 1:
+			// case 2:
+			case 4: {
+				let frames = readFrameTrack();
+				// Stored as Quantized UInt 16, 32 bits per entry + 128 bits of offsets/scale
+				let valueScale = data.readFloat32();
+				let valueOffset = data.readFloat32();
+				let slopeScale = data.readFloat32();
+				let slopeOffset = data.readFloat32();
+				for (let i = 0; i < frames.length; i++) {
+					keyframes.push({
+						frame : frames[i],
+						value : (data.readUint16() / 0xFFFF) * valueScale + valueOffset,
+						slope : (data.readUint16() / 0xFFFF) * slopeScale + slopeOffset,
+					});
 				}
-				while ((data.offset & 3) !== 0) data.skip();
-				
-				if ((flags & 1) !== 0) {
-					// Stored as float, 64 bits per entry
-					for (let i = 0; i < kfCount; i++) {
-						keyframes.push({
-							frame : frames[i],
-							value : data.readFloat32(),
-							slope : data.readFloat32(),
-						});
-					}
-				} else {
-					// Stored as Quantized UInt 16, 32 bits per entry + 128 bits of offsets/scale
-					let valueScale = data.readFloat32();
-					let valueOffset = data.readFloat32();
-					let slopeScale = data.readFloat32();
-					let slopeOffset = data.readFloat32();
-					for (let i = 0; i < kfCount; i++) {
-						keyframes.push({
-							frame : frames[i],
-							value : (data.readUint16() / 0xFFFF) * valueScale + valueOffset,
-							slope : (data.readUint16() / 0xFFFF) * slopeScale + slopeOffset,
-						});
-					}
+			} break;
+			case 5: {
+				let frames = readFrameTrack();
+				// Stored as float, 64 bits per entry
+				for (let i = 0; i < frames.length; i++) {
+					keyframes.push({
+						frame : frames[i],
+						value : data.readFloat32(),
+						slope : data.readFloat32(),
+					});
 				}
 			} break;
 			
-			case 1: //Unknown, used in Mega Steelix's floating Feelers, rotX and rotY
-			case 2: //Unknown, used in Mega Steelix's eye UV translation motions
 			default: //Not yet seen
-				if (console.PARSE_DEBUG) 
-					console.log(`[${console.PARSE_DEBUG.motType} ${console.PARSE_DEBUG.animNum}] case ${flags&7} for '${console.PARSE_DEBUG.name}':${console.PARSE_DEBUG.channel} : `, data.readBytes(len));
+				console.warn(`UNKNOWN KEYFRAME TYPE!`);
 				break; 
+		}
+		return;
+		
+		function readFrameTrack() {
+			let kfCount = data.readUint32();
+			let frames = new Array(kfCount);
+			for (let i = 0; i < kfCount; i++) {
+				if (frameCount > 0xFF) {
+					frames[i] = data.readUint16();
+				} else {
+					frames[i] = data.readUint8();
+				}
+			}
+			while ((data.offset & 3) !== 0) data.skip();
+			return frames;
 		}
 	}
 }

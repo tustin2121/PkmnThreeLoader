@@ -53,7 +53,29 @@ PARSE_PAK[1] = function(data, header, out={}) {
 // Parse Pak 2: Shiny Textures
 PARSE_PAK[2] = PARSE_PAK[1];
 // Parse Pak 3: Pokemon Amie Textures
-PARSE_PAK[3] = PARSE_PAK[1];
+PARSE_PAK[3] = function(data, header, out={}) {
+	out.modelpack = out.modelpack || new GFModelPack();
+	let textures = out.modelpack.textures;
+	for (let entry of header.entries) {
+		if (data.readUint32(entry.address) === GFTexture.MAGIC_NUMBER) {
+			data.offset = entry.address;
+			textures.push(new GFTexture(data));
+		} 
+		else {
+			// Unknown information
+			data.offset = entry.address;
+			let info = [];
+			while (data.offset <= entry.address + entry.length) {
+				let name = data.readPaddedString(0x20);
+				if (!name) break;
+				let val = data.readUint8();
+				info.push({ name, val });
+			}
+			textures.push(info);
+		}
+	}
+	return out;
+};
 // Parse Pak 4: Battle Animations
 PARSE_PAK[4] = function(data, header, out={}) {
 	if (header.entries.length !== 32) throw new ReferenceError('Invalid number of entries for Pack 4!');
@@ -254,6 +276,46 @@ PARSE_PAK[7] = function(data, header, out={}) {
 // Parse Pak 8: Extra Items
 PARSE_PAK[8] = function(data, header, out={}) {
 	if (header.entries.length !== 2) throw new ReferenceError('Invalid number of entries for Pack 8!');
+	
+	// Metadata 1
+	data.offset = header.entries[0].address;
+	if (header.entries[0].length !== 0x60) throw new TypeError('Invalid size for meta block 1!');
+	{
+		let meta = {};
+		meta.unk01 = data.readUint32();
+		meta.unk02 = data.readUint32();
+		meta.unk03 = data.readUint32();
+		meta.unk04 = data.readUint32();
+		meta.boundingBoxMin = data.readVector3();
+		meta.boundingBoxMax = data.readVector3();
+		meta.unk07 = data.readVector3();
+		meta.unk08 = data.readUint32(); //always zero?
+		meta.unk09 = data.readUint32(); //always zero?
+		meta.unk10 = data.readUint16(); //32
+		meta.unk11 = data.readUint16(); //32
+		meta.unk12 = []; // An array of 1's and 0's?
+		for (let i = 0; i < 16; i++) {
+			meta.unk12.push(data.readUint16());
+		}
+		out.meta1 = meta;
+	}
+	
+	// Metadata 2: Sprite Data, most likely (Koffing, Dewpider)
+	data.offset = header.entries[1].address;
+	{
+		let meta = [];
+		let num = data.readUint8();
+		for (let i = 0; i < num; i++) {
+			let info = {};
+			info.name = data.readNullTerminatedString();
+			info.unk01 = data.readUint8();
+			data.realignToWord();
+			info.unk02 = data.readVector3();
+			info.unk03 = data.readUint32();
+			meta.push(info);
+		}
+		out.meta2 = meta;
+	}
 	return out;
 };
 

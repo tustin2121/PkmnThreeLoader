@@ -232,12 +232,12 @@ class GFMaterial {
 		
 		let commandsLen = data.readUint32();
 		this.renderPriority = data.readUint32();
-			data.readUint32(); //Seems to be a 24 bit value
+		this.unk001 = data.readUint32(); //Seems to be a 24 bit value
 		this.renderLayer = data.readUint32();
-			data.readUint32(); //LUT 0 (Reflection R?) hash again?
-			data.readUint32(); //LUT 1 (Reflection G?) hash again?
-			data.readUint32(); //LUT 2 (Reflection B?) hash again?
-			data.readUint32(); //another hash?
+		this.unk002 = data.readUint32(); //LUT 0 (Reflection R?) hash again?
+		this.unk003 = data.readUint32(); //LUT 1 (Reflection G?) hash again?
+		this.unk004 = data.readUint32(); //LUT 2 (Reflection B?) hash again?
+		this.unk005 = data.readUint32(); //another hash?
 		
 		let commands = new Array(commandsLen >> 2);
 		for (let i = 0; i < commands.length; i++) {
