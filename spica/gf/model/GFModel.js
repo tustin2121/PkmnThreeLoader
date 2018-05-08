@@ -84,6 +84,37 @@ class GFModel {
 			this.meshes.push(m);
 		}
 	}
+	
+	toThree() {
+		const { Skeleton } = require('three');
+		
+		// Skeleton
+		let skeleton = (()=>{
+			let bones = [];
+			let boneNames = {};
+			for (let bone of this.skeleton) {
+				let b = bone.toThree();
+				bones.push(b);
+				boneNames[bone.name] = b;
+				boneNames[bone.parent].add(b);
+			}
+			return new Skeleton(bones);
+		})();
+		skeleton.calculateInverses();
+		
+		// Materials
+		let mats = [];
+		for (let gfMat of this.materials) {
+			mats.push(gfMat.toThree());
+		}
+		
+		let meshes = [];
+		for (let gfMesh of this.meshes) {
+			for (let gfSub of gfMesh.submeshes) {
+				
+			}
+		}
+	}
 }
 Object.defineProperties(GFModel, {
 	'MAGIC_NUMBER': { value:0x15122117, },
