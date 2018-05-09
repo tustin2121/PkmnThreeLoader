@@ -32,7 +32,7 @@ class UniformManager {
 	}
 	setIndexCommand(cmd) {
 		this.uniformIndex = (cmd & 0xFF) << 2;
-		this.uniform32Bits = (cmd & 31) !== 0;
+		this.uniform32Bits = (cmd >> 31) !== 0;
 	}
 	setValueParameters(params) {
 		let words = [];

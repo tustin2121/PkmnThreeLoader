@@ -6,6 +6,7 @@ const { GF_LUT } = require('./GF_LUT');
 const { GFMaterial } = require('./GFMaterial');
 const { GFMesh } = require('./GFMesh');
 const { GFHashName } = require('./GFHashName');
+const { PICAAttributeName, PICAAttributeFormat } = require('../../pica');
 
 function readHashTable(data) {
 	let count = data.readUint32();
@@ -88,7 +89,12 @@ class GFModel {
 	}
 	
 	toThree() {
-		const { Skeleton } = require('three');
+		const {
+			Skeleton, SkinnedMesh, BufferGeometry, InterleavedBuffer,
+			InterleavedBufferAttribute, BufferAttribute, Object3D,
+		} = require('three');
+		
+		let obj = new Object3D();
 		
 		// Skeleton
 		let skeleton = (()=>{
@@ -103,17 +109,84 @@ class GFModel {
 			return new Skeleton(bones);
 		})();
 		skeleton.calculateInverses();
+		obj.userData.skeleton = skeleton;
 		
 		// Materials
-		let mats = [];
+		let mats = {};
 		for (let gfMat of this.materials) {
-			mats.push(gfMat.toThree());
+			let mat = gfMat.toThree();
+			mats[mat.matName] = mat;
 		}
 		
+		// Meshes
 		let meshes = [];
 		for (let gfMesh of this.meshes) {
 			for (let gfSub of gfMesh.submeshes) {
+				let geom = new BufferGeometry();
 				
+				let bytebuf = new InterleavedBuffer(gfSub.rawBuffer, gfSub.vertexStride);
+				let shortbuf = new InterleavedBuffer(new Int16Array(gfSub.rawBuffer), gfSub.vertexStride/4);
+				let floatbuf = new InterleavedBuffer(new Float32Array(gfSub.rawBuffer), gfSub.vertexStride/4);
+				
+				let off = 0;
+				for (let attr of gfSub.attributes) {
+					let buf, size;
+					switch (gfSub.format) {
+						case PICAAttributeFormat.Byte: buf = bytebuf; size = 1; break;
+						case PICAAttributeFormat.Ubyte: buf = bytebuf; size = 1; break;
+						case PICAAttributeFormat.Short: buf = shortbuf; size = 2; break;
+						case PICAAttributeFormat.Float: buf = floatbuf; size = 4; break;
+					}
+					let bufattr = new InterleavedBufferAttribute(buf, attr.elements, off, attr.scale !== 1);
+					switch (attr.name) {
+						case PICAAttributeName.Position:
+							geom.addAttribute('position', bufattr);
+							break;
+						case PICAAttributeName.Normal:
+							geom.addAttribute('normal', bufattr);
+							break;
+						case PICAAttributeName.Tangent:
+							geom.addAttribute('tangent', bufattr);
+							break;
+						case PICAAttributeName.Color:
+							geom.addAttribute('color', bufattr);
+							break;
+						case PICAAttributeName.TexCoord0:
+							geom.addAttribute('tex0', bufattr);
+							break;
+						case PICAAttributeName.TexCoord1:
+							geom.addAttribute('tex1', bufattr);
+							break;
+						case PICAAttributeName.TexCoord2:
+							geom.addAttribute('tex2', bufattr);
+							break;
+						case PICAAttributeName.BoneIndex: {
+							// Convert index into boneIndices into bone indices
+							for (let i = 0; i < gfSub.verticesCount; i++) {
+								let x = gfSub.boneIndices[bufattr.getX(i)] || 255;
+								let y = gfSub.boneIndices[bufattr.getY(i)] || 255;
+								let z = gfSub.boneIndices[bufattr.getZ(i)] || 255;
+								let w = gfSub.boneIndices[bufattr.getW(i)] || 255;
+								bufattr.setXYZW(i, x, y, z, w);
+							}
+							bufattr.normalized = false;
+							geom.addAttribute('skinIndex', bufattr);
+						} break;
+						case PICAAttributeName.BoneWeight:
+							geom.addAttribute('skinWeight', bufattr);
+							break;
+						default:
+							console.error('Unhandled attribute name!', attr.name);
+							break;
+					}
+					off += size * attr.elements;
+				}
+				geom.setIndex(new BufferAttribute(new Uint32Array(gfSub.indices), 1, ));
+				
+				let mesh = new SkinnedMesh(geom, mats[gfSub.matName]);
+				mesh.bind(skeleton);
+				// meshes.push(mesh);
+				obj.add(mesh);
 			}
 		}
 	}
