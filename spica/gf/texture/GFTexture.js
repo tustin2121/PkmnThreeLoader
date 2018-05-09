@@ -51,11 +51,11 @@ class GFTexture {
 		} else {
 			let magic = data.readUint32();
 			if (magic !== GFTexture.MAGIC_NUMBER) throw new TypeError('Texture magic number does not match!');
-			let texCount = data.readUint32();
+			let texCount = this._texCount = data.readUint32(); // Unused? always 1?
 			let texSection = new GFSection(data);
 			let texLen = data.readUint32();
 			
-			data.skip(0xC);
+			data.skip(0xC); //Padding? Always zero it seems
 			this.name = data.readPaddedString(0x40);
 			
 			this.width = data.readUint16();

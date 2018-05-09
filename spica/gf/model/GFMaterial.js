@@ -280,12 +280,21 @@ class GFMaterial {
 			}
 		}
 		
-		data.offset = pos + matSection.length;
-		
+		// These define the mapping used by each texture (?)
+		// https://github.com/gdkchan/SPICA/blob/master/SPICA/Formats/CtrH3D/Model/Material/H3DMaterialParams.cs#L383
+		// 0-2 = UVMap[0-2]
+		// 3 = CameraCubeEnvMap
+		// 4 = CameraSphereEnvMap
+		// 5 = ProjectionMap?
+		// https://github.com/gdkchan/SPICA/blob/6c0b4083e26af3fbb7b3f6410dba15fd9b5c6e13/SPICA.Rendering/Model.cs#L206
+		// https://github.com/gdkchan/SPICA/blob/421240ffd586293a242d31d602ca5e0a655a2bfb/SPICA.Rendering/VertexShader.cs#L62
+		// https://github.com/gdkchan/SPICA/blob/03b37e23846eb3b2029f78ee8984a052929f833b/SPICA.Rendering/Resources/DefaultVertexShader.txt
 		this.textureSources[0] = cmdReader.vtxShaderUniforms[0].x;
 		this.textureSources[1] = cmdReader.vtxShaderUniforms[0].y;
 		this.textureSources[2] = cmdReader.vtxShaderUniforms[0].z;
 		this.textureSources[3] = cmdReader.vtxShaderUniforms[0].w;
+		
+		data.offset = pos + matSection.length;
 	}
 	
 	toThree() {
@@ -297,6 +306,10 @@ class GFMaterial {
 		if (this.blendFunction) Object.assign(opts, this.blendFunction.toThree());
 		if (this.colorOperation) Object.assign(opts, this.colorOperation.toThree());
 		//TODO?
+		
+		// TODO: TexCoord[] holds the texture name to be used for this material
+		// bumpTexture points to which of them is the bump/normal map
+		// https://github.com/gdkchan/SPICA/blob/09d56f40581847e4a81a657c8f35af0ec64059ee/SPICA/Formats/GFL2/Model/GFModel.cs#L313
 		
 		opts.fragmentShader = this.fragShaderName;
 		opts.vertexShader = this.vtxShaderName;
