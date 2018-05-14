@@ -314,11 +314,13 @@ class GFMaterial {
 		opts.fragmentShader = this.fragShaderName;
 		opts.vertexShader = this.vtxShaderName;
 		
-		this.skinning = true;
-		this.lights = true;
-		this.fog = true;
+		opts.skinning = true;
+		opts.lights = true;
+		opts.fog = true;
+		opts.wireframe = true;
 		
-		return new THREE.ShaderMaterial(opts);
+		// return new THREE.ShaderMaterial(opts);
+		return new THREE.MeshBasicMaterial(opts);
 	}
 }
 

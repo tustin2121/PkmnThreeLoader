@@ -13,17 +13,19 @@ class GFSubMesh {
 		this.hash = null;
 		this.matName = null;
 		
-		this.boneIndicesCount = null;
-		this.boneIndices = null;
+		/** @type{byte} */		this.boneIndicesCount = null;
+		/** @type{byte[]} */	this.boneIndices = null;
 		
-		this.indicesCount = null;
-		this.indicesLength = null;
-		this.verticesCount = null;
-		this.verticesLength = null;
-		this.vertexStride = null;
+		/** @type{int} */		this.indicesCount = null;
+		/** @type{int} */		this.indicesLength = null;
+		/** @type{int} */		this.verticesCount = null;
+		/** @type{int} */		this.verticesLength = null;
+		/** @type{int} */		this.vertexStride = null;
 		
-		this.indices = null; // ushort[]
-		this.rawBuffer = null; // byte[]
+		/** @type{ushort[]} */	this.indices = null; // ushort[]
+		/** @type{byte[]} */	this.rawBuffer = null; // byte[]
+		
+		/** @type{PICAPrimitiveMode} */ this.primitiveMode = null;
 		
 		Object.assign(this, obj);
 		
@@ -59,7 +61,6 @@ class GFMesh {
 		this.boneIndiciesPerVertex = data.readInt32();
 		data.skip(0x10); //padding
 		
-		// ???
 		let cmdList = [];
 		{
 			let len, idx, count;
@@ -125,7 +126,6 @@ class GFMesh {
 			/** @type {int} */
 			let attrCount = 0;
 			let attrTotal = 0;
-			let vertexStride = 0;
 			
 			while (cmdReader.hasCommand) {
 				let cmd = cmdReader.getCommand();
@@ -137,7 +137,7 @@ class GFMesh {
 					case PICARegister.GPUREG_ATTRIBBUFFER0_CONFIG1: bufferAttr_L |= param; break;
 					case PICARegister.GPUREG_ATTRIBBUFFER0_CONFIG2:
 						bufferAttr_H |= (param & 0xFFFF);
-						vertexStride = (param >> 16) & 0xFF;
+						SM.vertexStride = (param >> 16) & 0xFF;
 						attrCount = (param >> 28);
 						break;
 					case PICARegister.GPUREG_FIXEDATTRIB_INDEX: fixedIndex = param; break;
@@ -196,6 +196,38 @@ class GFMesh {
 				}
 			}
 			
+			//*
+			cmdReader = new PICACommandReader(indexCmds);
+			let bufferAddr = 0;
+			let bufferCount = 0;
+			
+			while (cmdReader.hasCommand) {
+				let cmd = cmdReader.getCommand();
+				let param = cmd.parameters[0];
+				switch (cmd.register) {
+					case PICARegister.GPUREG_INDEXBUFFER_CONFIG: bufferAddr = param; break;
+					case PICARegister.GPUREG_NUMVERTICES: bufferCount = param; break;
+					case PICARegister.GPUREG_PRIMITIVE_CONFIG:
+						SM.primitiveMode = (param >> 8);
+						break;
+				}
+			}
+			console.log("BUFFERCOUNT:=> ", data.offset, bufferAddr, bufferCount, SM.verticesLength);
+			
+			SM.rawBuffer = data.readBytes(SM.verticesLength);
+			data.skip(SM.verticesLength); // readBytes() doesn't advance
+			console.log("indices:=> ", data.offset);
+			SM.indices = new Array(bufferCount);
+			{
+				let idxAddress = data.offset;
+				for (let i = 0; i < bufferCount; i++) {
+					SM.indices[i] = ((bufferAddr >> 31) !== 0)? data.readUint16() : data.readUint8();
+					// SM.indices[i] %= SM.verticesCount;
+				}
+				data.offset = idxAddress + SM.indicesLength;
+			}
+			
+			/*/
 			cmdReader = new PICACommandReader(indexCmds);
 			let indexFmt = false;
 			let primitiveCount = 0;
@@ -219,6 +251,7 @@ class GFMesh {
 				}
 				data.offset = pos0 + SM.indicesLength;
 			}
+			*/
 		}
 		
 		data.offset = pos + meshSection.length;

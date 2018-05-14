@@ -1,6 +1,6 @@
 // main.js
 //
-
+/* global $, window, document */
 const SPICA = global.SPICA = require('../spica');
 const THREE = global.THREE = require('three');
 require('./OrbitControls');
@@ -12,11 +12,11 @@ renderer.setClearColor(new THREE.Color(0x325d82), 1.0);
 document.getElementById('view').appendChild(renderer.domElement);
 
 let scene = new THREE.Scene();
-scene.add(new THREE.GridHelper(20, 20));
-scene.add(new THREE.AxesHelper(5));
+scene.add(new THREE.GridHelper(200, 20));
+scene.add(new THREE.AxesHelper(50));
 
 let camera = new THREE.PerspectiveCamera(45, 1, 0.5, 1000);
-camera.position.set(20, 20, 16);
+camera.position.set(200, 200, 0);
 scene.add(camera);
 
 let root = new THREE.Object3D();
@@ -63,6 +63,7 @@ $('#props button[name=loadPkmnFile]').on('click', async function(){
 	for (let i = 0; i <= 8; i++) {
 		console.log(i, global.loadedFiles[i]);
 	}
+	displayPokemonModel();
 });
 
 function resize() {
@@ -115,4 +116,18 @@ function fillPkmnFilePaths(file0) {
 		if (!fs.existsSync(val)) return; //skip
 		$(`#props .file[name=pkmnFile${i+1}]`).val(val);
 	});
+}
+function displayPokemonModel() {
+	let paks = global.loadedFiles;
+	root.add(paks[0].modelpack.models[0].toThree());
+	{
+		let point = new THREE.Mesh(new THREE.SphereBufferGeometry(), new THREE.MeshBasicMaterial());
+		point.position.copy(paks[8].meta1.unk07);
+		root.add(point);
+	}{
+		let box = new THREE.Box3(paks[8].meta1.boundingBoxMin, paks[8].meta1.boundingBoxMax);
+		let help = new THREE.Box3Helper(box);
+		root.add(help);
+	}
+	root.add()
 }

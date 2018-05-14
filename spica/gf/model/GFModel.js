@@ -6,7 +6,7 @@ const { GF_LUT } = require('./GF_LUT');
 const { GFMaterial } = require('./GFMaterial');
 const { GFMesh } = require('./GFMesh');
 const { GFHashName } = require('./GFHashName');
-const { PICAAttributeName, PICAAttributeFormat } = require('../../pica');
+const { PICAAttributeName, PICAAttributeFormat } = require('../../pica/commands');
 
 function readHashTable(data) {
 	let count = data.readUint32();
@@ -90,8 +90,8 @@ class GFModel {
 	
 	toThree() {
 		const {
-			Skeleton, SkinnedMesh, BufferGeometry, InterleavedBuffer,
-			InterleavedBufferAttribute, BufferAttribute, Object3D,
+			Skeleton, SkinnedMesh, Mesh, BufferGeometry, InterleavedBuffer,
+			InterleavedBufferAttribute, BufferAttribute, Object3D, Box3,
 		} = require('three');
 		
 		let obj = new Object3D();
@@ -104,7 +104,7 @@ class GFModel {
 				let b = bone.toThree();
 				bones.push(b);
 				boneNames[bone.name] = b;
-				boneNames[bone.parent].add(b);
+				if (bone.parent) boneNames[bone.parent].add(b);
 			}
 			return new Skeleton(bones);
 		})();
@@ -124,20 +124,27 @@ class GFModel {
 			for (let gfSub of gfMesh.submeshes) {
 				let geom = new BufferGeometry();
 				
-				let bytebuf = new InterleavedBuffer(gfSub.rawBuffer, gfSub.vertexStride);
-				let shortbuf = new InterleavedBuffer(new Int16Array(gfSub.rawBuffer), gfSub.vertexStride/4);
-				let floatbuf = new InterleavedBuffer(new Float32Array(gfSub.rawBuffer), gfSub.vertexStride/4);
+				let bytebuf = new InterleavedBuffer(gfSub.rawBuffer.buffer, gfSub.vertexStride);
+				let shortbuf = new InterleavedBuffer(new Int16Array(gfSub.rawBuffer.buffer.buffer), gfSub.vertexStride/2);
+				let floatbuf = new InterleavedBuffer(new Float32Array(gfSub.rawBuffer.buffer.buffer), gfSub.vertexStride/4);
 				
-				let off = 0;
+				if (bytebuf.count % 1 !== 0) { //Sometimes the stride doesn't divide evently...?
+					console.warn('Stride does not divide evenly: ', bytebuf.count, ' => ', gfSub.verticesCount);
+					bytebuf.count = gfSub.verticesCount;
+					shortbuf.count = gfSub.verticesCount;
+					floatbuf.count = gfSub.verticesCount;
+				}
+				
+				let off = 0, skinned = false;
 				for (let attr of gfSub.attributes) {
 					let buf, size;
-					switch (gfSub.format) {
+					switch (attr.format) {
 						case PICAAttributeFormat.Byte: buf = bytebuf; size = 1; break;
 						case PICAAttributeFormat.Ubyte: buf = bytebuf; size = 1; break;
 						case PICAAttributeFormat.Short: buf = shortbuf; size = 2; break;
 						case PICAAttributeFormat.Float: buf = floatbuf; size = 4; break;
 					}
-					let bufattr = new InterleavedBufferAttribute(buf, attr.elements, off, attr.scale !== 1);
+					let bufattr = new InterleavedBufferAttribute(buf, attr.elements, off/size, attr.scale !== 1);
 					switch (attr.name) {
 						case PICAAttributeName.Position:
 							geom.addAttribute('position', bufattr);
@@ -174,6 +181,7 @@ class GFModel {
 						} break;
 						case PICAAttributeName.BoneWeight:
 							geom.addAttribute('skinWeight', bufattr);
+							skinned = true;
 							break;
 						default:
 							console.error('Unhandled attribute name!', attr.name);
@@ -181,14 +189,23 @@ class GFModel {
 					}
 					off += size * attr.elements;
 				}
-				geom.setIndex(new BufferAttribute(new Uint32Array(gfSub.indices), 1, ));
+				geom.setIndex(new BufferAttribute(new Uint32Array(gfSub.indices), 1, false));
+				geom.boundingBox = new Box3(gfMesh.boundingBoxMax, gfMesh.boundingBoxMin);
+				geom.computeBoundingSphere();
 				
-				let mesh = new SkinnedMesh(geom, mats[gfSub.matName]);
-				mesh.bind(skeleton);
+				let mesh;
+				if (skinned) {
+					mesh = new SkinnedMesh(geom, mats[gfSub.matName]);
+					mesh.bind(skeleton);
+				}
+				else {
+					mesh = new Mesh(geom, mats[gfSub.matName]);
+				}
 				// meshes.push(mesh);
 				obj.add(mesh);
 			}
 		}
+		return obj;
 	}
 }
 Object.defineProperties(GFModel, {
