@@ -246,7 +246,7 @@ class GFShader {
 	}
 }
 Object.defineProperties(GFShader, {
-	'MAGIC_NUMBER': { value:0x00000000, },
+	'MAGIC_NUMBER': { value:0x15041213, },
 });
 
 function makeArray(uniforms, name) {

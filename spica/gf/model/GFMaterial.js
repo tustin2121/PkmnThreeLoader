@@ -109,6 +109,24 @@ class GFTextureCoord {
 		
 		this.minLOD = data.readUint32(); //unsure
 	}
+	
+	toThree() {
+		const { Vector2 } = require('three');
+		return {
+			name: this.name,
+			
+			offset: this.translation.clone(),
+			repeat: this.scale.clone(),
+			rotation: this.rotation,
+			center: new Vector2(),
+			
+			mapping: GFTextureMappingType.toThree(this.mappingType),
+			wrapS: GFTextureWrap.toThree(this.wrapU),
+			wrapT: GFTextureWrap.toThree(this.wrapV),
+			magFilter: GFMagFilter.toThree(this.magFilter),
+			minFilter: GFMinFilter.toThree(this.minFilter),
+		};
+	}
 }
 
 class GFMaterial {
@@ -299,8 +317,17 @@ class GFMaterial {
 	
 	toThree() {
 		const THREE = require('three');
+		let info = {};
 		let opts = {
 			name: this.matName,
+			color: this.diffuseColor,
+			emissive: this.emissionColor,
+			
+			colorWrite: this.colorBufferWrite,
+			depthWrite: this.depthBufferWrite,
+			depthTest: this.depthBufferRead,
+			
+			userData: info,
 		};
 		if (this.alphaTest) Object.assign(opts, this.alphaTest.toThree());
 		if (this.blendFunction) Object.assign(opts, this.blendFunction.toThree());
@@ -310,6 +337,11 @@ class GFMaterial {
 		// TODO: TexCoord[] holds the texture name to be used for this material
 		// bumpTexture points to which of them is the bump/normal map
 		// https://github.com/gdkchan/SPICA/blob/09d56f40581847e4a81a657c8f35af0ec64059ee/SPICA/Formats/GFL2/Model/GFModel.cs#L313
+		info.map = this.textureCoords[0].toThree();
+		
+		if (this.bumpTexture > -1) {
+			info.normalMap = this.textureCoords[this.bumpTexture].toThree();
+		}
 		
 		opts.fragmentShader = this.fragShaderName;
 		opts.vertexShader = this.vtxShaderName;
