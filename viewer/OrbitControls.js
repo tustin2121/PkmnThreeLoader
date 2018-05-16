@@ -703,7 +703,9 @@ THREE.OrbitControls = function ( object, domElement ) {
 			scope.dispatchEvent( startEvent );
 
 		}
-
+		
+		event.preventDefault();
+		event.stopPropagation();
 	}
 
 	function onMouseMove( event ) {
@@ -745,6 +747,9 @@ THREE.OrbitControls = function ( object, domElement ) {
 	function onMouseUp( event ) {
 
 		if ( scope.enabled === false ) return;
+		
+		event.preventDefault();
+		event.stopPropagation();
 
 		handleMouseUp( event );
 
@@ -754,7 +759,6 @@ THREE.OrbitControls = function ( object, domElement ) {
 		scope.dispatchEvent( endEvent );
 
 		state = STATE.NONE;
-
 	}
 
 	function onMouseWheel( event ) {
@@ -768,7 +772,6 @@ THREE.OrbitControls = function ( object, domElement ) {
 
 		scope.dispatchEvent( startEvent ); // not sure why these are here...
 		scope.dispatchEvent( endEvent );
-
 	}
 
 	function onKeyDown( event ) {

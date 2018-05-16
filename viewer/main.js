@@ -65,6 +65,35 @@ $('#props button[name=loadPkmnFile]').on('click', async function(){
 	}
 	displayPokemonModel();
 });
+$('#props input[name=poptShadow]').on('click', function(){
+	if ($(this).is(':checked')) {
+		
+	} else {
+		
+	}
+});
+$('#props input[name=poptMeta]').on('click', function(){
+	if ($(this).is(':checked')) {
+		
+	} else {
+		
+	}
+});
+$('#props input[name=poptModelBound]').on('click', function(){
+	if ($(this).is(':checked')) {
+		
+	} else {
+		
+	}
+});
+$('#props input[name=poptColor]').on('click', function(){
+	let val = $(`#props input[name=poptColor]:checked`).val();
+	switch (val) {
+		case 'normal': break;
+		case 'shiny': break;
+		case 'shadow': break;
+	}
+});
 
 function resize() {
 	let view = $('#view');
@@ -79,6 +108,10 @@ function redraw() {
 	renderer.render(scene, camera);
 	raf(redraw);
 }
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// Loading
+
 function fillPkmnFilePaths(file0) {
 	if (typeof file0 !== 'string' || !file0) return;
 	const fs = require('fs');
@@ -117,6 +150,10 @@ function fillPkmnFilePaths(file0) {
 		$(`#props .file[name=pkmnFile${i+1}]`).val(val);
 	});
 }
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// Display
+
 function displayPokemonModel() {
 	let paks = global.loadedFiles;
 	root.add(paks[0].modelpack.models[0].toThree());

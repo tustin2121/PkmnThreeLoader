@@ -9,6 +9,11 @@
 	<div id="props">
 		<nav>
 			<li class="load selected">Loading</li>
+			<li class="pokemon">Pokemon</li>
+			<li class="models">Models</li>
+			<li class="shaders">Shaders</li>
+			<li class="textures">Textures</li>
+			<li class="metadata">Metadata</li>
 		</nav>
 		<section>
 			<div class="load selected">
@@ -26,7 +31,27 @@
 					<p><button name="loadPkmnFile">Load Pokemon</button></p>
 				</div>
 			</div>
-			
+			<div class="pokemon">
+				<div class="group" group-name="Pokemon Options">
+					<p><label><input type="checkbox" name="poptShadow"/> Show shadow projection</label></p>
+					<p>
+						<label><input type="radio" name="poptColor" value="normal"/> Normal</label>
+						<label><input type="radio" name="poptColor" value="shiny"/> Shiny</label>
+						<label><input type="radio" name="poptColor" value="shadow"/> Shadow</label>
+					</p>
+					<p><label><input type="checkbox" name="poptMeta"/> Show metadata boxes</label></label></p>
+					<p><label><input type="checkbox" name="poptModelBound"/> Show model bounding box</label></label></p>
+				</div>
+			</div>
+			<div class="models"></div>
+			<div class="shaders"></div>
+			<div class="textures">
+				<div class="group" group-name="Texture Packs">
+				</div>
+				<div class="group" group-name="LookUp Tables">
+				</div>
+			</div>
+			<div class="metadata"></div>
 		</section>
 	</div>
 	
