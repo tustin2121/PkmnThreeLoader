@@ -5,7 +5,7 @@ const ByteBuffer = require("bytebuffer");
 const BufferedReader = require('./BufferedReader');
 const GFPackage = require('./gfPackage');
 
-const { GFModelPack, GFModel, GFTexture, GFMotion } = require('./gf');
+const { GFModelPack, GFModel, GFTexture, GFMotion, GFShader } = require('./gf');
 
 function parse(data, out={}) {
 	let reader = new BufferedReader(data);
@@ -14,6 +14,7 @@ function parse(data, out={}) {
 	if (header) {
 		switch (header.magic) {
 			case 'CM': return require('./gfCharacterModel').parse(reader, header, out);
+			case 'BG': return require('./gfMapModel').parse(reader, header, out);
 			case 'PC': return require('./gfPkmnModel').parse(reader, header, out);
 			default: throw new Error(`Unknown header '${header.magic}' !`);
 		}
@@ -25,6 +26,8 @@ function parse(data, out={}) {
 				return Object.assign(out, { tex: new GFTexture(data) });
 			case GFModelPack.MAGIC_NUMBER:
 				return Object.assign(out, { modelpack: new GFModelPack(data) });
+			case GFShader.MAGIC_NUMBER:
+				return Object.assign(out, { modelpack: new GFShader(data) });
 			case GFMotion.MAGIC_NUMBER:
 				//parse to GFMotion and skeleton
 				return Object.assign(out, { motion: new GFMotion(data, 0) });

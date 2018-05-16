@@ -68,7 +68,7 @@ class GFTexture {
 		}
 	}
 	
-	toThreeTexture() {
+	toThree() {
 		//TODO
 	}
 }

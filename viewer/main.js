@@ -15,7 +15,7 @@ let scene = new THREE.Scene();
 scene.add(new THREE.GridHelper(200, 20));
 scene.add(new THREE.AxesHelper(50));
 
-let camera = new THREE.PerspectiveCamera(45, 1, 0.5, 1000);
+let camera = new THREE.PerspectiveCamera(45, 1, 0.5, 100000);
 camera.position.set(200, 200, 0);
 scene.add(camera);
 
@@ -40,18 +40,18 @@ $('#props .file').on('dblclick', function(){
 	chooser.unbind('change').val('').on('change', ()=>{
 		let file = chooser.val();
 		$(this).val(file);
-		if ($(this).attr('name') === 'pkmnFile0') {
-			if (!$('#props input[name=pkmnFileAuto]').is(':checked')) return;
+		if ($(this).attr('name') === 'loadPkmnFile0') {
+			if (!$('#props input[name=loadPkmnFileAuto]').is(':checked')) return;
 			fillPkmnFilePaths(file);
 		}
 	});
 	chooser.trigger('click');
 });
-$('#props button[name=loadPkmnFile]').on('click', async function(){
+$('#props button[name=loadPkmnFileBtn]').on('click', async function(){
 	global.loadedFiles = null;
 	let filenames = new Array(9);
 	for (let i = 0; i <= 8; i++) {
-		let file = $(`#props input[name=pkmnFile${i}]`).val();
+		let file = $(`#props input[name=loadPkmnFile${i}]`).val();
 		console.log(i, file);
 		if (!file) continue;
 		filenames[i] = file;
@@ -63,6 +63,7 @@ $('#props button[name=loadPkmnFile]').on('click', async function(){
 	for (let i = 0; i <= 8; i++) {
 		console.log(i, global.loadedFiles[i]);
 	}
+	clearDisplay();
 	displayPokemonModel();
 });
 $('#props input[name=poptShadow]').on('click', function(){
@@ -92,6 +93,16 @@ $('#props input[name=poptColor]').on('click', function(){
 		case 'normal': break;
 		case 'shiny': break;
 		case 'shadow': break;
+$('#props button[name=loadOtherFileBtn]').on('click', async function(){
+	global.loadedFiles = null;
+	let filename = $(`#props input[name=loadOtherFile0]`).val();
+	global.loadedFiles = await SPICA.open(filename);
+	if (global.loadedFiles.modelpack
+		&& global.loadedFiles.modelpack.models
+		&& global.loadedFiles.modelpack.models[0])
+	{
+		clearDisplay();
+		displayModel(global.loadedFiles.modelpack.models[0]); //TODO just display modelpack
 	}
 });
 
@@ -147,16 +158,25 @@ function fillPkmnFilePaths(file0) {
 	if (pathset.length === 0) return;
 	pathset.map(x=> PATH.format(x) ).forEach((val, i)=>{
 		if (!fs.existsSync(val)) return; //skip
-		$(`#props .file[name=pkmnFile${i+1}]`).val(val);
+		$(`#props .file[name=loadPkmnFile${i+1}]`).val(val);
 	});
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Display
 
+function clearDisplay() {
+	root.remove(...root.children);
+}
+function displayModel(model) {
+	root.add(model.toThree());
+}
+function displayModelpack(pak) {
+	root.add(pak.toThree());
+}
 function displayPokemonModel() {
 	let paks = global.loadedFiles;
-	root.add(paks[0].modelpack.models[0].toThree());
+	root.add(paks[0].modelpack.models[0].toThree()); //TODO modelpack instead of model
 	{
 		let point = new THREE.Mesh(new THREE.SphereBufferGeometry(), new THREE.MeshBasicMaterial());
 		point.position.copy(paks[8].meta1.unk07);
@@ -166,5 +186,4 @@ function displayPokemonModel() {
 		let help = new THREE.Box3Helper(box);
 		root.add(help);
 	}
-	root.add()
 }

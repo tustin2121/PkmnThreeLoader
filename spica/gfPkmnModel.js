@@ -60,7 +60,7 @@ PARSE_PAK[3] = function(data, header, out={}) {
 		if (data.readUint32(entry.address) === GFTexture.MAGIC_NUMBER) {
 			data.offset = entry.address;
 			textures.push(new GFTexture(data));
-		} 
+		}
 		else {
 			// Unknown information
 			data.offset = entry.address;
@@ -435,57 +435,44 @@ function toThree({ modelpack, motionpacks }) {
 	if (!modelpack.shaders || !modelpack.shaders.length) throw new ReferenceError('No shaders provided!');
 	if (!modelpack.textures || !modelpack.textures.length) throw new ReferenceError('No textures provided!');
 	
-	const {
-		Object3D, BufferGeometry, SkinnedMesh, Skeleton,
-	} = require('three');
-	
+	const { Object3D } = require('three');
 	let pkmn = new Object3D();
 	
-	for (let gfModel of modelpack.models){
-		// Transpile Shaders
-		let vShader = {}, gShader = {}, fShader = {};
-		for (let gfShader of gfModel.shaders) {
-			if (gfShader.vtxShader) {
-				// TODO generate a Vertex Shader from gfShader.vtxShader
-				vShader[gfShader.name] = true;
-			}
-			if (gfShader.geoShader) {
-				// TODO generate a Geometry Shader replacement from gfShader.geoShader
-				gShader[gfShader.name] = true;
-			}
-			if (gfShader.texEnvStages) {
-				// TODO generate a Fragment Shader from gfShader.texEnvStages
-				fShader[gfShader.name] = true;
-			}
+	// Transpile Shaders
+	let vShader = {}, gShader = {}, fShader = {};
+	for (let gfShader of modelpack.shaders) {
+		if (gfShader.vtxShader) {
+			// TODO generate a Vertex Shader from gfShader.vtxShader
+			vShader[gfShader.name] = true;
 		}
-		
-		// Pull out materials
-		let mats = {};
-		for (let gfMat of gfModel.materials) {
-			let mat = gfMat.toThree();
-			mats[mat.name] = mat;
-			let opts = {
-				name: gfMat.matName,
-				transparent: gfMat.alphaTest.enabled,
-			};
-			
+		if (gfShader.geoShader) {
+			// TODO generate a Geometry Shader replacement from gfShader.geoShader
+			gShader[gfShader.name] = true;
 		}
-		
-		for (let gfMesh of gfModel.submeshes) {
-			
+		if (gfShader.texEnvStages) {
+			// TODO generate a Fragment Shader from gfShader.texEnvStages
+			fShader[gfShader.name] = true;
 		}
-		
-		
-		let geom = new BufferGeometry();
-		
-		
-		
-		mainMesh = new SkinnedMesh();
 	}
 	
+	// Gather Textures
+	let textures = {};
+	for (let gfTex of modelpack.textures) {
+		textures[gfTex.name] = gfTex.toThree();
+	}
 	
-	
-	
+	// Compile Models
+	for (let gfModel of modelpack.models){
+		let model = gfModel.toThree();
+		model.traverse((obj)=>{
+			if (!obj.isMesh) return; //continue;
+			let matinfo = obj.material.userData;
+			if (matinfo.map) {
+				
+			}
+		})
+	}
+	return pkmn;
 }
 
 module.exports = { parse, parsePack:PARSE_PAK, toThree };
