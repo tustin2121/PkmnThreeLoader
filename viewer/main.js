@@ -93,6 +93,8 @@ $('#props input[name=poptColor]').on('click', function(){
 		case 'normal': break;
 		case 'shiny': break;
 		case 'shadow': break;
+	}
+});
 $('#props button[name=loadOtherFileBtn]').on('click', async function(){
 	global.loadedFiles = null;
 	let filename = $(`#props input[name=loadOtherFile0]`).val();
@@ -176,8 +178,14 @@ function displayModelpack(pak) {
 }
 function displayPokemonModel() {
 	let paks = global.loadedFiles;
-	root.add(paks[0].modelpack.models[0].toThree()); //TODO modelpack instead of model
 	{
+		let combined = new SPICA.gf.GFModelPack();
+		combined.merge(paks[0].modelpack).merge(paks[1].modelpack);
+		let mon = combined.toThree();
+		mon.name = "Pokemon";
+		mon.children[1].visible = false;
+		root.add(mon); //TODO modelpack instead of model
+	}{
 		let point = new THREE.Mesh(new THREE.SphereBufferGeometry(), new THREE.MeshBasicMaterial());
 		point.position.copy(paks[8].meta1.unk07);
 		root.add(point);
@@ -187,3 +195,4 @@ function displayPokemonModel() {
 		root.add(help);
 	}
 }
+

@@ -82,7 +82,7 @@ class GFMesh {
 		// The rest is added latter (because the data is split inside the file) --gdkchan
 		for (let i = 0; i < submeshCount; i++) {
 			let hash = data.readUint32();
-			let matName = data.readIntLenString().trim();
+			let matName = data.readIntLenString().trim().replace(/\0/g, '');
 			let boneIndicesCount = data.readUint8();
 			let boneIndices = new Array(0x1F);
 			for (let bone = 0; bone < boneIndices.length; bone++) {

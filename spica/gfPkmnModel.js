@@ -319,9 +319,36 @@ PARSE_PAK[8] = function(data, header, out={}) {
 	return out;
 };
 
-
-
 function parseMotionPack(data, header, names) {
+	let boneEntry = header.entries[header.entries.length - 14];
+	
+	// Check for extra data
+	if (data.readUint32(boneEntry.address) === GFModelPack.MAGIC_NUMBER) {
+		return parseExtraMotionPack(data, header, names);
+	}
+	
+	let motionpack = new GFMotionPack();
+	let animCount = header.entries.length;
+	for (let i = 0; i < animCount; i++) {
+		let entry = header.entries[i];
+		if (entry.length === 0) continue;
+		data.offset = entry.address;
+		
+		// if (data.offset + 4 > data.length) break;
+		if (data.readUint32(data.offset) !== GFMotion.MAGIC_NUMBER) {
+			motionpack.extradata[i] = { __addr:header.address, __len:header.length, magicNum:data.readUint32(data.offset) };
+			continue;
+		}
+		// if (data.readUint32(data.offset) !== GFMotion.MAGIC_NUMBER) throw new TypeError('Illegal section parse!');
+		
+		let mot = new GFMotion(data, i);
+		if (names) mot.name = names[i];
+		motionpack.push(mot);
+	}
+	return motionpack;
+}
+
+function parseExtraMotionPack(data, header, names) {
 	let motionpack = new GFMotionPack();
 	let animCount = header.entries.length - 14;
 	// Animations are of variable length at the front
@@ -435,43 +462,10 @@ function toThree({ modelpack, motionpacks }) {
 	if (!modelpack.shaders || !modelpack.shaders.length) throw new ReferenceError('No shaders provided!');
 	if (!modelpack.textures || !modelpack.textures.length) throw new ReferenceError('No textures provided!');
 	
-	const { Object3D } = require('three');
-	let pkmn = new Object3D();
+	let pkmn = modelpack.toThree();
 	
-	// Transpile Shaders
-	let vShader = {}, gShader = {}, fShader = {};
-	for (let gfShader of modelpack.shaders) {
-		if (gfShader.vtxShader) {
-			// TODO generate a Vertex Shader from gfShader.vtxShader
-			vShader[gfShader.name] = true;
-		}
-		if (gfShader.geoShader) {
-			// TODO generate a Geometry Shader replacement from gfShader.geoShader
-			gShader[gfShader.name] = true;
-		}
-		if (gfShader.texEnvStages) {
-			// TODO generate a Fragment Shader from gfShader.texEnvStages
-			fShader[gfShader.name] = true;
-		}
-	}
+	//TODO motionpack
 	
-	// Gather Textures
-	let textures = {};
-	for (let gfTex of modelpack.textures) {
-		textures[gfTex.name] = gfTex.toThree();
-	}
-	
-	// Compile Models
-	for (let gfModel of modelpack.models){
-		let model = gfModel.toThree();
-		model.traverse((obj)=>{
-			if (!obj.isMesh) return; //continue;
-			let matinfo = obj.material.userData;
-			if (matinfo.map) {
-				
-			}
-		})
-	}
 	return pkmn;
 }
 

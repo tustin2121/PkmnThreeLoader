@@ -329,7 +329,7 @@ class GFMaterial {
 			
 			userData: info,
 		};
-		if (this.alphaTest) Object.assign(opts, this.alphaTest.toThree());
+		// if (this.alphaTest) Object.assign(opts, this.alphaTest.toThree());
 		if (this.blendFunction) Object.assign(opts, this.blendFunction.toThree());
 		if (this.colorOperation) Object.assign(opts, this.colorOperation.toThree());
 		//TODO?
@@ -337,19 +337,20 @@ class GFMaterial {
 		// TODO: TexCoord[] holds the texture name to be used for this material
 		// bumpTexture points to which of them is the bump/normal map
 		// https://github.com/gdkchan/SPICA/blob/09d56f40581847e4a81a657c8f35af0ec64059ee/SPICA/Formats/GFL2/Model/GFModel.cs#L313
-		info.map = this.textureCoords[0].toThree();
-		
+		if (this.textureCoords[0]) {
+			info.map = this.textureCoords[0].toThree();
+		}
 		if (this.bumpTexture > -1) {
 			info.normalMap = this.textureCoords[this.bumpTexture].toThree();
 		}
 		
-		opts.fragmentShader = this.fragShaderName;
-		opts.vertexShader = this.vtxShaderName;
+		info.fragmentShader = this.fragShaderName;
+		info.vertexShader = this.vtxShaderName;
 		
-		opts.skinning = true;
-		opts.lights = true;
-		opts.fog = true;
-		opts.wireframe = true;
+		// opts.skinning = true;
+		// opts.lights = true;
+		// opts.fog = true;
+		// opts.wireframe = true;
 		
 		// return new THREE.ShaderMaterial(opts);
 		return new THREE.MeshBasicMaterial(opts);

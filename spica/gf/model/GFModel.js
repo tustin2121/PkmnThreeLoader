@@ -95,6 +95,7 @@ class GFModel {
 		} = require('three');
 		
 		let obj = new Object3D();
+		obj.name = this.name;
 		
 		// Skeleton
 		let skeleton = (()=>{
@@ -115,7 +116,7 @@ class GFModel {
 		let mats = {};
 		for (let gfMat of this.materials) {
 			let mat = gfMat.toThree();
-			mats[mat.matName] = mat;
+			mats[gfMat.matName] = mat;
 		}
 		
 		// Meshes

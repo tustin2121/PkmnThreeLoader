@@ -5,7 +5,7 @@ const { GFMotion } = require('./motion');
 class GFMotionPack {
 	constructor(data) {
 		this.animations = []; /** @type {List<GFMotion>} */
-		this.extradata = new Array(14);
+		this.extradata = []; //new Array(14);
 		
 		if (!data) return;
 		

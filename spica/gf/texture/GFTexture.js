@@ -18,7 +18,8 @@ const GFTextureFormat = {
 	A4 : 0x29,
 	ETC1 : 0x2A,
 	ETC1A4 : 0x2B,
-	convert3 : function(pica) {
+	toThree : function(pica) {
+		//TODO: Convert to this? https://github.com/gdkchan/SPICA/blob/master/SPICA/PICA/Converters/TextureConverter.cs
 		switch (pica) {
 			case GFTextureFormat.RGB565: return { type: THREE.UnsignedShort565Type, format:THREE.RGBFormat };
 			case GFTextureFormat.RGB8: return { type: THREE.UnsignedByteType, format:THREE.RGBFormat };
@@ -43,7 +44,7 @@ class GFTexture {
 	constructor(data) {
 		if (!data) {
 			this.name = '';
-			this.rawbuffer = null;
+			this.rawBuffer = null;
 			this.width = 0;
 			this.height = 0;
 			this.format = null;
@@ -64,12 +65,32 @@ class GFTexture {
 			this.mipmapSize = data.readUint16();
 			
 			data.skip(0x10);
-			this.rawbuffer = data.readBytes(texLen);
+			this.rawBuffer = data.readBytes(texLen);
 		}
 	}
 	
-	toThree() {
-		//TODO
+	toThree(opts={}) {
+		const { DataTexture } = require('three');
+		let data = this.rawBuffer.buffer; //TODO https://github.com/gdkchan/SPICA/blob/master/SPICA/PICA/Converters/TextureConverter.cs
+		let format = GFTextureFormat.toThree(this.format);
+		const TEX = new DataTexture(
+			data,
+			this.width,
+			this.height,
+			format.format,
+			format.type,
+			opts.mapping,
+			opts.wrapS,
+			opts.wrapT,
+			opts.magFilter,
+			opts.minFilter,
+		);
+		TEX.offset = opts.offset;
+		TEX.repeat = opts.repeat;
+		TEX.rotation = opts.rotation;
+		TEX.name = opts.name;
+		TEX.unpackAlignment = 4;
+		return TEX;
 	}
 }
 Object.defineProperties(GFTexture, {

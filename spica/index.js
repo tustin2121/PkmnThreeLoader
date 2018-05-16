@@ -128,7 +128,7 @@ function openPokemonPack(files) {
 	return Promise.all(files);
 }
 
-module.exports = { load, loadAll, parse, parseAll, open, openPokemonPack };
+module.exports = { load, loadAll, parse, parseAll, open, openPokemonPack, gf:require('./gf') };
 
 /*
 function open(file) {
