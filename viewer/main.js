@@ -25,8 +25,8 @@ scene.add(root);
 let trackball = new THREE.OrbitControls(camera, renderer.domElement);
 global.loadedFiles = null;
 
-// global.textureTests = new THREE.Object3D();
-// scene.add(global.textureTests);
+global.ttestNode = new THREE.Object3D();
+scene.add(global.ttestNode);
 
 global.textureTests = {
 	$el : $('<div name="textureTests">').appendTo('#view'),
@@ -34,20 +34,27 @@ global.textureTests = {
 		let canvas = $(`<canvas name="${tex.name}" width="${tex.image.width}" height="${tex.image.height}">`);
 		let ctx = canvas[0].getContext('2d');
 		ctx.imageSmoothingEnabled = false;
-		if (tex.name === "pm0156_00_MouthNor.tga") debugger;
 		let data = tex.image.data;
 		if (data.length % 4 !== 0) console.log('Data not divisible by 4!');
 		for (let i = 0; i < data.length; i += 4) {
-			let a = data[i + 0];
-			let r = data[i + 1];
-			let g = data[i + 2];
-			let b = data[i + 3];
+			let a = data[i + 3];
+			let r = data[i + 0];
+			let g = data[i + 1];
+			let b = data[i + 2];
 			ctx.fillStyle = `rgba(${r},${g},${b},${a})`;
 			let x = (i>>2)%tex.image.width;
-			let y = Math.floor((i>>2)/tex.image.width);
+			let y = tex.image.height - 1 - Math.floor((i>>2)/tex.image.width);
 			ctx.fillRect(x, y, 1, 1);
 		}
 		this.$el.append(canvas);
+		//////////////////////////////////////////////
+		/*
+		let geom = new THREE.PlaneGeometry(tex.image.width, tex.image.height, 8, 8);
+		let mat = new THREE.MeshBasicMaterial();
+		mat.map = tex;
+		let mesh = new THREE.Mesh(geom, mat);
+		mesh.position.z = global.ttestNode.children.length * 10;
+		global.ttestNode.add(mesh); //*/
 	},
 };
 

@@ -160,13 +160,13 @@ class GFModel {
 							geom.addAttribute('color', bufattr);
 							break;
 						case PICAAttributeName.TexCoord0:
-							geom.addAttribute('tex0', bufattr);
+							geom.addAttribute('uv', bufattr);
 							break;
 						case PICAAttributeName.TexCoord1:
-							geom.addAttribute('tex1', bufattr);
+							geom.addAttribute('uv2', bufattr);
 							break;
 						case PICAAttributeName.TexCoord2:
-							geom.addAttribute('tex2', bufattr);
+							geom.addAttribute('uv3', bufattr);
 							break;
 						case PICAAttributeName.BoneIndex: {
 							// Convert index into boneIndices into bone indices

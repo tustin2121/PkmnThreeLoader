@@ -95,8 +95,8 @@ const GFTextureFormat = {
 					for (let px = 0; px < 64; px++) {
 						let x =  SWIZZLE_TABLE[px] & 7;
 						let y = (SWIZZLE_TABLE[px] - x) >> 3;
-						// let ooff = (tx + x + ((height - 1 - (ty + y)) * width)) * 4;
-						let ooff = (tx + x + (((ty + y)) * width)) * 4;
+						let ooff = (tx + x + ((height - 1 - (ty + y)) * width)) * 4;
+						// let ooff = (tx + x + (((ty + y)) * width)) * 4;
 						
 						switch (format) {
 							case GFTextureFormat.RGBA8:
@@ -206,14 +206,14 @@ const GFTextureFormat = {
 							} break;
 						}
 						
-						out[ooff + 0] = temp[3];
-						out[ooff + 1] = temp[0];
-						out[ooff + 2] = temp[1];
-						out[ooff + 3] = temp[2];
-						// out[ooff + 0] = temp[2];
-						// out[ooff + 1] = temp[1];
-						// out[ooff + 2] = temp[0];
-						// out[ooff + 3] = temp[3];
+						// out[ooff + 0] = temp[3];
+						// out[ooff + 1] = temp[0];
+						// out[ooff + 2] = temp[1];
+						// out[ooff + 3] = temp[2];
+						out[ooff + 0] = temp[0];
+						out[ooff + 1] = temp[1];
+						out[ooff + 2] = temp[2];
+						out[ooff + 3] = temp[3];
 						ioff += inc;
 					}
 				}
@@ -269,8 +269,8 @@ class GFTexture {
 			opts.mapping,
 			opts.wrapS,
 			opts.wrapT,
-			opts.magFilter,
-			opts.minFilter,
+			THREE.NearestFilter, //opts.magFilter,
+			THREE.NearestFilter, //opts.minFilter,
 		);
 		TEX.offset = opts.offset;
 		TEX.repeat = opts.repeat;
@@ -281,12 +281,6 @@ class GFTexture {
 		
 		if (global.textureTests) {
 			global.textureTests.submit(TEX);
-			// let geom = new THREE.PlaneGeometry(this.width, this.height, 8, 8);
-			// let mat = new THREE.MeshBasicMaterial();
-			// mat.map = TEX;
-			// let mesh = new THREE.Mesh(geom, mat);
-			// mesh.position.z = global.textureTests.children.length * 10;
-			// global.textureTests.add(mesh);
 		}
 		return TEX;
 	}
