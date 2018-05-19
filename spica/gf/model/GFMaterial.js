@@ -111,14 +111,14 @@ class GFTextureCoord {
 	}
 	
 	toThree() {
-		const { Vector2 } = require('three');
-		return {
+		const THREE = require('three');
+		let obj = {
 			name: this.name,
 			
 			offset: this.translation.clone(),
 			repeat: this.scale.clone(),
 			rotation: this.rotation,
-			center: new Vector2(),
+			center: this.translation.clone().negate(),
 			
 			mapping: GFTextureMappingType.toThree(this.mappingType),
 			wrapS: GFTextureWrap.toThree(this.wrapU),
@@ -126,6 +126,8 @@ class GFTextureCoord {
 			magFilter: GFMagFilter.toThree(this.magFilter),
 			minFilter: GFMinFilter.toThree(this.minFilter),
 		};
+		
+		return obj;
 	}
 }
 
@@ -320,8 +322,8 @@ class GFMaterial {
 		let info = {};
 		let opts = {
 			name: this.matName,
-			color: this.diffuseColor,
-			emissive: this.emissionColor,
+			color: this.diffuseColor >> 8,
+			emissive: this.emissionColor >> 8,
 			
 			colorWrite: this.colorBufferWrite,
 			depthWrite: this.depthBufferWrite,

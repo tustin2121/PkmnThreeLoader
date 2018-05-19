@@ -272,6 +272,7 @@ class GFTexture {
 			THREE.NearestFilter, //opts.magFilter,
 			THREE.NearestFilter, //opts.minFilter,
 		);
+		TEX.center = opts.center;
 		TEX.offset = opts.offset;
 		TEX.repeat = opts.repeat;
 		TEX.rotation = opts.rotation;
