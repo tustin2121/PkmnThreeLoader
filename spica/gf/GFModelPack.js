@@ -11,6 +11,7 @@ class GFModelPack {
 		this.unk2 = [];
 		this.unk3 = [];
 		this.shaders = [];
+		this.extra = [];
 		
 		if (!data) return this;
 		
@@ -51,7 +52,7 @@ class GFModelPack {
 		return this;
 	}
 	
-	toThree() {
+	async toThree() {
 		const { Object3D } = require('three');
 		let obj = new Object3D();
 		
@@ -77,6 +78,7 @@ class GFModelPack {
 		for (let gfTex of this.textures) {
 			textures[gfTex.name] = gfTex;
 		}
+		await Promise.all(Object.values(textures).map(x=>x.decodeData()));
 		
 		// Compile Models
 		for (let gfModel of this.models){
