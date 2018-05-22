@@ -81,9 +81,9 @@ class GFSkeletonMot {
 		
 		let tracks = [];
 		for (let bone of this.bones) {
-			tracks.push(...makeTrack(`${this.name}.scale`, bone.scaleX, bone.scaleY, bone.scaleZ));
-			tracks.push(...makeTrack(`${this.name}.rotation`, bone.rotX, bone.rotY, bone.rotZ));
-			tracks.push(...makeTrack(`${this.name}.position`, bone.transX, bone.transY, bone.transZ));
+			tracks.push(...makeTrack(`.bones[${this.name}].scale`, bone.scaleX, bone.scaleY, bone.scaleZ));
+			tracks.push(...makeTrack(`.bones[${this.name}].rotation`, bone.rotX, bone.rotY, bone.rotZ));
+			tracks.push(...makeTrack(`.bones[${this.name}].position`, bone.transX, bone.transY, bone.transZ));
 		}
 		return tracks;
 		
@@ -96,9 +96,9 @@ class GFSkeletonMot {
 			if (num === 0) return [];
 			// if (num !== 3) {
 				let tracks = [];
-				if (vx.length) tracks.push(makeNumTrack(`${path}.x`, vx));
-				if (vy.length) tracks.push(makeNumTrack(`${path}.y`, vy));
-				if (vz.length) tracks.push(makeNumTrack(`${path}.z`, vz));
+				if (vx.length) tracks.push(makeNumTrack(`${path}[x]`, vx));
+				if (vy.length) tracks.push(makeNumTrack(`${path}[y]`, vy));
+				if (vz.length) tracks.push(makeNumTrack(`${path}[z]`, vz));
 				return tracks;
 			// }
             //

@@ -53,8 +53,8 @@ class GFModelPack {
 	}
 	
 	async toThree() {
-		const { Object3D } = require('three');
-		let obj = new Object3D();
+		const { Group } = require('three');
+		let obj = new Group();
 		
 		// Transpile Shaders
 		let vShader = {}, gShader = {}, fShader = {};

@@ -1,6 +1,6 @@
 // main.js
 //
-/* global $, window, document */
+/* global $, window, document, hljs */
 const SPICA = global.SPICA = require('../spica');
 const THREE = global.THREE = require('three');
 require('./OrbitControls');
@@ -24,6 +24,10 @@ scene.add(root);
 
 let trackball = new THREE.OrbitControls(camera, renderer.domElement);
 global.loadedFiles = null;
+
+hljs.configure({
+	// tabReplace: '<span class="tab">\t</span>',
+});
 
 // global.ttestNode = new THREE.Object3D();
 // scene.add(global.ttestNode);
@@ -179,6 +183,9 @@ $('#props button[name=loadPkmnFileBtn]').on('click', async function(){
 	displayPokemonModel();
 });
 $('#props input[name=poptShadow]').on('click', function(){
+	//TODO: Implement in shader?
+	// https://gamedev.stackexchange.com/questions/27252/draw-a-projection-of-a-mesh-on-a-surface
+	// https://en.wikibooks.org/wiki/GLSL_Programming/Unity/Shadows_on_Planes
 	displayPokemonModel();
 });
 $('#props input[name=poptMeta]').on('click', function(){
@@ -276,19 +283,28 @@ function displayTexture(canvas) {
 	$('#view > canvas').hide();
 	$('#textureView').show().empty().append(canvas);
 }
-function displayShader(code) {
+function displayShader(code, errorLog) {
 	code = code.split('\n');
 	let $d = $('<div>');
 	for (let line of code) {
+		// console.log('Line: '+line);
 		let $line = $('<line>');
-		// Escape all html unsafe characters
-		line = $line.text(line).html();
-		//TODO replace keywords etc with spans to highlight them
+		line = hljs.highlight('GLSL', line).value;
+		line = line.replace(/\t/g, '<span class="hljs-tab">&nbsp;</span>');
+		if (line === '') line = '&nbsp';
+		// console.log('Out: '+line);
 		$line.html(line).appendTo($d);
 	}
 	
+	if (errorLog) {
+		let res = /^ERROR: (\d+):(\d+):/i.exec(errorLog);
+		let row = res[2];
+		let $err = $('<error>').text(errorLog).attr('locx', res[1]);
+		$d.find(`line:nth-child(${row})`).after($err);
+	}
+	
 	$('#view > canvas').hide();
-	$('#textureView').show().empty().append($d);
+	$('#shaderView').show().empty().append($d);
 }
 async function displayModel(model) {
 	root.add(model.toThree());

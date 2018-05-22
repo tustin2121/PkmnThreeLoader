@@ -30,23 +30,41 @@ body {
 	left: 0; right: 0;
 	counter-reset: code;
 	font-family: Consolas, monospace;
+	overflow: scroll;
 }
 #shaderView > div line {
 	display: block;
+	position: relative;
 	counter-increment: code;
-	background-color: #D7D7D7;
+	background-color: #f8f8f8;
+	padding-left: 54px;
 }
 #shaderView > div line:nth-of-type(even) {
-	background-color: #B5DBDB;
+	background-color: #ECECEC;
 }
 #shaderView > div line::before {
 	content: counter(code);
-	width: 30px;
+	position: absolute;
+	width: 42px; left: 0;
 	text-align: right;
 	user-select: none;
 }
-#shaderView > div span.keyword {
-	
+#shaderView > div error {
+	display: block;
+	position: relative;
+	background-color: #FFDDDD;
+	color: #FF0000;
+	padding-left: 14px;
+}
+#shaderView > div error::before {
+	content: '';
+	position: absolute;
+	width: 0; height: 0;
+	top: -5px; left: 52px;
+	left: calc(52px + attr(locx, em, 0))
+	border-bottom: 5px solid #FFDDDD;
+	border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
 }
 
 

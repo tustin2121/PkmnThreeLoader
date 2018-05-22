@@ -111,6 +111,7 @@ class GFModel {
 		})();
 		skeleton.calculateInverses();
 		obj.userData.skeleton = skeleton;
+		obj.skeleton = skeleton;
 		
 		// Materials
 		let mats = {};
@@ -202,7 +203,7 @@ class GFModel {
 				else {
 					mesh = new Mesh(geom, mats[gfSub.matName]);
 				}
-				// meshes.push(mesh);
+				mesh.name = gfMesh.name;
 				obj.add(mesh);
 			}
 		}

@@ -329,7 +329,7 @@ class GFMaterial {
 			depthWrite: this.depthBufferWrite,
 			depthTest: this.depthBufferRead,
 			
-			userData: info,
+			userData: info, //TODO: clear userData when saving off the pokemon
 		};
 		if (this.alphaTest) Object.assign(opts, this.alphaTest.toThree());
 		if (this.blendFunction) Object.assign(opts, this.blendFunction.toThree());
@@ -339,11 +339,16 @@ class GFMaterial {
 		// TODO: TexCoord[] holds the texture name to be used for this material
 		// bumpTexture points to which of them is the bump/normal map
 		// https://github.com/gdkchan/SPICA/blob/09d56f40581847e4a81a657c8f35af0ec64059ee/SPICA/Formats/GFL2/Model/GFModel.cs#L313
-		if (this.textureCoords[0]) {
-			info.map = this.textureCoords[0].toThree();
-		}
-		if (this.bumpTexture > -1) {
-			info.normalMap = this.textureCoords[this.bumpTexture].toThree();
+		if (this.textureCoords) {
+			info.coodMap = new Array(3);
+			if (this.textureCoords[0]) {
+				info.map = this.textureCoords[0].toThree();
+				info.coodMap[0] = 'map';
+			}
+			if (this.bumpTexture > -1) {
+				info.normalMap = this.textureCoords[this.bumpTexture].toThree();
+				info.coodMap[this.bumpTexture] = 'normalMap';
+			}
 		}
 		
 		info.fragmentShader = this.fragShaderName;

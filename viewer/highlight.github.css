@@ -97,3 +97,8 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
 .hljs-strong {
   font-weight: bold;
 }
+
+.hljs-tab {
+  width: 2em;
+  display: inline-block;
+}
