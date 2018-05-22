@@ -42,29 +42,33 @@ PARSE_PAK[0] = function(data, header, out={}) {
 };
 // Parse Pak 1: Normal Textures
 PARSE_PAK[1] = function(data, header, out={}) {
-	global.info.markTexturePack(1);
+	if (global.info) global.info.markTexturePack(1);
 	out.modelpack = out.modelpack || new GFModelPack();
 	let textures = out.modelpack.textures;
 	for (let entry of header.entries) {
 		data.offset = entry.address;
-		textures.push(new GFTexture(data));
+		let tex = new GFTexture(data);
+		if (global.info) global.info.markTexture(tex);
+		textures.push(tex);
 	}
 	return out;
 };
 // Parse Pak 2: Shiny Textures
 PARSE_PAK[2] = function(data, header, out={}) {
-	global.info.markTexturePack(2);
+	if (global.info) global.info.markTexturePack(2);
 	out.modelpack = out.modelpack || new GFModelPack();
 	let textures = out.modelpack.textures;
 	for (let entry of header.entries) {
 		data.offset = entry.address;
-		textures.push(new GFTexture(data));
+		let tex = new GFTexture(data);
+		if (global.info) global.info.markTexture(tex);
+		textures.push(tex);
 	}
 	return out;
 };
 // Parse Pak 3: Pokemon Amie Petting Texture Maps
 PARSE_PAK[3] = function(data, header, out={}) {
-	global.info.markTexturePack(3);
+	if (global.info) global.info.markTexturePack(3);
 	out.modelpack = out.modelpack || new GFModelPack();
 	let textures = out.modelpack.textures;
 	for (let entry of header.entries) {
@@ -72,6 +76,7 @@ PARSE_PAK[3] = function(data, header, out={}) {
 			data.offset = entry.address;
 			let tex = new GFTexture(data);
 			tex.isPetMap = true;
+			if (global.info) global.info.markTexture(tex);
 			textures.push(tex);
 		}
 		else {

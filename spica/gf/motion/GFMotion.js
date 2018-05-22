@@ -65,6 +65,18 @@ class GFMotion {
 			}
 		}
 	}
+	
+	toThree() {
+		const { AnimationClip } = require('three');
+		let tracks = [];
+		
+		if (this.skeletonAnimation) tracks.push(...this.skeletonAnimation.toThreeTracks(this.frameCount));
+		if (this.materialAnimation) tracks.push(...this.materialAnimation.toThreeTracks(this.frameCount));
+		if (this.visibilityAnimation) tracks.push(...this.visibilityAnimation.toThreeTracks(this.frameCount));
+		
+		let clip = new AnimationClip(this.name, this.frameCount, tracks);
+		return clip;
+	}
 }
 Object.defineProperties(GFMotion, {
 	'MAGIC_NUMBER': { value:0x00060000, },

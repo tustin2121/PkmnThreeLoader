@@ -61,6 +61,43 @@ class GFMaterialMot {
 			}
 		}
 	}
+	
+	toThreeTracks(frameCount) {
+		const { VectorKeyframeTrack, NumberKeyframeTrack } = require('three');
+		
+		let tracks = [];
+		for (let mat of this.materials) {
+			tracks.push(...makeTrack   (`${this.name}.repeat`, mat.scaleX, mat.scaleY));
+			tracks.push(...makeNumTrack(`${this.name}.rotation`, mat.rotX));
+			tracks.push(...makeTrack   (`${this.name}.offset`, mat.transX, mat.transY));
+		}
+		return tracks;
+		
+		function makeTrack(path, vx, vy, vz) {
+			let num = 0;
+			if (vx.length) num++;
+			if (vy.length) num++;
+        
+			if (num === 0) return [];
+			// if (num !== 2) {
+				let tracks = [];
+				if (vx.length) tracks.push(makeNumTrack(`${path}.x`, vx));
+				if (vy.length) tracks.push(makeNumTrack(`${path}.y`, vy));
+				return tracks;
+			// }
+			//TODO VectorKeyframeTrack?
+		}
+		
+		function makeNumTrack(path, vt) {
+			let times=[], values=[];
+			for (let frame of vt) {
+				times.push(frame.frame);
+				values.push(frame.value);
+				//TODO frame.slope; ???
+			}
+			let track = new NumberKeyframeTrack(path, times, values);
+		}
+	}
 }
 
 module.exports = { GFMaterialMot, GFMotUVTransform };

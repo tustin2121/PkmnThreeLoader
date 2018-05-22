@@ -165,21 +165,32 @@ const GFTextureFormat = {
 			output[3] = input[3];
 		};
 		const PET_MAPPING = (input, output)=>{
+			output[3] = 0xFF;
 			switch (input[0]) {
-				//				R					G				B					A
-				case   0: output[0] = 0x00; output[1] = 0x00; output[2] = 0x00; output[3] = 0xFF; break;
-				case   2: output[0] = 0x22; output[1] = 0x22; output[2] = 0x22; output[3] = 0xFF; break;
-				case   3: output[0] = 0x33; output[1] = 0x33; output[2] = 0x33; output[3] = 0xFF; break;
-				case   4: output[0] = 0x44; output[1] = 0x44; output[2] = 0x44; output[3] = 0xFF; break;
-				case   6: output[0] = 0x66; output[1] = 0x66; output[2] = 0x66; output[3] = 0xFF; break;
-				case   8: output[0] = 0xFF; output[1] = 0xFF; output[2] = 0xFF; output[3] = 0xFF; break;
-				case   9: output[0] = 0x99; output[1] = 0x99; output[2] = 0x99; output[3] = 0xFF; break;
-				case  10: output[0] = 0xAA; output[1] = 0xAA; output[2] = 0xAA; output[3] = 0xFF; break;
-				case  19: output[0] = 0x00; output[1] = 0x00; output[2] = 0x99; output[3] = 0xFF; break;
-				case  25: output[0] = 0x00; output[1] = 0xDD; output[2] = 0x00; output[3] = 0xFF; break;
-				case  26: output[0] = 0x00; output[1] = 0x66; output[2] = 0x00; output[3] = 0xFF; break;
-				case  27: output[0] = 0xDD; output[1] = 0x00; output[2] = 0x00; output[3] = 0xFF; break;
-				case  28: output[0] = 0x66; output[1] = 0x00; output[2] = 0x00; output[3] = 0xFF; break;
+				//				R			G			B
+				// Invalid location:
+				case 0x00: output[0] = output[1] = output[2] = 0x00; break;
+				//
+				case 0x02: output[0] = output[1] = output[2] = 0x62; break;
+				case 0x03: output[0] = output[1] = output[2] = 0x63; break;
+				case 0x04: output[0] = output[1] = output[2] = 0x64; break;
+				case 0x06: output[0] = output[1] = output[2] = 0x66; break;
+				// Face Marking?
+				case 0x08: output[0] = output[1] = output[2] = 0xF0; break;
+				// Body Marking?
+				case 0x09: output[0] = output[1] = output[2] = 0xC0; break;
+				case 0x0A: output[0] = output[1] = output[2] = 0xCF; break;
+				// Ghostly Hand Reaction
+				case 0x0D: output[0] = 0x66; output[1] = 0x00; output[2] = 0x66; break;
+				// Water Hand Reaction
+				case 0x13: output[0] = 0x00; output[1] = 0x00; output[2] = 0x99; break;
+				// Bad Reactions:
+				case 0x19: output[0] = 0xDD; output[1] = 0x00; output[2] = 0x00; break;
+				case 0x1A: output[0] = 0x66; output[1] = 0x00; output[2] = 0x00; break;
+				// Good Reactions:
+				case 0x1B: output[0] = 0x00; output[1] = 0xDD; output[2] = 0x00; break;
+				case 0x1C: output[0] = 0x00; output[1] = 0x66; output[2] = 0x00; break;
+				
 				default:
 					if (!UNHANDLED_PET[input[0]]) {
 						console.log('Unhandled pet value:', input[0]);
@@ -215,6 +226,7 @@ const GFTextureFormat = {
 					let out = new Uint8Array(width * height * 4);
 					let ioff = 0, ooff = 0, x, y;
 					let input = [], output = [];
+					input.readUint16 = ()=>{ return this[0]|(this[1] << 8); }
 					for (let ty = 0; ty < height; ty += 8) {
 						for (let tx = 0; tx < width; tx += 8) {
 							for (let px = 0; px < 64; px++) {
@@ -271,11 +283,10 @@ class GFTexture {
 		// this.rawBuffer = data.readBytes(texLen);
 		this._decoded = false;
 		this.buffer = data.readBytes(texLen);
-		global.info.markTexture(this);
 	}
 	
 	decodeData() {
-		if (this._decoded) return Promise.resolve(this.buffer);
+		if (this._decoded) return Promise.resolve(true);
 		return GFTextureFormat.decodeBuffer(this)
 			.then((d)=>{
 				this.buffer = d;
@@ -309,8 +320,8 @@ class GFTexture {
 		
 		if (this.isPetMap) {
 			TEX.isPetMap = true;
-			if (TEX.repeat.x === 2) TEX.repeat.x = 1;
-			if (TEX.repeat.y === 2) TEX.repeat.y = 1;
+			TEX.repeat.set(1, 1);
+			TEX.offset.set(0, 0);
 		}
 		
 		return TEX;

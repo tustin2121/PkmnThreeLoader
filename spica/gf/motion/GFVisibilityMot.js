@@ -31,6 +31,26 @@ class GFVisibilityMot {
 			this.visibilities.push(new GFMotBoolean(data, name, frameCount+1));
 		}
 	}
+	
+	toThreeTracks(frameCount) {
+		const { BooleanKeyframeTrack } = require('three');
+		
+		let tracks = [];
+		for (let vis of this.visibilities) {
+			tracks.push(...makeBoolTrack(`${this.name}.visible`, vis.values));
+		}
+		return tracks;
+		
+		function makeBoolTrack(path, vt) {
+			let times=[], values=[];
+			for (let frame of vt) {
+				times.push(frame.frame);
+				values.push(frame.value);
+				//TODO frame.slope; ???
+			}
+			let track = new BooleanKeyframeTrack(path, times, values);
+		}
+	}
 }
 
 module.exports = { GFVisibilityMot, GFMotBoolean };

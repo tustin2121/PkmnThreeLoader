@@ -75,6 +75,58 @@ class GFSkeletonMot {
 			this.bones.push(new GFMotBoneTransform(data, name, frameCount));
 		}
 	}
+	
+	toThreeTracks(frameCount) {
+		const { VectorKeyframeTrack, NumberKeyframeTrack } = require('three');
+		
+		let tracks = [];
+		for (let bone of this.bones) {
+			tracks.push(...makeTrack(`${this.name}.scale`, bone.scaleX, bone.scaleY, bone.scaleZ));
+			tracks.push(...makeTrack(`${this.name}.rotation`, bone.rotX, bone.rotY, bone.rotZ));
+			tracks.push(...makeTrack(`${this.name}.position`, bone.transX, bone.transY, bone.transZ));
+		}
+		return tracks;
+		
+		function makeTrack(path, vx, vy, vz) {
+			let num = 0;
+			if (vx.length) num++;
+			if (vy.length) num++;
+			if (vz.length) num++;
+        
+			if (num === 0) return [];
+			// if (num !== 3) {
+				let tracks = [];
+				if (vx.length) tracks.push(makeNumTrack(`${path}.x`, vx));
+				if (vy.length) tracks.push(makeNumTrack(`${path}.y`, vy));
+				if (vz.length) tracks.push(makeNumTrack(`${path}.z`, vz));
+				return tracks;
+			// }
+            //
+			// let frameVals = new Array(frameCount);
+			// for (let i = 0, ix = 0, iy = 0, iz = 0; i < frameCount; i++) {
+			// 	let frame = { num:i, x:undefined, y:undefined: z:undefined };
+			// 	if (vx[ix].frame === i) {
+			// 		frame
+			// 	}
+			// }
+            //
+            //
+            //
+			// let times=[], values=[];
+            //
+			// let track = new VectorKeyframeTrack(path, )
+		}
+		
+		function makeNumTrack(path, vt) {
+			let times=[], values=[];
+			for (let frame of vt) {
+				times.push(frame.frame);
+				values.push(frame.value);
+				//TODO frame.slope; ???
+			}
+			let track = new NumberKeyframeTrack(path, times, values);
+		}
+	}
 }
 
 module.exports = { GFSkeletonMot, GFMotBoneTransform };

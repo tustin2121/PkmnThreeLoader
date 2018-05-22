@@ -1,18 +1,22 @@
 <html>
 <head>
 	<link rel="stylesheet" href="main.css" />
+	<link rel="stylesheet" href="highlight.github.css" />
 	<title>GF Bin Viewer / Converter</title>
 </head>
 <body>
 	<div id="hidden"><input type="file" id="fileChooser" /></div>
-	<div id="view"></div>
+	<div id="view">
+		<div id="textureView"></div>
+		<div id="shaderView"></div>
+	</div>
 	<div id="props">
 		<nav>
 			<li class="load selected">Loading</li>
-			<li class="pokemon">Pokemon</li>
-			<li class="models">Models</li>
-			<li class="shaders">Shaders</li>
+			<li class="models">Model</li>
 			<li class="textures">Textures</li>
+			<li class="shaders">Shaders</li>
+			<li class="anims">Animations</li>
 			<li class="metadata">Metadata</li>
 		</nav>
 		<section>
@@ -35,22 +39,29 @@
 					<p><button name="loadOtherFileBtn">Load Pokemon</button></p>
 				</div>
 			</div>
-			<div class="pokemon">
-				<div class="group" group-name="Pokemon Options" id="pokemonDisplayOpts">
-					<p><label><input type="checkbox" name="poptShadow" disabled/> Show shadow projection</label></p>
+			<div class="models">
+				<div class="group" group-name="Model List" id="modelList">
+				</div>
+				<div class="group" group-name="Pokemon Options" id="pokemonDisplayOpts" style="display:none;">
+					<p><label><input type="checkbox" name="poptShadow"/> Show shadow projection</label></p>
 					<p>
-						<label><input type="radio" name="poptColor" value="normal" disabled checked/> Normal</label>
-						<label><input type="radio" name="poptColor" value="shiny" disabled/> Shiny</label>
-						<label><input type="radio" name="poptColor" value="shadow" disabled/> Pet Spots</label>
+						<label><input type="radio" name="poptColor" value="normal" checked/> Normal</label>
+						<label><input type="radio" name="poptColor" value="shiny"/> Shiny</label>
+						<label><input type="radio" name="poptColor" value="shadow"/> Pet Spots</label>
 					</p>
-					<p><label><input type="checkbox" name="poptMeta" disabled checked/> Show metadata boxes</label></label></p>
-					<p><label><input type="checkbox" name="poptModelBound" disabled/> Show model bounding box</label></label></p>
+					<p><label><input type="checkbox" name="poptMeta" checked/> Show metadata boxes</label></label></p>
+					<p><label><input type="checkbox" name="poptModelBound"/> Show model bounding box</label></label></p>
 				</div>
 			</div>
-			<div class="models"></div>
-			<div class="shaders"></div>
+			<div class="anims">
+				
+			</div>
+			<div class="shaders">
+				<div class="group" group-name="Shaders" id="shaderList">
+				</div>
+			</div>
 			<div class="textures">
-				<div class="group" group-name="Texture Packs">
+				<div class="group" group-name="Texture Packs" id="texturePackList">
 				</div>
 				<div class="group" group-name="LookUp Tables">
 				</div>
@@ -60,6 +71,7 @@
 	</div>
 	
 	<script src="jquery-3.1.1.min.js"></script>
+	<script src="highlight.pack.js"></script>
 	<script src="main.js"></script>
 </body>
 </html>

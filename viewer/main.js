@@ -68,6 +68,25 @@ global.info = {
 		this.luts = [];
 		this.shaders = [];
 	},
+	populateSidebar() {
+		$('#texturePackList').empty();
+		for (let [i, val] of this.texpak.entries()){
+			if (!val) continue;
+			let $p = $(`<ul name="Texture Pack ${i}">`);
+			for (let [name, texInfo] of Object.entries(val)) {
+				let $t = $(`<li>${texInfo.tex.name}</li>`).appendTo($p);
+				$t.on('dblclick', ()=>{
+					displayTexture(texInfo.canvas);
+					texInfo.tex.decodeData().then(x=>{
+						texInfo.repaint();
+					});
+				});
+			}
+			$('#texturePackList').append($p);
+		}
+		
+		
+	},
 	
 	texpak: [],
 	currTexpak: null,
@@ -75,23 +94,28 @@ global.info = {
 		this.currTexpak = this.texpak[num] = {};
 	},
 	markTexture(tex) {
-		// if (this.textures[tex.name]) tex.name ;
 		let canvas = $(`<canvas name="${tex.name}" width="${tex.width}" height="${tex.height}">`);
-		let ctx = canvas[0].getContext('2d');
-		ctx.imageSmoothingEnabled = false;
-		let data = tex.buffer;
-		if (data.length % 4 !== 0) console.log('Data not divisible by 4!');
-		for (let i = 0; i < data.length; i += 4) {
-			let a = data[i + 3];
-			let r = data[i + 0];
-			let g = data[i + 1];
-			let b = data[i + 2];
-			ctx.fillStyle = `rgba(${r},${g},${b},${a})`;
-			let x = (i>>2)%tex.width;
-			let y = tex.height - 1 - Math.floor((i>>2)/tex.width);
-			ctx.fillRect(x, y, 1, 1);
-		}
-		this.currTexpak[`${tex.name}`] = canvas;
+		this.currTexpak[`${tex.name}`] = { tex, canvas,
+			_painted: false,
+			repaint() {
+				if (this._painted) return;
+				let ctx = canvas[0].getContext('2d');
+				ctx.imageSmoothingEnabled = false;
+				let data = tex.buffer;
+				if (data.length % 4 !== 0) console.log('Data not divisible by 4!');
+				for (let i = 0; i < data.length; i += 4) {
+					let a = data[i + 3];
+					let r = data[i + 0];
+					let g = data[i + 1];
+					let b = data[i + 2];
+					ctx.fillStyle = `rgba(${r},${g},${b},${a})`;
+					let x = (i>>2)%tex.width;
+					let y = tex.height - 1 - Math.floor((i>>2)/tex.width);
+					ctx.fillRect(x, y, 1, 1);
+				}
+				this._painted = true;
+			}
+		};
 	},
 	
 	luts: {},
@@ -101,8 +125,16 @@ global.info = {
 	
 	shaders: {},
 	markShader(shader) {
+		// code:
+		// let lines = string.split( '\n' );
 		
-	}
+		
+		
+		function findError(errorInfo) {
+			//gl.getShaderInfoLog( shader )
+			//ERROR: 0:277: '<' : wrong operand types - no operation '<' exists that takes a left-hand operand of type 'highp float' and a right operand of type 'const int' (or there is no acceptable conversion)
+		}
+	},
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -114,6 +146,7 @@ raf(redraw);
 $('#props > nav > li').on('click', function(){
 	$('#props .selected').removeClass('selected');
 	$('#props .'+this.className).addClass('selected');
+	resetView();
 });
 $('#props .file').on('dblclick', function(){
 	let chooser = $('#fileChooser');
@@ -231,8 +264,31 @@ function fillPkmnFilePaths(file0) {
 /*not-async*/ function clearDisplay() {
 	global.loadedFiles = null;
 	root.remove(...root.children);
-	global.info.textures = {};
+	global.info.clear();
+	resetView();
 	$('#pokemonDisplayOpts input').prop('disabled', true);
+}
+function resetView() {
+	$('#view > canvas').show();
+	$('#view > div').empty().hide();
+}
+function displayTexture(canvas) {
+	$('#view > canvas').hide();
+	$('#textureView').show().empty().append(canvas);
+}
+function displayShader(code) {
+	code = code.split('\n');
+	let $d = $('<div>');
+	for (let line of code) {
+		let $line = $('<line>');
+		// Escape all html unsafe characters
+		line = $line.text(line).html();
+		//TODO replace keywords etc with spans to highlight them
+		$line.html(line).appendTo($d);
+	}
+	
+	$('#view > canvas').hide();
+	$('#textureView').show().empty().append($d);
 }
 async function displayModel(model) {
 	root.add(model.toThree());
@@ -243,6 +299,8 @@ async function displayModelpack(pak) {
 async function displayPokemonModel() {
 	let paks = global.loadedFiles;
 	root.remove(...root.children);
+	$('#pokemonDisplayOpts').show();
+	$('#modelList').hide();
 	$('#pokemonDisplayOpts input').prop('disabled', false);
 	{
 		let combined = new SPICA.gf.GFModelPack();
@@ -274,5 +332,9 @@ async function displayPokemonModel() {
 		let help = new THREE.Box3Helper(box, 0x00FF00);
 		root.add(help);
 	}
+	global.info.populateSidebar();
 }
 
+
+
+clearDisplay();

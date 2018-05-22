@@ -331,7 +331,7 @@ class GFMaterial {
 			
 			userData: info,
 		};
-		// if (this.alphaTest) Object.assign(opts, this.alphaTest.toThree());
+		if (this.alphaTest) Object.assign(opts, this.alphaTest.toThree());
 		if (this.blendFunction) Object.assign(opts, this.blendFunction.toThree());
 		if (this.colorOperation) Object.assign(opts, this.colorOperation.toThree());
 		//TODO?
