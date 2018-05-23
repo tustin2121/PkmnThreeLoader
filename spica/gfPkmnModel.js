@@ -307,15 +307,15 @@ PARSE_PAK[8] = function(data, header, out={}) {
 		meta.unk01 = data.readUint32();
 		meta.unk02 = data.readUint32();
 		meta.unk03 = data.readUint32();
-		meta.unk04 = data.readUint32();
+		meta.cameraLevel = data.readUint32(); //0 = small pokemon, 1 = medium, 2 = large+
 		meta.boundingBoxMin = data.readVector3();
 		meta.boundingBoxMax = data.readVector3();
 		meta.unk07 = data.readVector3();
-		meta.unk08 = data.readUint32(); //always zero?
+		meta.unk08 = data.readFloat32(); //always zero?
 		meta.unk09 = data.readUint32(); //always zero?
 		meta.unk10 = data.readUint16(); //32
 		meta.unk11 = data.readUint16(); //32
-		meta.unk12 = []; // An array of 1's and 0's?
+		meta.unk12 = []; // An array of 1's and 0's in u16 form
 		for (let i = 0; i < 16; i++) {
 			meta.unk12.push(data.readUint16());
 		}
@@ -338,6 +338,7 @@ PARSE_PAK[8] = function(data, header, out={}) {
 		}
 		out.meta2 = meta;
 	}
+	if (global.info) global.info.markMetadata(out);
 	return out;
 };
 

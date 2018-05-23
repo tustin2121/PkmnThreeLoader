@@ -5,6 +5,12 @@ const SPICA = global.SPICA = require('../spica');
 const THREE = global.THREE = require('three');
 require('./OrbitControls');
 
+if (!Object.hasOwnProperty(THREE.Vector3.prototype, 'toString')) {
+	THREE.Vector3.prototype.toString = function(){
+		return `Vector3(${this.x}, ${this.y}, ${this.z})`;
+	};
+}
+
 const raf = window.requestAnimationFrame;
 
 let renderer = new THREE.WebGLRenderer();
@@ -73,6 +79,7 @@ global.info = {
 		this.currAnimpak = this.animpak[0];
 		this.luts = [];
 		this.shaders = [];
+		this.metadata = {};
 	},
 	populateSidebar() {
 		for (let [i, val] of this.texpak.entries()){
@@ -110,6 +117,29 @@ global.info = {
 			}
 		}
 		
+		{
+			let { meta1 } = this.metadata;
+			$('#metaList1 [name=meta1_01]').val(meta1.unk01);
+			$('#metaList1 [name=meta1_02]').val(meta1.unk02);
+			$('#metaList1 [name=meta1_03]').val(meta1.unk03);
+			$('#metaList1 [name=meta1_04]').val(meta1.unk04);
+			$('#metaList1 [name=meta1_05]').val(meta1.boundingBoxMin);
+			$('#metaList1 [name=meta1_06]').val(meta1.boundingBoxMax);
+			$('#metaList1 [name=meta1_07]').val(meta1.unk07);
+			$('#metaList1 [name=meta1_08]').val(meta1.unk08);
+			$('#metaList1 [name=meta1_09]').val(meta1.unk09);
+			$('#metaList1 [name=meta1_10]').val(meta1.unk10);
+			$('#metaList1 [name=meta1_11]').val(meta1.unk11);
+			for (let i = 0; i < meta1.unk12.length; i++) {
+				$(`#metaList1 [name=meta1_field${i.toString(16)}]`).prop('checked', meta1.unk12[i] !== 0);
+				$(`#metaList1 [name=meta1_field${i.toString(16)}]`).prop('indeterminate', meta1.unk12[i] !== 0 && meta1.unk12[i] !== 1);
+			}
+		}{
+			let { meta2 } = this.metadata;
+			for (let i = 0; i < meta2.length; i++) {
+				
+			}
+		}
 	},
 	
 	texpak: null,
@@ -169,6 +199,11 @@ global.info = {
 			//ERROR: 0:277: '<' : wrong operand types - no operation '<' exists that takes a left-hand operand of type 'highp float' and a right operand of type 'const int' (or there is no acceptable conversion)
 		}
 	},
+	
+	metadata: {},
+	markMetadata(data) {
+		this.metadata = data;
+	}
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
