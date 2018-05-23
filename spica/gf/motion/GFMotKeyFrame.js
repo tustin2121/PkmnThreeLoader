@@ -12,6 +12,13 @@ class GFMotKeyFrame {
 		this.slope = slope;
 	}
 	
+	static hashCode(prevHash, { frame, value, slope }) {
+		prevHash = (((prevHash * 43) - prevHash) + frame)|0;
+		prevHash = (((prevHash * 17) - prevHash) + ((value * 103)|0))|0;
+		prevHash = (((prevHash * 29) - prevHash) + ((slope * 47)|0))|0;
+		return prevHash;
+	}
+	
 	/**
 	 * @param {list<>} keyframes
 	 * @param {BufferedReader} data
@@ -31,8 +38,8 @@ class GFMotKeyFrame {
 			case 2: break; //No keyframes for this track, even though there are keyframes for other u/v components on the same vector 2
 			
 			case 3: // One keyframe, a constant
-				keyframes.push(new GFMotKeyFrame({ frame:0, value:data.readFloat32(), slope:0 })); 
-				break; 
+				keyframes.push({ frame:0, value:data.readFloat32(), slope:0 });
+				break;
 			
 			// Key Frame List
 			// case 1:
@@ -66,7 +73,7 @@ class GFMotKeyFrame {
 			
 			default: //Not yet seen
 				console.warn(`UNKNOWN KEYFRAME TYPE!`);
-				break; 
+				break;
 		}
 		return;
 		

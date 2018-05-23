@@ -16,7 +16,9 @@ class GFMotionPack {
 			let addr = data.readUint32();
 			if (addr === 0) continue;
 			data.offset = pos + addr;
-			this.animations.push(new GFMotion(data, i));
+			let mot = new GFMotion(data, i);
+			if (global.info) global.info.markAnimation(i, mot);
+			this.animations.push(mot);
 		}
 	}
 	

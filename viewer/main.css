@@ -155,17 +155,6 @@ body {
 	direction: rtl;
 }
 
-#props ul li:nth-of-type(even) {
-	background-color: azure;
-}
-#props ul li {
-	padding: 2px;
-	padding-left: 2em;
-	background-color: white;
-	color: black;
-	list-style-type: none;
-	cursor: pointer;
-}
 #props ul {
 	margin: 0;
 	padding: 4px 2px 2px;
@@ -174,4 +163,30 @@ body {
 }
 #props ul::before {
 	content: attr(name);
+}
+#props li:nth-of-type(even) {
+	background-color: azure;
+}
+#props li {
+	padding: 2px;
+	background-color: white;
+	color: black;
+	list-style-type: none;
+	cursor: pointer;
+}
+#props li[slot]::before {
+	content: attr(slot)': ';
+	display: inline-block;
+	width: 1.7em;
+	padding-right: 0.3em;
+	text-align: right;
+}
+#props ul li {
+	padding-left: 2em;
+}
+#props li span.dup {
+    display: inline-block;
+    float: right;
+    color: red;
+	font-size: 0.8em;
 }

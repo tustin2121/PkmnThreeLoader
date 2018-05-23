@@ -97,6 +97,7 @@ PARSE_PAK[3] = function(data, header, out={}) {
 // Parse Pak 4: Battle Animations
 PARSE_PAK[4] = function(data, header, out={}) {
 	if (header.entries.length !== 32) throw new ReferenceError('Invalid number of entries for Pack 4!');
+	if (global.info) global.info.markAnimationPack(4);
 	let motionpack = parseMotionPack(data, header, [
 		'idle0', //0
 		'idle0_fidget0',
@@ -106,14 +107,14 @@ PARSE_PAK[4] = function(data, header, out={}) {
 		'appear_land',
 		'appear_hover', //6
 		'mega_roar', //7
-		'physatk0', //8
-		'physatk1',
-		'physatk2',
-		'physatk3',
-		'splatk0', //12
-		'splatk1',
-		'splatk2',
-		'splatk3',
+		'atk_phys0', //8
+		'atk_phys1',
+		'atk_phys2',
+		'atk_phys3',
+		'atk_sp0', //12
+		'atk_sp1',
+		'atk_sp2',
+		'atk_sp3',
 		'hit0', //16
 		'faint', //17
 		null,
@@ -135,6 +136,7 @@ PARSE_PAK[4] = function(data, header, out={}) {
 // Parse Pak 5: PokemonAmie Animations
 PARSE_PAK[5] = function(data, header, out={}) {
 	if (header.entries.length !== 40) throw new ReferenceError('Invalid number of entries for Pack 5!');
+	if (global.info) global.info.markAnimationPack(5);
 	let motionpack = parseMotionPack(data, header, [
 		'idle1', //0
 		null,
@@ -181,6 +183,7 @@ PARSE_PAK[5] = function(data, header, out={}) {
 // Parse Pak 6: General Animations
 PARSE_PAK[6] = function(data, header, out={}) {
 	if (header.entries.length !== 27) throw new ReferenceError('Invalid number of entries for Pack 6!');
+	if (global.info) global.info.markAnimationPack(6);
 	let motionpack = parseMotionPack(data, header, [
 		'idle2', //0
 		null,
@@ -214,6 +217,7 @@ PARSE_PAK[6] = function(data, header, out={}) {
 // Parse Pak 7: Misc Animations
 PARSE_PAK[7] = function(data, header, out={}) {
 	if (header.entries.length !== 71) throw new ReferenceError('Invalid number of entries for Pack 7!');
+	if (global.info) global.info.markAnimationPack(7);
 	let motionpack = parseMotionPack(data, header, [
 		null, //0
 		null,
@@ -361,6 +365,7 @@ function parseMotionPack(data, header, names) {
 		
 		let mot = new GFMotion(data, i);
 		if (names) mot.name = names[i];
+		if (global.info) global.info.markAnimation(i, mot);
 		motionpack.push(mot);
 	}
 	return motionpack;
@@ -381,6 +386,7 @@ function parseExtraMotionPack(data, header, names) {
 		
 		let mot = new GFMotion(data, i);
 		if (names) mot.name = names[i];
+		if (global.info) global.info.markAnimation(i, mot);
 		motionpack.push(mot);
 	}
 	// Extra sections include more meta data

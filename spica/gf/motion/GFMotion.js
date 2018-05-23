@@ -22,6 +22,7 @@ class GFMotion {
 		this.skeletonAnimation = null; /** @type {GFSkeletonMot} */
 		this.materialAnimation = null; /** @type {GFMaterialMot} */
 		this.visibilityAnimation = null; /** @type {GFVisibilityMot} */
+		this.animHash = null;
 		
 		if (!data) return this;
 		let pos = data.offset;
@@ -45,7 +46,7 @@ class GFMotion {
 		this.isBlended = (data.readUint16() & 1) != 0; //probably
 		this.animRegionMin = data.readVector3();
 		this.animRegionMax = data.readVector3();
-		let animHash = data.readUint32();
+		this.hashid = data.readUint32();
 		
 		if (console.PARSE_DEBUG) console.PARSE_DEBUG['animNum'] = index;
 		
@@ -64,6 +65,17 @@ class GFMotion {
 					break;
 			}
 		}
+	}
+	
+	calcAnimHash() {
+		if (this.animHash === null) {
+			let hash = 0;
+			if (this.skeletonAnimation) hash ^= this.skeletonAnimation.calcAnimHash();
+			if (this.materialAnimation) hash ^= this.materialAnimation.calcAnimHash();
+			if (this.visibilityAnimation) hash ^= this.visibilityAnimation.calcAnimHash();
+			this.animHash = hash;
+		}
+		return this.animHash;
 	}
 	
 	toThree() {

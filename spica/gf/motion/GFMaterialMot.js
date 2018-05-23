@@ -36,6 +36,17 @@ class GFMotUVTransform {
 			flags >>= 3;
 		}
 	}
+	
+	calcAnimHash() {
+		let hash = this.name.split('').reduce((prev,curr)=> (((prev << 5) - prev) + curr.charCodeAt(0))|0, 0);
+		hash = ((hash << 5) * (this.unitIndex+1))|0;
+		hash = this.scaleX.reduce(GFMotKeyFrame.hashCode, hash);
+		hash = this.scaleY.reduce(GFMotKeyFrame.hashCode, hash);
+		hash = this.rotX.reduce(GFMotKeyFrame.hashCode, hash);
+		hash = this.transX.reduce(GFMotKeyFrame.hashCode, hash);
+		hash = this.transY.reduce(GFMotKeyFrame.hashCode, hash);
+		return hash;
+	}
 }
 
 class GFMaterialMot {
@@ -60,6 +71,14 @@ class GFMaterialMot {
 				this.materials.push(new GFMotUVTransform(data, matNames[i], frameCount));
 			}
 		}
+	}
+	
+	calcAnimHash() {
+		let hash = (this.materials.length * 23) % 0xFFFFFFFF;
+		for (let mat of this.materials) {
+			hash ^= mat.calcAnimHash();
+		}
+		return hash;
 	}
 	
 	toThreeTracks(frameCount) {

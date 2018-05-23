@@ -14,6 +14,13 @@ class GFMotBoolean {
 			this.values.push((val & (1 << bit)) != 0);
 		}
 	}
+	
+	calcAnimHash() {
+		let hash = this.name.split('').reduce((prev,curr)=> (((prev << 5) - prev) + curr.charCodeAt(0))|0, 0);
+		hash = ((hash << 5) * (this.values.length))|0;
+		// hash = this.values.reduce(GFMotKeyFrame.hashCode, hash); //TODO?
+		return hash;
+	}
 }
 
 class GFVisibilityMot {
@@ -30,6 +37,14 @@ class GFVisibilityMot {
 		for (let name of meshNames) {
 			this.visibilities.push(new GFMotBoolean(data, name, frameCount+1));
 		}
+	}
+	
+	calcAnimHash() {
+		let hash = (this.visibilities.length * 41) % 0xFFFFFFFF;
+		for (let vis of this.visibilities) {
+			hash ^= vis.calcAnimHash();
+		}
+		return hash;
 	}
 	
 	toThreeTracks(frameCount) {

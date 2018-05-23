@@ -67,16 +67,18 @@ hljs.configure({
 
 global.info = {
 	clear() {
-		this.texpak = [];
-		this.currTexpak = null;
+		this.texpak = [{}];
+		this.currTexpak = this.texpak[0];
+		this.animpak = [[]];
+		this.currAnimpak = this.animpak[0];
 		this.luts = [];
 		this.shaders = [];
 	},
 	populateSidebar() {
-		$('#texturePackList').empty();
 		for (let [i, val] of this.texpak.entries()){
-			if (!val) continue;
-			let $p = $(`<ul name="Texture Pack ${i}">`);
+			$(`#texList${i}`).empty().hide();
+			if (!val || !Object.keys(val).length) continue;
+			let $p = $(`#texList${i}`).show();
 			for (let [name, texInfo] of Object.entries(val)) {
 				let $t = $(`<li>${texInfo.tex.name}</li>`).appendTo($p);
 				$t.on('dblclick', ()=>{
@@ -86,13 +88,31 @@ global.info = {
 					});
 				});
 			}
-			$('#texturePackList').append($p);
 		}
-		
+		let animHashes = new Map();
+		for (let [i, val] of this.animpak.entries()) {
+			$(`#animList${i}`).empty().hide();
+			if (!val || !val.length) continue;
+			let $p = $(`#animList${i}`).show();
+			for (let [num, animInfo] of Object.entries(val)) {
+				let $t = $(`<li slot="${num}">${animInfo.anim.name || '[unnamed_'+i+':'+num+']'}</li>`).appendTo($p);
+				if (animHashes.has(animInfo.hash)) {
+					$t.append(`<span class="dup">dup of '${animHashes.get(animInfo.hash)}'</span>`);
+				} else {
+					animHashes.set(animInfo.hash, animInfo.anim.name);
+				}
+				// $t.on('dblclick', ()=>{
+				// 	displayTexture(animInfo.canvas);
+				// 	animInfo.tex.decodeData().then(x=>{
+				// 		animInfo.repaint();
+				// 	});
+				// });
+			}
+		}
 		
 	},
 	
-	texpak: [],
+	texpak: null,
 	currTexpak: null,
 	markTexturePack(num) {
 		this.currTexpak = this.texpak[num] = {};
@@ -120,6 +140,16 @@ global.info = {
 				this._painted = true;
 			}
 		};
+	},
+	
+	animpak: null,
+	currAnimpak: null,
+	markAnimationPack(num) {
+		this.currAnimpak = this.animpak[num] = [];
+	},
+	markAnimation(i, anim) {
+		this.currAnimpak[i] = { anim, hash:anim.calcAnimHash() };
+		
 	},
 	
 	luts: {},

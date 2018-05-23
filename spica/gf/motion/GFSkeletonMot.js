@@ -48,6 +48,21 @@ class GFMotBoneTransform {
 		}
 	}
 	
+	calcAnimHash() {
+		let hash = this.name.split('').reduce((prev,curr)=> (((prev << 5) - prev) + curr.charCodeAt(0))|0, 0);
+		if (this.isAxisAngle) hash = (hash << 5)|0;
+		hash = this.scaleX.reduce(GFMotKeyFrame.hashCode, hash);
+		hash = this.scaleY.reduce(GFMotKeyFrame.hashCode, hash);
+		hash = this.scaleZ.reduce(GFMotKeyFrame.hashCode, hash);
+		hash = this.rotX.reduce(GFMotKeyFrame.hashCode, hash);
+		hash = this.rotY.reduce(GFMotKeyFrame.hashCode, hash);
+		hash = this.rotZ.reduce(GFMotKeyFrame.hashCode, hash);
+		hash = this.transX.reduce(GFMotKeyFrame.hashCode, hash);
+		hash = this.transY.reduce(GFMotKeyFrame.hashCode, hash);
+		hash = this.transZ.reduce(GFMotKeyFrame.hashCode, hash);
+		return hash;
+	}
+	
 	/**
 	 * @type {List<>} keyframes
 	 * @type {float} frame
@@ -74,6 +89,14 @@ class GFSkeletonMot {
 		for (let name of boneNames) {
 			this.bones.push(new GFMotBoneTransform(data, name, frameCount));
 		}
+	}
+	
+	calcAnimHash() {
+		let hash = (this.bones.length * 17) % 0xFFFFFFFF;
+		for (let bone of this.bones) {
+			hash ^= bone.calcAnimHash();
+		}
+		return hash;
 	}
 	
 	toThreeTracks(frameCount) {
