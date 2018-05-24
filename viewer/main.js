@@ -80,6 +80,7 @@ global.info = {
 		this.luts = [];
 		this.shaders = [];
 		this.metadata = {};
+		this.bones = [];
 	},
 	populateSidebar() {
 		for (let [i, val] of this.texpak.entries()){
@@ -182,6 +183,15 @@ global.info = {
 		
 	},
 	
+	bones: [],
+	markSkeleton(bones) {
+		if (!this.bones.length) {
+			this.bones = bones;
+		} else {
+			
+		}
+	},
+	
 	luts: {},
 	markLUT(lut) {
 		
@@ -203,7 +213,7 @@ global.info = {
 	metadata: {},
 	markMetadata(data) {
 		this.metadata = data;
-	}
+	},
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
