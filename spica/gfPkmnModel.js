@@ -403,16 +403,16 @@ function parseExtraMotionPack(data, header, names) {
 				// It has a bone name that is 0x40 long (null padded), followed by 1 int and 5 floats.
 				motionpack.extradata[i] = data.readBytes(entry.length);
 			} break;
-			case 1: // Right/Both Eye Expression Map
-			case 2: // Left Eye Expression Map
-			case 3: // ?
-			case 4: // Mouth Expression Map
+			case 1: // Eyes Expression Map (Right Eye / Head 1)
+			case 2: // Eyes Expression Map (Left Eye / Head 2)
+			case 3: // Eyes Expression Map (Head 3)
+			case 4: // Mouth Expression Map (Head 1)
+			case 5: // Mouth Expression Map (Head 2)
+			case 6: // Mouth Expression Map (Head 3)
 			{
 				let mot = new GFMotion(data, i);
 				motionpack.extradata[i] = mot;
 			} break;
-			case 5: motionpack.extradata[i] = true; break; //Unknown, no examples yet
-			case 6: motionpack.extradata[i] = true; break; //Unknown, no examples yet
 			case 7: {
 				// Constant motion animation - run constantly under all other animations, and some animations can override.
 				// Used for Koffing's smoke, Mega Steelix's crystals

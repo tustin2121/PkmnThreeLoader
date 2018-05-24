@@ -37,6 +37,7 @@ for (const file of files) {
 	for (let i = 0; i < 16; i++) {
 		line += `${reader.readUint16()}, `;
 	}
+	line += `${reader.readUint8()}, `;
 	line += `${file}\n`;
 	OUT.write(line);
 }
