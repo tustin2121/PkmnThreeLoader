@@ -105,13 +105,17 @@ class GFModel {
 				let b = bone.toThree();
 				bones.push(b);
 				boneNames[bone.name] = b;
-				if (bone.parent) boneNames[bone.parent].add(b);
+				if (bone.parent) {
+					b.rotation.setFromVector3(boneNames[bone.parent].worldToLocal(b.rotation.toVector3()));
+					boneNames[bone.parent].add(b);
+				}
 			}
 			return new Skeleton(bones);
 		})();
 		skeleton.calculateInverses();
-		obj.userData.skeleton = skeleton;
+		// obj.userData.skeleton = skeleton;
 		obj.skeleton = skeleton;
+		obj.add(skeleton.bones[0]);
 		
 		// Materials
 		let mats = {};

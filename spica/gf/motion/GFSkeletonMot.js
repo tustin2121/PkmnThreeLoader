@@ -104,9 +104,9 @@ class GFSkeletonMot {
 		
 		let tracks = [];
 		for (let bone of this.bones) {
-			tracks.push(...makeTrack(`.bones[${this.name}].scale`, bone.scaleX, bone.scaleY, bone.scaleZ));
-			tracks.push(...makeTrack(`.bones[${this.name}].rotation`, bone.rotX, bone.rotY, bone.rotZ));
-			tracks.push(...makeTrack(`.bones[${this.name}].position`, bone.transX, bone.transY, bone.transZ));
+			tracks.push(...makeTrack(`.bones[${bone.name}].scale`, bone.scaleX, bone.scaleY, bone.scaleZ));
+			tracks.push(...makeTrack(`.bones[${bone.name}].rotation`, bone.rotX, bone.rotY, bone.rotZ));
+			tracks.push(...makeTrack(`.bones[${bone.name}].position`, bone.transX, bone.transY, bone.transZ));
 		}
 		return tracks;
 		
@@ -148,6 +148,7 @@ class GFSkeletonMot {
 				//TODO frame.slope; ???
 			}
 			let track = new NumberKeyframeTrack(path, times, values);
+			return track;
 		}
 	}
 }

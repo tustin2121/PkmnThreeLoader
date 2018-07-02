@@ -14,9 +14,10 @@ class GFBone {
 	toThree() {
 		const { Bone } = require('three');
 		let bone = new Bone();
+		bone.userData.flags = this.flags;
 		bone.name = this.name;
 		bone.position.copy(this.translation);
-		bone.rotation.setFromVector3 (this.rotation);
+		bone.rotation.setFromVector3(this.rotation, "ZYX");
 		bone.scale.copy(this.scale);
 		return bone;
 	}

@@ -52,18 +52,21 @@ class GFVisibilityMot {
 		
 		let tracks = [];
 		for (let vis of this.visibilities) {
-			tracks.push(...makeBoolTrack(`${this.name}.visible`, vis.values));
+			tracks.push(makeBoolTrack(`${vis.name}.visible`, vis.values));
 		}
 		return tracks;
 		
 		function makeBoolTrack(path, vt) {
 			let times=[], values=[];
-			for (let frame of vt) {
-				times.push(frame.frame);
-				values.push(frame.value);
-				//TODO frame.slope; ???
+			let val = undefined;
+			for (let i = 0; i < vt.length; i++) {
+				if (val === vt[i]) continue;
+				times.push(i);
+				values.push(vt[i]);
+				val = vt[i];
 			}
 			let track = new BooleanKeyframeTrack(path, times, values);
+			return track;
 		}
 	}
 }

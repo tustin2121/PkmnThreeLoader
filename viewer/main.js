@@ -22,11 +22,13 @@ scene.add(new THREE.GridHelper(200, 20));
 scene.add(new THREE.AxesHelper(50));
 
 let camera = new THREE.PerspectiveCamera(45, 1, 0.5, 100000);
-camera.position.set(200, 200, 0);
+camera.position.set(0, 200, 200);
 scene.add(camera);
 
 let root = new THREE.Object3D();
 scene.add(root);
+
+let debugNodes = {};
 
 let trackball = new THREE.OrbitControls(camera, renderer.domElement);
 global.loadedFiles = null;
@@ -116,6 +118,10 @@ global.info = {
 				// 	});
 				// });
 			}
+		}
+		$('#boneList').empty();
+		for (let bone of this.bones) {
+			$('#boneList').append(`<li>${bone.name}</li>`);
 		}
 		
 		{
@@ -264,10 +270,16 @@ $('#props input[name=poptShadow]').on('click', function(){
 	displayPokemonModel();
 });
 $('#props input[name=poptMeta]').on('click', function(){
-	displayPokemonModel();
+	// displayPokemonModel();
+	if (debugNodes['metaHelper']) debugNodes['metaHelper'].visible = $(this).is(':checked');
 });
 $('#props input[name=poptModelBound]').on('click', function(){
-	displayPokemonModel();
+	// displayPokemonModel();
+	if (debugNodes['boundingHelper']) debugNodes['boundingHelper'].visible = $(this).is(':checked');
+});
+$('#props input[name=poptSkeleton]').on('click', function(){
+	// displayPokemonModel();
+	if (debugNodes['skeletonHelper']) debugNodes['skeletonHelper'].visible = $(this).is(':checked');
 });
 $('#props input[name=poptColor]').on('click', function(){
 	displayPokemonModel();
@@ -388,6 +400,7 @@ async function displayModelpack(pak) {
 	root.add(await pak.toThree());
 }
 async function displayPokemonModel() {
+	debugNodes = {};
 	let paks = global.loadedFiles;
 	root.remove(...root.children);
 	$('#pokemonDisplayOpts').show();
@@ -406,22 +419,34 @@ async function displayPokemonModel() {
 		mon.name = "Pokemon";
 		mon.children[1].visible = false;
 		root.add(mon); //TODO modelpack instead of model
-	}
-	if ($('#props input[name=poptMeta]').is(':checked')) {
+		
+		{
+			let node = new THREE.SkeletonHelper(mon.children[0].skeleton.bones[0]);
+			node.visible = $('#props input[name=poptSkeleton]').is(':checked');
+			root.add(node);
+			debugNodes['skeletonHelper'] = node;
+			global.info.markSkeleton(mon.children[0].skeleton.bones);
+		}
+	}{
+		let node = new THREE.Group();
 		{
 			let point = new THREE.Mesh(new THREE.SphereBufferGeometry(), new THREE.MeshBasicMaterial());
 			point.position.copy(paks[8].meta1.unk07);
-			root.add(point);
+			node.add(point);
 		}{
 			let box = new THREE.Box3(paks[8].meta1.boundingBoxMin, paks[8].meta1.boundingBoxMax);
 			let help = new THREE.Box3Helper(box);
-			root.add(help);
+			node.add(help);
 		}
-	}
-	if ($('#props input[name=poptModelBound]').is(':checked')) {
+		node.visible = $('#props input[name=poptMeta]').is(':checked');
+		root.add(node);
+		debugNodes['metaHelper'] = node;
+	}{
 		let box = new THREE.Box3(paks[0].modelpack.models[0].boundingBoxMin, paks[0].modelpack.models[0].boundingBoxMax);
 		let help = new THREE.Box3Helper(box, 0x00FF00);
+		help.visible = $('#props input[name=poptModelBound]').is(':checked');
 		root.add(help);
+		debugNodes['boundingHelper'] = help;
 	}
 	global.info.populateSidebar();
 }
