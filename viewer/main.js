@@ -29,6 +29,8 @@ let root = new THREE.Object3D();
 scene.add(root);
 
 let debugNodes = {};
+let animMixer = null;
+let animclock = new THREE.Clock();
 
 let trackball = new THREE.OrbitControls(camera, renderer.domElement);
 global.loadedFiles = null;
@@ -111,17 +113,14 @@ global.info = {
 				} else {
 					animHashes.set(animInfo.hash, animInfo.anim.name);
 				}
-				// $t.on('dblclick', ()=>{
-				// 	displayTexture(animInfo.canvas);
-				// 	animInfo.tex.decodeData().then(x=>{
-				// 		animInfo.repaint();
-				// 	});
-				// });
+				$t.on('dblclick', ()=>{
+					playAnimation(animInfo);
+				});
 			}
 		}
 		$('#boneList').empty();
 		for (let bone of this.bones) {
-			$('#boneList').append(`<li>${bone.name}</li>`);
+			let $t = $(`<li>${bone.name}</li>`).appendTo('#boneList');
 		}
 		
 		{
@@ -185,7 +184,8 @@ global.info = {
 		this.currAnimpak = this.animpak[num] = [];
 	},
 	markAnimation(i, anim) {
-		this.currAnimpak[i] = { anim, hash:anim.calcAnimHash() };
+		let clip = anim.toThree();
+		this.currAnimpak[i] = { anim, clip, hash:anim.calcAnimHash() };
 		
 	},
 	
@@ -305,6 +305,8 @@ function resize() {
 	renderer.setSize(view.innerWidth(), view.innerHeight(), true);
 }
 function redraw() {
+	const dt = animclock.getDelta();
+	if (animMixer) animMixer.update(dt);
 	trackball.update();
 	renderer.render(scene, camera);
 	raf(redraw);
@@ -420,6 +422,8 @@ async function displayPokemonModel() {
 		mon.children[1].visible = false;
 		root.add(mon); //TODO modelpack instead of model
 		
+		animMixer = new THREE.AnimationMixer(mon.children[0]);
+		animMixer.timeScale = 30;
 		{
 			let node = new THREE.SkeletonHelper(mon.children[0].skeleton.bones[0]);
 			node.visible = $('#props input[name=poptSkeleton]').is(':checked');
@@ -451,6 +455,11 @@ async function displayPokemonModel() {
 	global.info.populateSidebar();
 }
 
+function playAnimation({ clip }) {
+	animMixer.stopAllAction();
+	let action = animMixer.clipAction(clip);
+	action.play();
+}
 
 
 clearDisplay();

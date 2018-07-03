@@ -32,11 +32,15 @@ class GFMotBoneTransform {
 				case 0: GFMotKeyFrame.setList(this.scaleX, data, flags, frameCount, end-data.offset); break;
 				case 1: GFMotKeyFrame.setList(this.scaleY, data, flags, frameCount, end-data.offset); break;
 				case 2: GFMotKeyFrame.setList(this.scaleZ, data, flags, frameCount, end-data.offset); break;
-				
+				//*
 				case 3: GFMotKeyFrame.setList(this.rotX, data, flags, frameCount, end-data.offset); break;
 				case 4: GFMotKeyFrame.setList(this.rotY, data, flags, frameCount, end-data.offset); break;
 				case 5: GFMotKeyFrame.setList(this.rotZ, data, flags, frameCount, end-data.offset); break;
-				
+				/*/
+				case 3: GFMotKeyFrame.setList(this.rotZ, data, flags, frameCount, end-data.offset); break;
+				case 4: GFMotKeyFrame.setList(this.rotY, data, flags, frameCount, end-data.offset); break;
+				case 5: GFMotKeyFrame.setList(this.rotX, data, flags, frameCount, end-data.offset); break;
+				//*/
 				case 6: GFMotKeyFrame.setList(this.transX, data, flags, frameCount, end-data.offset); break;
 				case 7: GFMotKeyFrame.setList(this.transY, data, flags, frameCount, end-data.offset); break;
 				case 8: GFMotKeyFrame.setList(this.transZ, data, flags, frameCount, end-data.offset); break;

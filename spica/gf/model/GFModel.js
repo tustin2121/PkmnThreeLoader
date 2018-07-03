@@ -106,10 +106,11 @@ class GFModel {
 				bones.push(b);
 				boneNames[bone.name] = b;
 				if (bone.parent) {
-					b.rotation.setFromVector3(boneNames[bone.parent].worldToLocal(b.rotation.toVector3()));
+					// b.rotation.setFromVector3(boneNames[bone.parent].worldToLocal(b.rotation.toVector3()));
 					boneNames[bone.parent].add(b);
 				}
 			}
+			bones[0].updateMatrixWorld(true); //force matrixWorld update, so zero-pose is correct on bind() below
 			return new Skeleton(bones);
 		})();
 		skeleton.calculateInverses();
@@ -202,7 +203,8 @@ class GFModel {
 				let mesh;
 				if (skinned) {
 					mesh = new SkinnedMesh(geom, mats[gfSub.matName]);
-					mesh.bind(skeleton);
+					mesh.bindMode = 'detached';
+					mesh.bind(skeleton, skeleton.bones[0].matrixWorld);
 				}
 				else {
 					mesh = new Mesh(geom, mats[gfSub.matName]);
