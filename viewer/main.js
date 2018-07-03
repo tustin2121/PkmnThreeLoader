@@ -423,7 +423,7 @@ async function displayPokemonModel() {
 		root.add(mon); //TODO modelpack instead of model
 		
 		animMixer = new THREE.AnimationMixer(mon.children[0]);
-		animMixer.timeScale = 30;
+		// animMixer.timeScale = 30;
 		{
 			let node = new THREE.SkeletonHelper(mon.children[0].skeleton.bones[0]);
 			node.visible = $('#props input[name=poptSkeleton]').is(':checked');

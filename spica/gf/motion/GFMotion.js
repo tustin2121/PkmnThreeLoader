@@ -86,7 +86,7 @@ class GFMotion {
 		if (this.materialAnimation) tracks.push(...this.materialAnimation.toThreeTracks(this.frameCount));
 		if (this.visibilityAnimation) tracks.push(...this.visibilityAnimation.toThreeTracks(this.frameCount));
 		
-		let clip = new AnimationClip(this.name, this.frameCount, tracks);
+		let clip = new AnimationClip(this.name, this.frameCount/30, tracks);
 		return clip;
 	}
 }

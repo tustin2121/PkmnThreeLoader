@@ -70,14 +70,26 @@ class GFMotBoneTransform {
 	/**
 	 * @type {List<>} keyframes
 	 * @type {float} frame
-	 * @type {float} value
 	 */
-	static setFrameValue(keyframes, frame, value) {
-		if (keyframes.length === 1) value = keyframes[0].value;
-		if (keyframes.length < 2) return value;
+	static getFrameValue(keyframes, frame) {
+		//https://github.com/gdkchan/SPICA/blob/master/SPICA/Formats/GFL2/Motion/GFMotBoneTransform.cs#L74
+		if (keyframes.length === 1) return keyframes[0].value;
+		if (keyframes.length < 2) return 0;
 		
-		//TODO https://github.com/gdkchan/SPICA/blob/master/SPICA/Formats/GFL2/Motion/GFMotBoneTransform.cs#L74
+		let LHS = keyframes.filter(x=> x.frame <= frame).pop();
+		let RHS = keyframes.filter(x=> x.frame >= frame).shift();
+		
+		if (LHS.frame === RHS.frame) return LHS.value;
+		let framediff = frame - LHS.frame;
+		let weight = framediff / (RHS.frame - LHS.frame);
+		
+		// Hermite interpolation
+		let res = LHS.value + (LHS.value - RHS.value) * (2 * weight - 3) * weight * weight;
+		res += (framediff * (weight - 1)) * (LHS.slope * (weight - 1) + RHS.slope * weight);
+		return res;
 	}
+	
+	
 }
 
 class GFSkeletonMot {
@@ -104,15 +116,49 @@ class GFSkeletonMot {
 	}
 	
 	toThreeTracks(frameCount) {
-		const { VectorKeyframeTrack, NumberKeyframeTrack } = require('three');
+		const { VectorKeyframeTrack, NumberKeyframeTrack, QuaternionKeyframeTrack, Quaternion, Vector3, Euler } = require('three');
 		
 		let tracks = [];
 		for (let bone of this.bones) {
 			tracks.push(...makeTrack(`.bones[${bone.name}].scale`, bone.scaleX, bone.scaleY, bone.scaleZ));
-			tracks.push(...makeTrack(`.bones[${bone.name}].rotation`, bone.rotX, bone.rotY, bone.rotZ));
+			tracks.push(...makeRotationTrack(`.bones[${bone.name}].quaternion`, bone));
 			tracks.push(...makeTrack(`.bones[${bone.name}].position`, bone.transX, bone.transY, bone.transZ));
 		}
 		return tracks;
+		
+		function makeRotationTrack(path, bone) {
+			const q = new Quaternion();
+			const v = new Vector3();
+			const e = new Euler();
+			
+			if (!bone.rotX.length && !bone.rotY.length && !bone.rotZ.length) return [];
+			let vals = [], times = [];
+			
+			for (let i = 0; i < frameCount; i++) {
+				v.x = GFMotBoneTransform.getFrameValue(bone.rotX, i);
+				v.y = GFMotBoneTransform.getFrameValue(bone.rotY, i);
+				v.z = GFMotBoneTransform.getFrameValue(bone.rotZ, i);
+				
+				// Note from gdkchan:
+				// When the game uses Axis Angle for rotation, I believe that the original Euler rotation can be ignored,
+                // because otherwise we would need to either convert Euler to Axis Angle or Axis to Euler,
+				// and both conversions are pretty expensive. The vector is already halved as a optimization (needs * 2).
+				if (bone.isAxisAngle) {
+					let angle = v.length() * 2;
+					if (angle > 0) {
+						q.setFromAxisAngle(v.normalize(), angle);
+					} else {
+						q.set(0, 0, 0, 1); //set to identity
+					}
+				} else {
+					e.setFromVector3(v, 'ZYX');
+					q.setFromEuler(e);
+				}
+				times.push(i/30);
+				vals.push(q.x, q.y, q.z, q.w);
+			}
+			return [new QuaternionKeyframeTrack(path, times, vals)];
+		}
 		
 		function makeTrack(path, vx, vy, vz) {
 			let num = 0;
@@ -128,26 +174,12 @@ class GFSkeletonMot {
 				if (vz.length) tracks.push(makeNumTrack(`${path}[z]`, vz));
 				return tracks;
 			// }
-            //
-			// let frameVals = new Array(frameCount);
-			// for (let i = 0, ix = 0, iy = 0, iz = 0; i < frameCount; i++) {
-			// 	let frame = { num:i, x:undefined, y:undefined: z:undefined };
-			// 	if (vx[ix].frame === i) {
-			// 		frame
-			// 	}
-			// }
-            //
-            //
-            //
-			// let times=[], values=[];
-            //
-			// let track = new VectorKeyframeTrack(path, )
 		}
 		
 		function makeNumTrack(path, vt) {
 			let times=[], values=[];
 			for (let frame of vt) {
-				times.push(frame.frame);
+				times.push(frame.frame/30);
 				values.push(frame.value);
 				//TODO frame.slope; ???
 			}

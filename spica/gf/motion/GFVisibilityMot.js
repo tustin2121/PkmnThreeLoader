@@ -61,7 +61,7 @@ class GFVisibilityMot {
 			let val = undefined;
 			for (let i = 0; i < vt.length; i++) {
 				if (val === vt[i]) continue;
-				times.push(i);
+				times.push(i/30);
 				values.push(vt[i]);
 				val = vt[i];
 			}

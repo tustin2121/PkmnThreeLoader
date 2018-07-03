@@ -87,7 +87,8 @@ class GFMaterialMot {
 		let tracks = [];
 		for (let mat of this.materials) {
 			tracks.push(...makeTrack(`${mat.name}.repeat`, mat.scaleX, mat.scaleY));
-			tracks.push(...makeTrack(`${mat.name}.rotation`, mat.rotX));
+			if (mat.rotX.length) 
+				tracks.push(makeNumTrack(`${mat.name}.rotation`, mat.rotX));
 			tracks.push(...makeTrack(`${mat.name}.offset`, mat.transX, mat.transY));
 		}
 		return tracks;
@@ -110,7 +111,7 @@ class GFMaterialMot {
 		function makeNumTrack(path, vt) {
 			let times=[], values=[];
 			for (let frame of vt) {
-				times.push(frame.frame);
+				times.push(frame.frame/30);
 				values.push(frame.value);
 				//TODO frame.slope; ???
 			}
