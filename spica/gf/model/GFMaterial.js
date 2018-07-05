@@ -331,7 +331,7 @@ class GFMaterial {
 			
 			userData: info, //TODO: clear userData when saving off the pokemon
 		};
-		if (this.alphaTest) Object.assign(opts, this.alphaTest.toThree());
+		// if (this.alphaTest) Object.assign(opts, this.alphaTest.toThree());
 		if (this.blendFunction) Object.assign(opts, this.blendFunction.toThree());
 		if (this.colorOperation) Object.assign(opts, this.colorOperation.toThree());
 		//TODO?

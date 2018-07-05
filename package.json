@@ -5,7 +5,7 @@
   "main": "index.js",
   "dependencies": {
     "bytebuffer": "^5.0.1",
-    "nw": "^0.30.0-sdk",
+    "nw": "^0.31.4-sdk",
     "three": "^0.92.0"
   },
   "devDependencies": {},

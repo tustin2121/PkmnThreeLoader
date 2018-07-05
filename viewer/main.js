@@ -11,11 +11,18 @@ if (!Object.hasOwnProperty(THREE.Vector3.prototype, 'toString')) {
 	};
 }
 
-const raf = window.requestAnimationFrame;
+let raf = window.requestAnimationFrame;
 
 let renderer = new THREE.WebGLRenderer();
 renderer.setClearColor(new THREE.Color(0x325d82), 1.0);
 document.getElementById('view').appendChild(renderer.domElement);
+
+if (window.gli) {
+	window.addEventListener('load', ()=>{
+		new gli.host.HostUI(gli.host.inspectContext(renderer.domElement, renderer.context));
+		raf = window.requestAnimationFrame;
+	});
+}
 
 let scene = new THREE.Scene();
 scene.add(new THREE.GridHelper(200, 20));
@@ -310,6 +317,11 @@ function redraw() {
 	trackball.update();
 	renderer.render(scene, camera);
 	raf(redraw);
+	
+	if (window.gli) {
+		let glext = renderer.context.getExtension('GLI_frame_terminator');
+		if (glext) glext.frameTerminator();
+	} 
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////

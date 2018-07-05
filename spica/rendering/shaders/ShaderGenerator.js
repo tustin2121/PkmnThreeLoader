@@ -1,15 +1,25 @@
 // https://github.com/gdkchan/SPICA/blob/master/SPICA.Rendering/Shaders/ShaderGenerator.cs
 
-const { ShaderOpCode } = require('../../pica/shader');
+const { 
+	ShaderOpCode, ShaderOutputReg, ShaderOutputRegName,
+} = require('../../pica/shader');
 
 const GEN_INST = [];
+
+/** 
+ * @typedef {Object} ProcInfo
+ * @property {string} name - Name of the procedure
+ * @property {uint} offset - Starting offset of the procedure
+ * @property {uint} length - Total length of the procedure
+ */
+
 
 class ShaderGenerator {
 	/**
 	 * @param {ShaderBinary} shBin -
 	 */
 	constructor(shBin) {
-		/** @type {Queue<ProcInfo>} */
+		/** @type {Queue<ProcInfo>} - A queue of procedures to be built. */
 		this.procQueue = null;
 		/** @type {Set<string>} */
 		this.procTable = null;
@@ -17,11 +27,12 @@ class ShaderGenerator {
 		this.labels = null;
 		/** @type {ShaderBinary} */
 		this.shBin = shBin;
-		/** @type {string} */
-		this.buffer = '';
-		/** @type {string} */
-		this.ident = null;
-		/** @type {uint} */
+		
+		/** @type {string[]} - The proc currently being built. */
+		this.buffer = null;
+		/** @type {string} - The current indent level for the proc being built. */
+		this.indent = '';
+		/** @type {uint} - Instruction Pointer, to currently being generated instruction. */
 		this.ip = 0;
 		
 		this.vec4UniformNames = new Array(96);
@@ -118,6 +129,72 @@ class ShaderGenerator {
 		return info;
 	}
 	
+	/**
+	 * @param {string} name 
+	 */
+	getValidName(name) {
+		return name.replace(/[^a-zA-Z0-9_]/ig, '');
+	}
+	
+	/**
+	 * 
+	 * @param {ShaderOutputReg[]} regs 
+	 * @param {string} prefix 
+	 * @returns {string[]}
+	 */
+	genOutputs(regs, prefix='') {
+		let out = [];
+		for (let i = 0; i < regs.length; i++) {
+			let reg = regs[i];
+			if (reg.mask) {
+				if (reg.name === ShaderOutputRegName.TexCoord0W) {
+					reg.name = ShaderOutputRegName.TexCoord0;
+				}
+				
+				this.outputNames[i] = `${prefix}${red.nameStr}`;
+				
+				// Shaders can have more than one generic output.
+				// In this case, we need to add a suffix to avoid name collision.
+				if (reg.name === ShaderOutputRegName.Generic) {
+					this.outputNames[i] += '_' + i;
+				}
+				out.push(`out vec4 ${this.outputNames[i]};`);
+			}
+		}
+		return out;
+	}
+	
+	/**
+	 * 
+	 * @param {ShaderProgram} program 
+	 * @param {ProcInfo} proc 
+	 */
+	genProcBody(program, proc) {
+		for (this.ip = proc.offset; this.ip < proc.offset + proc.length; this.ip++) {
+			// Split procedure if a label is found at the current address.
+			// This is done to support Jump instructions.
+			if (this.ip > proc.offset && !!this.labels[this.ip]) {
+				let name = this.labels[this.ip];
+				this.addProc(name, this.ip, (proc.offset + proc.length) - this.ip);
+				this.buffer.push(`\t${name}();`);
+				break;
+			}
+			this.genInst(program, this.shBin.executable[this.ip]);
+		}
+	}
+	
+	addProc() {
+		//TODO!
+	}
+	
+	/**
+	 * 
+	 * @param {ShaderProgram} program 
+	 * @param {uint} inst - Instruction to generate
+	 */
+	genInst(program, inst) {
+		GEN_INST[inst >> 26].call(this, program, inst);
+	}
 }
 
 module.exports = ShaderGenerator;

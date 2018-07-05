@@ -196,7 +196,6 @@ class GFMesh {
 				}
 			}
 			
-			//*
 			cmdReader = new PICACommandReader(indexCmds);
 			let bufferAddr = 0;
 			let bufferCount = 0;
@@ -226,32 +225,6 @@ class GFMesh {
 				}
 				data.offset = idxAddress + SM.indicesLength;
 			}
-			
-			/*/
-			cmdReader = new PICACommandReader(indexCmds);
-			let indexFmt = false;
-			let primitiveCount = 0;
-			
-			while (cmdReader.hasCommand) {
-				let cmd = cmdReader.getCommand();
-				let param = cmd.parameters[0];
-				switch (cmd.register) {
-					case PICARegister.GPUREG_INDEXBUFFER_CONFIG: indexFmt = (param >> 31) !== 0; break;
-					case PICARegister.GPUREG_NUMVERTICES: primitiveCount = param; break;
-				}
-			}
-			SM.rawBuffer = data.readBytes(SM.verticesLength);
-			SM.vertexStride = vertexStride;
-			SM.indices = new Array(primitiveCount);
-			
-			{
-				let pos0 = data.offset;
-				for (let i = 0; i < primitiveCount; i++) {
-					SM.indices[i] = (indexFmt)? data.readUint16() : data.readUint8();
-				}
-				data.offset = pos0 + SM.indicesLength;
-			}
-			*/
 		}
 		
 		data.offset = pos + meshSection.length;

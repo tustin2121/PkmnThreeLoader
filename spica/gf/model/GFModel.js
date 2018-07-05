@@ -91,7 +91,7 @@ class GFModel {
 	toThree() {
 		const {
 			Skeleton, SkinnedMesh, Mesh, BufferGeometry, InterleavedBuffer,
-			InterleavedBufferAttribute, BufferAttribute, Object3D, Box3,
+			InterleavedBufferAttribute, BufferAttribute, Object3D, Box3, Group,
 		} = require('three');
 		
 		let obj = new Object3D();
@@ -202,8 +202,10 @@ class GFModel {
 				
 				let mesh;
 				if (skinned) {
+					mats[gfSub.matName].skinning = true;
 					mesh = new SkinnedMesh(geom, mats[gfSub.matName]);
 					mesh.bindMode = 'detached';
+					// mesh.bind(skeleton, obj.matrixWorld);
 					mesh.bind(skeleton, skeleton.bones[0].matrixWorld);
 				}
 				else {

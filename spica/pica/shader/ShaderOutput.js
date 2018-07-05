@@ -23,7 +23,12 @@ class ShaderOutputReg {
 	constructor() {
 		this.name = ''; /** @type {ShaderOutputRegName} */
 		this.mask = 0; /** @type {uint} */
-	}
+    }
+    
+    get nameStr() {
+        return Object.entries(ShaderOutputRegName).filter(x=>x[1] == this.name)[0][0];
+        // [0] (first object in array) [0] (key name of entry)
+    }
 }
 
 module.exports = { ShaderOutputReg, ShaderOutputRegName };
