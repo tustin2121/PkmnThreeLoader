@@ -186,10 +186,18 @@ class GFModel {
 							bufattr.normalized = false;
 							geom.addAttribute('skinIndex', bufattr);
 						} break;
-						case PICAAttributeName.BoneWeight:
+						case PICAAttributeName.BoneWeight: {
+							let a = new Float32Array(gfSub.verticesCount * 4);
+							for (let i = 0; i < gfSub.verticesCount; i++) {
+								a[(i*4) + 0] = bufattr.getX(i) / 255;
+								a[(i*4) + 1] = bufattr.getY(i) / 255;
+								a[(i*4) + 2] = bufattr.getZ(i) / 255;
+								a[(i*4) + 3] = bufattr.getW(i) / 255;
+							}
+							bufattr = new BufferAttribute(a, 4, true);
 							geom.addAttribute('skinWeight', bufattr);
 							skinned = true;
-							break;
+						} break;
 						default:
 							console.error('Unhandled attribute name!', attr.name);
 							break;
