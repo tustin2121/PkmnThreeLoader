@@ -142,7 +142,8 @@ class GFModel {
 					floatbuf.count = gfSub.verticesCount;
 				}
 				
-				let off = 0, skinned = false;
+				// Parse Explicitly Defined Attributes
+				let off = 0, boned=false, skinned = false;
 				for (let attr of gfSub.attributes) {
 					let buf, size;
 					switch (attr.format) {
@@ -176,23 +177,24 @@ class GFModel {
 							break;
 						case PICAAttributeName.BoneIndex: {
 							// Convert index into boneIndices into bone indices
+							let a = new Uint8Array(gfSub.verticesCount * 4)
 							for (let i = 0; i < gfSub.verticesCount; i++) {
-								let x = gfSub.boneIndices[bufattr.getX(i)] || 255;
-								let y = gfSub.boneIndices[bufattr.getY(i)] || 255;
-								let z = gfSub.boneIndices[bufattr.getZ(i)] || 255;
-								let w = gfSub.boneIndices[bufattr.getW(i)] || 255;
-								bufattr.setXYZW(i, x, y, z, w);
+								a[(i*4)+0] = gfSub.boneIndices[bufattr.getX(i)] || 255;
+								a[(i*4)+1] = gfSub.boneIndices[bufattr.getY(i)] || 255;
+								a[(i*4)+2] = gfSub.boneIndices[bufattr.getZ(i)] || 255;
+								a[(i*4)+3] = gfSub.boneIndices[bufattr.getW(i)] || 255;
 							}
-							bufattr.normalized = false;
+							bufattr = new BufferAttribute(a, 4, false);
 							geom.addAttribute('skinIndex', bufattr);
+							boned = true;
 						} break;
 						case PICAAttributeName.BoneWeight: {
 							let a = new Float32Array(gfSub.verticesCount * 4);
 							for (let i = 0; i < gfSub.verticesCount; i++) {
-								a[(i*4) + 0] = bufattr.getX(i) / 255;
-								a[(i*4) + 1] = bufattr.getY(i) / 255;
-								a[(i*4) + 2] = bufattr.getZ(i) / 255;
-								a[(i*4) + 3] = bufattr.getW(i) / 255;
+								a[(i*4)+0] = bufattr.getX(i) / 255;
+								a[(i*4)+1] = bufattr.getY(i) / 255;
+								a[(i*4)+2] = bufattr.getZ(i) / 255;
+								a[(i*4)+3] = bufattr.getW(i) / 255;
 							}
 							bufattr = new BufferAttribute(a, 4, true);
 							geom.addAttribute('skinWeight', bufattr);
@@ -205,6 +207,38 @@ class GFModel {
 					off += size * attr.elements;
 				}
 				geom.setIndex(new BufferAttribute(new Uint32Array(gfSub.indices), 1, false));
+				
+				// Parse Implied Attributes
+				if (gfSub.boneIndices && gfSub.boneIndices.length == 1) {
+					// Some pokemon have an entire mesh as a rigid part. To save space, they didn't define 
+					// an attribute for bone indexes for these meshes, since it'd just be the same bone for the whole thing.
+					// We need to add the bone as an attribute, however, if we want the mesh to stick with the bone's movement
+					let a = new Uint8Array(gfSub.verticesCount * 4)
+					for (let i = 0; i < gfSub.verticesCount; i++) {
+						a[(i*4)+0] = gfSub.boneIndices[0];
+						a[(i*4)+1] = 255;
+						a[(i*4)+2] = 255;
+						a[(i*4)+3] = 255;
+					}
+					let bufattr = new BufferAttribute(a, 4, false);
+					geom.addAttribute('skinIndex', bufattr);
+					boned = true;
+				}
+				if (boned && !skinned) { 
+					// Some pokemon have rigid parts, and so those meshes have bone indexes, but not skin weights.
+					// We need to add rigid, single-bone skin weights for them.
+					let a = new Float32Array(gfSub.verticesCount * 4);
+					for (let i = 0; i < gfSub.verticesCount; i++) {
+						a[(i*4)+0] = 1;
+						a[(i*4)+1] = 0;
+						a[(i*4)+2] = 0;
+						a[(i*4)+3] = 0;
+					}
+					let bufattr = new BufferAttribute(a, 4, true);
+					geom.addAttribute('skinWeight', bufattr);
+					skinned = true;
+				}
+				
 				geom.boundingBox = new Box3(gfMesh.boundingBoxMax, gfMesh.boundingBoxMin);
 				geom.computeBoundingSphere();
 				

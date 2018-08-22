@@ -37,6 +37,7 @@ scene.add(root);
 
 let debugNodes = {};
 let animMixer = null;
+let currAnim = null;
 let animclock = new THREE.Clock();
 
 let trackball = new THREE.OrbitControls(camera, renderer.domElement);
@@ -302,6 +303,10 @@ $('#props button[name=loadOtherFileBtn]').on('click', async function(){
 		displayModel(global.loadedFiles.modelpack.models[0]); //TODO just display modelpack
 	}
 });
+$('#animStop').on('dblclick', function(){
+	// if (animMixer) animMixer.stopAllAction();
+	playAnimation();
+});
 
 function resize() {
 	let view = $('#view');
@@ -467,10 +472,15 @@ async function displayPokemonModel() {
 	global.info.populateSidebar();
 }
 
-function playAnimation({ clip }) {
-	animMixer.stopAllAction();
-	let action = animMixer.clipAction(clip);
-	action.play();
+function playAnimation({ clip }={}) {
+	if (currAnim) {
+		currAnim.stop();
+		currAnim.enable = false;
+		currAnim = null;
+	}
+	if (!clip) return;
+	currAnim = animMixer.clipAction(clip);
+	currAnim.play();
 }
 
 
