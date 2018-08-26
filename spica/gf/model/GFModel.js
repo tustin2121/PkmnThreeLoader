@@ -89,9 +89,11 @@ class GFModel {
 	}
 	
 	toThree() {
+		require('three/examples/js/BufferGeometryUtils'); //need this first
 		const {
 			Skeleton, SkinnedMesh, Mesh, BufferGeometry, InterleavedBuffer,
-			InterleavedBufferAttribute, BufferAttribute, Object3D, Box3, Bone,
+			InterleavedBufferAttribute, BufferAttribute, Object3D, Box3,
+			BufferGeometryUtils,
 		} = require('three');
 		
 		let obj = new Object3D();
@@ -103,6 +105,7 @@ class GFModel {
 			let scaleBones = [];
 			let boneNames = {};
 			for (let bone of this.skeleton) {
+				if (bone.isModelRoot) continue; //skip
 				let b = bone.toThree();
 				let sb = b.userData.scaleBone;
 				bones.push(b); 
@@ -140,6 +143,9 @@ class GFModel {
 		// Meshes
 		let meshes = [];
 		for (let gfMesh of this.meshes) {
+			let boned=false, skinned = false;
+			let matName = '';
+			let geoms = [];
 			for (let gfSub of gfMesh.submeshes) {
 				let geom = new BufferGeometry();
 				
@@ -155,7 +161,7 @@ class GFModel {
 				}
 				
 				// Parse Explicitly Defined Attributes
-				let off = 0, boned=false, skinned = false;
+				let off = 0;
 				for (let attr of gfSub.attributes) {
 					let buf, size;
 					switch (attr.format) {
@@ -166,27 +172,74 @@ class GFModel {
 					}
 					let bufattr = new InterleavedBufferAttribute(buf, attr.elements, off/size, attr.scale !== 1);
 					switch (attr.name) {
-						case PICAAttributeName.Position:
+						case PICAAttributeName.Position: {
+							let a = new Float32Array(gfSub.verticesCount * 3);
+							for (let i = 0; i < gfSub.verticesCount; i++) {
+								a[(i*3)+0] = bufattr.getX(i);
+								a[(i*3)+1] = bufattr.getY(i);
+								a[(i*3)+2] = bufattr.getZ(i);
+							}
+							bufattr = new BufferAttribute(a, 3, false);
 							geom.addAttribute('position', bufattr);
-							break;
-						case PICAAttributeName.Normal:
+						} break;
+						case PICAAttributeName.Normal: {
+							let a = new Float32Array(gfSub.verticesCount * 3);
+							for (let i = 0; i < gfSub.verticesCount; i++) {
+								a[(i*3)+0] = bufattr.getX(i);
+								a[(i*3)+1] = bufattr.getY(i);
+								a[(i*3)+2] = bufattr.getZ(i);
+							}
+							bufattr = new BufferAttribute(a, 3, false);
 							geom.addAttribute('normal', bufattr);
-							break;
-						case PICAAttributeName.Tangent:
+						} break;
+						case PICAAttributeName.Tangent: {
+							let a = new Float32Array(gfSub.verticesCount * 3);
+							for (let i = 0; i < gfSub.verticesCount; i++) {
+								a[(i*3)+0] = bufattr.getX(i);
+								a[(i*3)+1] = bufattr.getY(i);
+								a[(i*3)+2] = bufattr.getZ(i);
+							}
+							bufattr = new BufferAttribute(a, 3, false);
 							geom.addAttribute('tangent', bufattr);
-							break;
-						case PICAAttributeName.Color:
+						} break;
+						case PICAAttributeName.Color: {
+							let a = new Uint8Array(gfSub.verticesCount * 4)
+							for (let i = 0; i < gfSub.verticesCount; i++) {
+								a[(i*4)+0] = gfSub.boneIndices[bufattr.getX(i)] || 255;
+								a[(i*4)+1] = gfSub.boneIndices[bufattr.getY(i)] || 255;
+								a[(i*4)+2] = gfSub.boneIndices[bufattr.getZ(i)] || 255;
+								a[(i*4)+3] = gfSub.boneIndices[bufattr.getW(i)] || 255;
+							}
+							bufattr = new BufferAttribute(a, 4, false);
 							geom.addAttribute('color', bufattr);
-							break;
-						case PICAAttributeName.TexCoord0:
+						} break;
+						case PICAAttributeName.TexCoord0: {
+							let a = new Float32Array(gfSub.verticesCount * 2);
+							for (let i = 0; i < gfSub.verticesCount; i++) {
+								a[(i*2)+0] = bufattr.getX(i);
+								a[(i*2)+1] = bufattr.getY(i);
+							}
+							bufattr = new BufferAttribute(a, 2, false);
 							geom.addAttribute('uv', bufattr);
-							break;
-						case PICAAttributeName.TexCoord1:
+						} break;
+						case PICAAttributeName.TexCoord1: {
+							let a = new Float32Array(gfSub.verticesCount * 2);
+							for (let i = 0; i < gfSub.verticesCount; i++) {
+								a[(i*2)+0] = bufattr.getX(i);
+								a[(i*2)+1] = bufattr.getY(i);
+							}
+							bufattr = new BufferAttribute(a, 2, false);
 							geom.addAttribute('uv2', bufattr);
-							break;
-						case PICAAttributeName.TexCoord2:
+						} break;
+						case PICAAttributeName.TexCoord2: {
+							let a = new Float32Array(gfSub.verticesCount * 2);
+							for (let i = 0; i < gfSub.verticesCount; i++) {
+								a[(i*2)+0] = bufattr.getX(i);
+								a[(i*2)+1] = bufattr.getY(i);
+							}
+							bufattr = new BufferAttribute(a, 2, false);
 							geom.addAttribute('uv3', bufattr);
-							break;
+						} break;
 						case PICAAttributeName.BoneIndex: {
 							// Convert index into boneIndices into bone indices
 							let a = new Uint8Array(gfSub.verticesCount * 4)
@@ -251,23 +304,28 @@ class GFModel {
 					skinned = true;
 				}
 				
-				geom.boundingBox = new Box3(gfMesh.boundingBoxMax, gfMesh.boundingBoxMin);
-				geom.computeBoundingSphere();
-				
-				let mesh;
-				if (skinned) {
-					mats[gfSub.matName].skinning = true;
-					mesh = new SkinnedMesh(geom, mats[gfSub.matName]);
-					mesh.bindMode = 'detached';
-					// mesh.bind(skeleton, obj.matrixWorld);
-					mesh.bind(skeleton, skeleton.bones[0].matrixWorld);
-				}
-				else {
-					mesh = new Mesh(geom, mats[gfSub.matName]);
-				}
-				mesh.name = gfMesh.name;
-				obj.add(mesh);
+				geoms.push(geom);
+				matName = gfSub.matName;
 			}
+			let geom = BufferGeometryUtils.mergeBufferGeometries(geoms);
+			if (!geom) throw new ReferenceError('Could not merge geometries!');
+			
+			geom.boundingBox = new Box3(gfMesh.boundingBoxMax, gfMesh.boundingBoxMin);
+			geom.computeBoundingSphere();
+			
+			let mesh;
+			if (skinned) {
+				mats[matName].skinning = true;
+				mesh = new SkinnedMesh(geom, mats[matName]);
+				mesh.bindMode = 'detached';
+				// mesh.bind(skeleton, obj.matrixWorld);
+				mesh.bind(skeleton, skeleton.bones[0].matrixWorld);
+			}
+			else {
+				mesh = new Mesh(geom, mats[matName]);
+			}
+			mesh.name = gfMesh.name;
+			obj.add(mesh);
 		}
 		return obj;
 	}
