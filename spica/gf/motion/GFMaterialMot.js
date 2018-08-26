@@ -82,37 +82,70 @@ class GFMaterialMot {
 	}
 	
 	toThreeTracks(frameCount) {
-		const { VectorKeyframeTrack, NumberKeyframeTrack } = require('three');
+		const { VectorKeyframeTrack, NumberKeyframeTrack, InterpolateDiscrete } = require('three');
 		
+		const unitTrans = ['map', 'unkMap', 'normalMap'];
 		let tracks = [];
 		for (let mat of this.materials) {
-			tracks.push(...makeTrack(`${mat.name}.repeat`, mat.scaleX, mat.scaleY));
-			if (mat.rotX.length) 
-				tracks.push(makeNumTrack(`${mat.name}.rotation`, mat.rotX));
-			tracks.push(...makeTrack(`${mat.name}.offset`, mat.transX, mat.transY));
+			let coord = unitTrans[mat.unitIndex];
+			let tn = `${mat.name}_OptMesh.material[${coord}]`;
+			if (mat.scaleX.length) tracks.push(makeNumTrack(`${tn}.repeat[x]`, mat.scaleX));
+			if (mat.scaleY.length) tracks.push(makeNumTrack(`${tn}.repeat[y]`, mat.scaleY));
+			if (mat.rotX.length) tracks.push(makeNumTrack(`${tn}.rotation`, mat.rotX));
+			if (mat.transX.length) tracks.push(makeStepTrack(`${tn}.offset[x]`, mat.transX, { trans:-1, multi:2 }));
+			if (mat.transY.length) tracks.push(makeStepTrack(`${tn}.offset[y]`, mat.transY, { trans:0 }));
 		}
 		return tracks;
 		
-		function makeTrack(path, vx, vy) {
-			let num = 0;
-			if (vx && vx.length) num++;
-			if (vy && vy.length) num++;
-        
-			if (num === 0) return [];
-			// if (num !== 2) {
-				let tracks = [];
-				if (vx.length) tracks.push(makeNumTrack(`${path}.x`, vx));
-				if (vy.length) tracks.push(makeNumTrack(`${path}.y`, vy));
-				return tracks;
-			// }
-			//TODO VectorKeyframeTrack?
-		}
-		
-		function makeNumTrack(path, vt) {
+		//*
+		function makeStepTrack(path, vt, { trans=0, multi=1 }) {
 			let times=[], values=[];
 			for (let frame of vt) {
 				times.push(frame.frame/30);
-				values.push(frame.value);
+				values.push(((1-frame.value)*multi)+trans);
+				//TODO frame.slope; ???
+			}
+			let track = new NumberKeyframeTrack(path, times, values);
+			track.setInterpolation(InterpolateDiscrete);
+			return track;
+		}
+		/*/
+		function makeStepTrack(path, vt, adjust=0) {
+			if (vt.length < 4) return makeNumTrack(path, vt, adjust);
+			
+			let newVt = [vt[0]];
+			let isStep = true, hasStep = false;
+			for (let i = 4; i < vt.length; i++) {
+				let shouldTest = true;
+				shouldTest &= (vt[i-0].frame === vt[i-1].frame+1) && (vt[i-0].value === vt[i-1].value);
+				shouldTest &= (vt[i-1].frame === vt[i-2].frame+1) && (vt[i-1].value != vt[i-2].value);
+				shouldTest &= (vt[i-2].frame === vt[i-3].frame+1) && (vt[i-2].value === vt[i-3].value);
+				
+				console.log('makeStepTrack 1', vt[i-0], vt[i-1], vt[i-2], vt[i-3], shouldTest);
+				
+				if (shouldTest) {
+					hasStep = true;
+					isStep &= (Math.abs(vt[i-0].slope) < 0.001);
+					isStep &= (Math.abs(vt[i-1].slope) > 0.01);
+					isStep &= (Math.abs(vt[i-2].slope) > 0.01);
+					isStep &= (Math.abs(vt[i-3].slope) < 0.001);
+				} else {
+					newVt.push(vt[i-2]);
+				}
+			}
+			console.log('makeStepTrack 2', isStep, hasStep);
+			if (!isStep || !hasStep) return makeNumTrack(path, vt, adjust);
+			let track = makeNumTrack(path, newVt, adjust);
+			track.setInterpolation(InterpolateDiscrete);
+			console.log('makeStepTrack 3', track);
+			return track;
+		}
+		//*/
+		function makeNumTrack(path, vt, adjust=0) {
+			let times=[], values=[];
+			for (let frame of vt) {
+				times.push(frame.frame/30);
+				values.push(frame.value+adjust);
 				//TODO frame.slope; ???
 			}
 			let track = new NumberKeyframeTrack(path, times, values);

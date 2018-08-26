@@ -91,7 +91,7 @@ class GFModel {
 	toThree() {
 		const {
 			Skeleton, SkinnedMesh, Mesh, BufferGeometry, InterleavedBuffer,
-			InterleavedBufferAttribute, BufferAttribute, Object3D, Box3, Group,
+			InterleavedBufferAttribute, BufferAttribute, Object3D, Box3, Bone,
 		} = require('three');
 		
 		let obj = new Object3D();
@@ -100,18 +100,28 @@ class GFModel {
 		// Skeleton
 		let skeleton = (()=>{
 			let bones = [];
+			let scaleBones = [];
 			let boneNames = {};
 			for (let bone of this.skeleton) {
 				let b = bone.toThree();
-				bones.push(b);
-				boneNames[bone.name] = b;
+				let sb = b.userData.scaleBone;
+				bones.push(b); 
+				boneNames[b.name] = b;
+				scaleBones.push(sb);
+				boneNames[sb.name] = sb;
+				
+				if (!bone.useLocalScale) {
+					[ b, sb ] = [ sb, b ]; //swap bones, so scale modifies the main bone
+				}
+				b.add(sb);
+				
 				if (bone.parent) {
 					// b.rotation.setFromVector3(boneNames[bone.parent].worldToLocal(b.rotation.toVector3()));
 					boneNames[bone.parent].add(b);
 				}
 			}
 			bones[0].updateMatrixWorld(true); //force matrixWorld update, so zero-pose is correct on bind() below
-			return new Skeleton(bones);
+			return new Skeleton([...scaleBones, ...bones]);
 		})();
 		skeleton.calculateInverses();
 		// obj.userData.skeleton = skeleton;
@@ -120,9 +130,11 @@ class GFModel {
 		
 		// Materials
 		let mats = {};
+		obj.mapNames = {};
 		for (let gfMat of this.materials) {
 			let mat = gfMat.toThree();
 			mats[gfMat.matName] = mat;
+			obj.mapNames[gfMat.matName] = mat.map;
 		}
 		
 		// Meshes

@@ -120,7 +120,7 @@ class GFSkeletonMot {
 		
 		let tracks = [];
 		for (let bone of this.bones) {
-			tracks.push(...makeTrack(`.bones[${bone.name}].scale`, bone.scaleX, bone.scaleY, bone.scaleZ));
+			tracks.push(...makeTrack(`.bones[${bone.name}_S].scale`, bone.scaleX, bone.scaleY, bone.scaleZ));
 			tracks.push(...makeRotationTrack(`.bones[${bone.name}].quaternion`, bone));
 			tracks.push(...makeTrack(`.bones[${bone.name}].position`, bone.transX, bone.transY, bone.transZ));
 		}

@@ -194,7 +194,6 @@ global.info = {
 	markAnimation(i, anim) {
 		let clip = anim.toThree();
 		this.currAnimpak[i] = { anim, clip, hash:anim.calcAnimHash() };
-		
 	},
 	
 	bones: [],
