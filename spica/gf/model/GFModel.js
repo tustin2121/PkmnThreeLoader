@@ -104,8 +104,9 @@ class GFModel {
 			let bones = [];
 			let scaleBones = [];
 			let boneNames = {};
-			for (let bone of this.skeleton) {
-				if (bone.isModelRoot) continue; //skip
+			for (let i = 0; i < this.skeleton.length; i++) {
+				let bone = this.skeleton[i]
+				if (bone.isModelRoot && i !== 0) continue; //skip
 				let b = bone.toThree();
 				let sb = b.userData.scaleBone;
 				bones.push(b); 
