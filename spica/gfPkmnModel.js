@@ -117,17 +117,6 @@ PARSE_PAK[4] = function(data, header, out={}) {
 		'atk_sp3',
 		'hit0', //16
 		'faint', //17
-		null,
-		'exp_reye', //19
-		'exp_leye',
-		null,
-		'exp_mouth', //22
-		null,
-		null,
-		'const_overlay', //25
-		null,
-		null,
-		null, // 28
 	]);
 	out.motionpacks = out.motionpacks || [];
 	out.motionpacks.push(motionpack);
@@ -164,17 +153,6 @@ PARSE_PAK[5] = function(data, header, out={}) {
 		'eat_loop',
 		'eat_out',
 		'high_five', //25
-		null,
-		'exp_reye', //27
-		'exp_leye',
-		null,
-		'exp_mouth', //30
-		null,
-		null,
-		'const_overlay', //25
-		null,
-		null,
-		null, // 28
 	]);
 	out.motionpacks = out.motionpacks || [];
 	out.motionpacks.push(motionpack);
@@ -193,22 +171,11 @@ PARSE_PAK[6] = function(data, header, out={}) {
 		null,
 		null,
 		null,
-		null,
-		null,
+		'run_in', //Brionne (1040) has these two animations
+		'run_out',
 		null, //10
 		null,
 		null,
-		null,
-		'exp_reye', //14
-		'exp_leye',
-		null,
-		'exp_mouth', //17
-		null,
-		null,
-		'const_overlay', //25
-		null,
-		null,
-		null, // 28
 	]);
 	out.motionpacks = out.motionpacks || [];
 	out.motionpacks.push(motionpack);
@@ -402,6 +369,7 @@ function parseExtraMotionPack(data, header, names) {
 				// Plus the pack always has a bunch of sections 2 and 3, which are unknown.
 				// It has a bone name that is 0x40 long (null padded), followed by 1 int and 5 floats.
 				motionpack.extradata[i] = data.readBytes(entry.length);
+				motionpack.extradata[i]._addr = entry.address;
 			} break;
 			case 1: // Eyes Expression Map (Right Eye / Head 1)
 			case 2: // Eyes Expression Map (Left Eye / Head 2)

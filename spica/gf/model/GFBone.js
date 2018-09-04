@@ -12,9 +12,15 @@ class GFBone {
 	}
 	
 	/** If scaling animations on this bone should affect only this bone and not the hierarchy below it. */
-	get useLocalScale() { return this.flags & 0x1; }
+	get useLocalScale() { return !!(this.flags & 0x1); }
 	/** If this bone is a root bone (which will not be moved by animations). */
-	get isRoot() { return this.flags & 0x2; }
+	get isRoot() { return !!(this.flags & 0x2); }
+	/** If this bone is not a part of the skeleton, but rather a model node that can be pruned. */
+	get isModelRoot() {
+		if (!this.isRoot) return false;
+		if (!/^pm\d{4}_\d{2}_/i.test(this.name)) return false;
+		return true;
+	}
 	
 	toThree() {
 		const { Bone } = require('three');
