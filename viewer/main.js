@@ -36,9 +36,10 @@ let root = new THREE.Object3D();
 scene.add(root);
 
 let debugNodes = {};
+let animclock = new THREE.Clock();
 let animMixer = null;
 let currAnim = null;
-let animclock = new THREE.Clock();
+let expressionAnims = [];
 
 let trackball = new THREE.OrbitControls(camera, renderer.domElement);
 global.loadedFiles = null;
@@ -95,6 +96,7 @@ global.info = {
 		this.bones = [];
 	},
 	populateSidebar() {
+		$('.xanims > div').hide();
 		for (let [i, val] of this.texpak.entries()){
 			$(`#texList${i}`).empty().hide();
 			if (!val || !Object.keys(val).length) continue;
@@ -110,20 +112,43 @@ global.info = {
 			}
 		}
 		let animHashes = new Map();
-		for (let [i, val] of this.animpak.entries()) {
+		for (let [i, pak] of this.animpak.entries()) {
 			$(`#animList${i}`).empty().hide();
-			if (!val || !val.length) continue;
-			let $p = $(`#animList${i}`).show();
-			for (let [num, animInfo] of Object.entries(val)) {
-				let $t = $(`<li slot="${num}">${animInfo.anim.name || '[unnamed_'+i+':'+num+']'}</li>`).appendTo($p);
-				if (animHashes.has(animInfo.hash)) {
-					$t.append(`<span class="dup">dup of '${animHashes.get(animInfo.hash)}'</span>`);
-				} else {
-					animHashes.set(animInfo.hash, animInfo.anim.name);
+			if (!pak) continue;
+			let { a, x } = pak;
+			if (a && a.length) {
+				let $p = $(`#animList${i}`).show();
+				for (let [num, animInfo] of Object.entries(a)) {
+					let $t = $(`<li slot="${num}">${animInfo.anim.name || '[unnamed_'+i+':'+num+']'}</li>`).appendTo($p);
+					if (animHashes.has(animInfo.hash)) {
+						$t.append(`<span class="dup">dup of '${animHashes.get(animInfo.hash)}'</span>`);
+					} else {
+						animHashes.set(animInfo.hash, animInfo.anim.name);
+					}
+					$t.on('dblclick', ()=>{
+						playAnimation(animInfo);
+					});
 				}
-				$t.on('dblclick', ()=>{
-					playAnimation(animInfo);
-				});
+			}
+			if (x && x.length) {
+				for (let num = 0; num < x.length; num++) {
+					let xanim = x[num];
+					if (!xanim) continue;
+					switch (num) {
+						case 1: // Eye expressions
+						case 2: 
+						case 3: 
+							_eyeExpressionBlock(num, xanim);
+							break;
+						case 4: // Mouth expressions
+						case 5: 
+						case 6: 
+							_mouthExpressionBlock(num, xanim);
+							break;
+						case 7: 
+							break;
+					}
+				}
 			}
 		}
 		$('#boneList').empty();
@@ -153,6 +178,42 @@ global.info = {
 			for (let i = 0; i < meta2.length; i++) {
 				
 			}
+		}
+		return;
+		
+		function _eyeExpressionBlock(num, anim) {
+			expressionAnims[num] = animMixer.clipAction(anim);
+			expressionAnims[num].paused = true;
+			let $div = $(`#xanimExp${num}`).empty().show();
+			$div.append(`<label><input name="eye${num}" type="radio" value="0" checked/> Neutral</label>`);
+			$div.append(`<label><input name="eye${num}" type="radio" value="10"/> Half-Blink</label>`);
+			$div.append(`<label><input name="eye${num}" type="radio" value="20"/> Blink</label>`);
+			$div.append(`<label><input name="eye${num}" type="radio" value="30"/> Pained</label>`);
+			$div.append(`<label><input name="eye${num}" type="radio" value="40"/> Determined</label>`);
+			$div.append(`<label><input name="eye${num}" type="radio" value="50"/> Pleased</label>`);
+			$div.append(`<label><input name="eye${num}" type="radio" value="60"/> Sad</label>`);
+			$div.append(`<label><input name="eye${num}" type="radio" value="70"/> Crossed</label>`);
+			$div.append(`<label><input name="eye${num}" type="radio" value="80"/> [Unsupported]</label>`);
+			$div.find(`name[name=eye${num}]`).on('click', function(e) {
+				expressionAnims[num].time = ($(this).val() / 30)+2;
+			});
+		}
+		function _mouthExpressionBlock(num, anim) {
+			expressionAnims[num] = animMixer.clipAction(anim);
+			expressionAnims[num].paused = true;
+			let $div = $(`#xanimExp${num}`).empty().show();
+			$div.append(`<label><input name="mouth${num}" type="radio" value="0" checked/> Neutral</label>`);
+			$div.append(`<label><input name="mouth${num}" type="radio" value="10"/> Half-Blink</label>`);
+			$div.append(`<label><input name="mouth${num}" type="radio" value="20"/> Blink</label>`);
+			$div.append(`<label><input name="mouth${num}" type="radio" value="30"/> Pained</label>`);
+			$div.append(`<label><input name="mouth${num}" type="radio" value="40"/> Determined</label>`);
+			$div.append(`<label><input name="mouth${num}" type="radio" value="50"/> Pleased</label>`);
+			$div.append(`<label><input name="mouth${num}" type="radio" value="60"/> Sad</label>`);
+			$div.append(`<label><input name="mouth${num}" type="radio" value="70"/> Crossed</label>`);
+			$div.append(`<label><input name="mouth${num}" type="radio" value="80"/> [Unsupported]</label>`);
+			$div.find(`name[name=mouth${num}]`).on('click', function(e) {
+				expressionAnims[num].time = ($(this).val() / 30)+2;
+			});
 		}
 	},
 	
@@ -189,11 +250,18 @@ global.info = {
 	animpak: null,
 	currAnimpak: null,
 	markAnimationPack(num) {
-		this.currAnimpak = this.animpak[num] = [];
+		this.currAnimpak = this.animpak[num] = { a:[], x:[] };
 	},
 	markAnimation(i, anim) {
 		let clip = anim.toThree();
-		this.currAnimpak[i] = { anim, clip, hash:anim.calcAnimHash() };
+		this.currAnimpak.a[i] = { anim, clip, hash:anim.calcAnimHash() };
+	},
+	markXanim(xanim) {
+		if (!xanim || !xanim.length) return;
+		this.currAnimpak.x = xanim.map(x=>{
+			if (x.toThree) return x.toThree();
+			return x;
+		});
 	},
 	
 	bones: [],

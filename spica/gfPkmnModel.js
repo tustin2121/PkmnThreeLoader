@@ -451,6 +451,7 @@ function parseExtraMotionPack(data, header, names) {
 			case 13: motionpack.extradata[i] = true; break; //Unknown, no examples yet
 		}
 	}
+	if (global.info) global.info.markXanim(motionpack.extradata);
 	return motionpack;
 }
 

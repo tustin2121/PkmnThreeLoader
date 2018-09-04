@@ -52,12 +52,14 @@
 	</div>
 	<div id="props">
 		<nav>
-			<li class="load selected">Loading</li>
+			<li class="load selected">Load</li>
+			<li class="export">Export</li>
 			<li class="models">Model</li>
-			<li class="textures">Textures</li>
+			<li class="textures">Tex</li>
 			<li class="shaders">Shaders</li>
-			<li class="skeleton">Skeleton</li>
-			<li class="anims">Animations</li>
+			<li class="skeleton">Skel</li>
+			<li class="anims">Anims</li>
+			<li class="xanims">Anim Meta</li>
 			<li class="metadata">Metadata</li>
 		</nav>
 		<section>
@@ -82,7 +84,7 @@
 			</div>
 			<div class="models">
 				<div class="group" group-name="Model List" id="modelList"></div>
-				<div class="group" group-name="Pokemon Options" id="pokemonDisplayOpts" style="display:none;">
+				<div class="group" group-name="Pokemon Display Options" id="pokemonDisplayOpts" style="display:none;">
 					<p><label><input type="checkbox" name="poptShadow"/> Show shadow projection</label></p>
 					<p>
 						<label><input type="radio" name="poptColor" value="normal" checked/> Normal</label>
@@ -91,6 +93,7 @@
 					</p>
 					<p><label><input type="checkbox" name="poptMeta" checked/> Show metadata boxes</label></label></p>
 					<p><label><input type="checkbox" name="poptModelBound"/> Show model bounding box</label></label></p>
+					<p><label><input type="checkbox" name="poptSkeleton" checked/> Show skeleton</label></p>
 				</div>
 			</div>
 			<div class="anims">
@@ -101,11 +104,23 @@
 				<div class="group" group-name="Movement Animations" id="animList6"></div>
 				<div class="group" group-name="Other Animations" id="animList7"></div>
 			</div>
+			<div class="xanims">
+				<div class="group" group-name="Info" id="xanimMsg"></div>
+				<div class="group" group-name="Constant Motion" id="xanimConst">
+					<p><label><input type="checkbox" name="xanimRunConst"/> Run constant motion anim</label></p>
+				</div>
+				<p>Expressions:</p>
+				<div class="group" group-name="Eye (Right / Head 1)" id="xanimExp1"></div>
+				<div class="group" group-name="Eye (Left / Head 2)" id="xanimExp2"></div>
+				<div class="group" group-name="Eye (Head 3)" id="xanimExp3"></div>
+				<div class="group" group-name="Mouth (Head 1)" id="xanimExp4"></div>
+				<div class="group" group-name="Mouth (Head 2)" id="xanimExp5"></div>
+				<div class="group" group-name="Mouth (Head 3)" id="xanimExp6"></div>
+			</div>
 			<div class="shaders">
 				<div class="group" group-name="Shaders" id="shaderList"></div>
 			</div>
 			<div class="skeleton">
-				<p><label><input type="checkbox" name="poptSkeleton" checked/> Show skeleton</label></p>
 				<div class="group" group-name="Bones" id="boneList"></div>
 			</div>
 			<div class="textures">
@@ -150,6 +165,14 @@
 					</div>
 				</div>
 				<div class="group" group-name="Metadata 2" id="metaList2">
+					
+				</div>
+			</div>
+			<div class="export">
+				<div class="group" group-name="Animation Options" id="expAnimOpts">
+					
+				</div>
+				<div class="group" group-name="Animations" id="expAnims">
 					
 				</div>
 			</div>

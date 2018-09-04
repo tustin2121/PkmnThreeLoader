@@ -70,7 +70,6 @@ body {
 
 #props {
 	grid-area: props;
-	overflow-y: scroll;
 	position: relative;
 	font-size: 10pt;
 	font-family: sans-serif;
@@ -106,6 +105,7 @@ body {
 
 #props > section {
 	background-color: #efefef;
+	overflow-y: scroll;
 	position: absolute;
 	left: 20px; top: 0; right: 0; bottom: 0;
 }
