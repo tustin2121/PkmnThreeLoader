@@ -97,6 +97,7 @@ global.info = {
 	},
 	populateSidebar() {
 		$('.xanims > div').hide();
+		expressionAnims = [];
 		for (let [i, val] of this.texpak.entries()){
 			$(`#texList${i}`).empty().hide();
 			if (!val || !Object.keys(val).length) continue;
@@ -145,10 +146,22 @@ global.info = {
 						case 6: 
 							_mouthExpressionBlock(num, xanim);
 							break;
-						case 7: 
+						case 7:
+							_constantMotionBlock(num, xanim);
 							break;
 					}
 				}
+				$('#xanimPresets').show();
+				$('#xanimPresets [name=preExp]').on('click', function(e) {
+					let vals = $(this).val().split('-');
+					
+					$(`.xanims input[name=eye1][value=${vals[0]*10}]`).click();
+					$(`.xanims input[name=eye2][value=${vals[0]*10}]`).click();
+					$(`.xanims input[name=eye3][value=${vals[0]*10}]`).click();
+					$(`.xanims input[name=mouth4][value=${vals[1]*10}]`).click();
+					$(`.xanims input[name=mouth5][value=${vals[1]*10}]`).click();
+					$(`.xanims input[name=mouth6][value=${vals[1]*10}]`).click();
+				});
 			}
 		}
 		$('#boneList').empty();
@@ -182,7 +195,9 @@ global.info = {
 		return;
 		
 		function _eyeExpressionBlock(num, anim) {
+			if (expressionAnims[num]) return; //do only once
 			expressionAnims[num] = animMixer.clipAction(anim);
+			expressionAnims[num].reset().play();
 			expressionAnims[num].paused = true;
 			let $div = $(`#xanimExp${num}`).empty().show();
 			$div.append(`<label><input name="eye${num}" type="radio" value="0" checked/> Neutral</label>`);
@@ -193,26 +208,41 @@ global.info = {
 			$div.append(`<label><input name="eye${num}" type="radio" value="50"/> Pleased</label>`);
 			$div.append(`<label><input name="eye${num}" type="radio" value="60"/> Sad</label>`);
 			$div.append(`<label><input name="eye${num}" type="radio" value="70"/> Crossed</label>`);
-			$div.append(`<label><input name="eye${num}" type="radio" value="80"/> [Unsupported]</label>`);
-			$div.find(`name[name=eye${num}]`).on('click', function(e) {
-				expressionAnims[num].time = ($(this).val() / 30)+2;
+			$div.find(`input[name=eye${num}]`).on('click', function(e) {
+				expressionAnims[num].time = (parseInt($(this).val(),10)+2) / 30;
 			});
 		}
 		function _mouthExpressionBlock(num, anim) {
+			if (expressionAnims[num]) return; //do only once
 			expressionAnims[num] = animMixer.clipAction(anim);
+			expressionAnims[num].reset().play();
 			expressionAnims[num].paused = true;
 			let $div = $(`#xanimExp${num}`).empty().show();
 			$div.append(`<label><input name="mouth${num}" type="radio" value="0" checked/> Neutral</label>`);
-			$div.append(`<label><input name="mouth${num}" type="radio" value="10"/> Half-Blink</label>`);
-			$div.append(`<label><input name="mouth${num}" type="radio" value="20"/> Blink</label>`);
-			$div.append(`<label><input name="mouth${num}" type="radio" value="30"/> Pained</label>`);
-			$div.append(`<label><input name="mouth${num}" type="radio" value="40"/> Determined</label>`);
-			$div.append(`<label><input name="mouth${num}" type="radio" value="50"/> Pleased</label>`);
-			$div.append(`<label><input name="mouth${num}" type="radio" value="60"/> Sad</label>`);
-			$div.append(`<label><input name="mouth${num}" type="radio" value="70"/> Crossed</label>`);
-			$div.append(`<label><input name="mouth${num}" type="radio" value="80"/> [Unsupported]</label>`);
-			$div.find(`name[name=mouth${num}]`).on('click', function(e) {
-				expressionAnims[num].time = ($(this).val() / 30)+2;
+			$div.append(`<label><input name="mouth${num}" type="radio" value="10"/> Half-Open</label>`);
+			$div.append(`<label><input name="mouth${num}" type="radio" value="20"/> Open</label>`);
+			$div.append(`<label><input name="mouth${num}" type="radio" value="30"/> Chew</label>`);
+			$div.append(`<label><input name="mouth${num}" type="radio" value="40"/> Bite</label>`);
+			$div.append(`<label><input name="mouth${num}" type="radio" value="50"/> Sad</label>`);
+			$div.append(`<label><input name="mouth${num}" type="radio" value="60"/> [Unsupported]</label>`);
+			$div.append(`<label><input name="mouth${num}" type="radio" value="70"/> [Unsupported]</label>`);
+			$div.find(`input[name=mouth${num}]`).on('click', function(e) {
+				expressionAnims[num].time = (parseInt($(this).val(),10)+2) / 30;
+			});
+		}
+		function _constantMotionBlock(num, anim) {
+			if (expressionAnims[num]) return; //do only once
+			expressionAnims[num] = animMixer.clipAction(anim);
+			$(`#xanimConst`).show();
+			$(`#xanimConst [name=xanimRunConst]`).on('click', function(e){
+				let b = $(this).is(':checked');
+				if (b) {
+					expressionAnims[num].enabled = true;
+					expressionAnims[num].reset().play();
+				} else {
+					expressionAnims[num].enabled = false;
+					expressionAnims[num].stop();
+				}
 			});
 		}
 	},

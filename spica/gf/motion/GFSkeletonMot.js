@@ -5,6 +5,7 @@ const { GFMotKeyFrame } = require('./GFMotKeyFrame');
 class GFMotBoneTransform {
 	constructor(data, name, frameCount) {
 		this.name = name || '';
+		this._flags = 0;
 		this.isAxisAngle = false;
 		/** @type {List<GtMotKeyFrame} */
 		this.scaleX = [];
@@ -25,6 +26,8 @@ class GFMotBoneTransform {
 		if (console.PARSE_DEBUG) console.PARSE_DEBUG['motType'] = 'Skeletal';
 		if (console.PARSE_DEBUG) console.PARSE_DEBUG['name'] = name;
 		
+		// this._flags = ('00000000000000000000000000000000'+(flags).toString(2)).slice(-32);
+		this._flags = ('00000'+(flags >> 27).toString(2)).slice(-5);
 		this.isAxisAngle = (flags >> 31) === 0;
 		for (let i = 0; i < 9; i++) {
 			if (console.PARSE_DEBUG) console.PARSE_DEBUG['channel'] = ['scaleX','scaleY','scaleZ','rotX','rotY','rotZ','transX','transY','transZ'][i];
