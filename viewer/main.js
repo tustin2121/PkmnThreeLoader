@@ -97,6 +97,7 @@ global.info = {
 	},
 	populateSidebar() {
 		$('.xanims > div').hide();
+		const self = this;
 		expressionAnims = [];
 		for (let [i, val] of this.texpak.entries()){
 			$(`#texList${i}`).empty().hide();
@@ -134,7 +135,10 @@ global.info = {
 			if (x && x.length) {
 				for (let num = 0; num < x.length; num++) {
 					let xanim = x[num];
-					if (!xanim) continue;
+					if (!xanim) {
+						$(`#xanimExp${num}`).empty();
+						continue;
+					}
 					switch (num) {
 						case 1: // Eye expressions
 						case 2: 
@@ -148,6 +152,9 @@ global.info = {
 							break;
 						case 7:
 							_constantMotionBlock(num, xanim);
+							break;
+						case 11:
+							_extraPoints(num, xanim);
 							break;
 					}
 				}
@@ -244,6 +251,60 @@ global.info = {
 					expressionAnims[num].stop();
 				}
 			});
+		}
+		function _extraPoints(num, info) {
+			if (expressionAnims[num]) return; //do only once
+			expressionAnims[num] = [];
+			let $div = $('#xanimInfo').empty().show();
+			for (let i = 0; i < info.length; i++) {
+				let row = info[i];
+				let $t = $(`<li slot="${row.a}/${row.b}"><label><input type='checkbox'/> ${row.name}<span class="dup"></span></br>(${row.x},${row.y},${row.z})</label></li>`);
+				switch (row.a) {
+					case 0: $t.find('.dup').text(`Head Focus`); break;
+					case 1: $t.find('.dup').text(`Top of Head`); break;
+					case 2: $t.find('.dup').text(`Eye`); break;
+					case 3: $t.find('.dup').text(`Mouth`); break;
+					case 4: $t.find('.dup').text(`???`); break;
+					case 5: $t.find('.dup').text(`Center of Mon`); break;
+					case 6: $t.find('.dup').text(`Sp0 Beam Origin`); break;
+					case 7: $t.find('.dup').text(`Hand Attach`); break;
+					case 8: $t.find('.dup').text(`End of Tail`); break;
+					case 9: $t.find('.dup').text(`Ground Contact`); break;
+					case 10: $t.find('.dup').text(`Phys0 Contact`); break;
+					case 11: $t.find('.dup').text(`Phys1 Contact`); break;
+					case 12: $t.find('.dup').text(`Phys2 Contact(?)`); break;
+					case 13: $t.find('.dup').text(`Phys3 Contact(?)`); break;
+					case 14: $t.find('.dup').text(`Pokeball Hover`); break;
+					case 15: $t.find('.dup').text(`Sp1 Origin`); break;
+					case 16: $t.find('.dup').text(`Sp2 Origin`); break;
+					case 17: $t.find('.dup').text(`Sp3 Origin`); break;
+					case 18: $t.find('.dup').text(`???`); break;
+					default: $t.find('.dup').text(`[Unknown]`); break;
+				}
+				let bone = (()=>{
+					for (let b of self.bones) {
+						if (b.name === row.name) return b;
+					}
+					return null;
+				})();
+				if (bone) {
+					let point = new THREE.Mesh(new THREE.SphereBufferGeometry(), new THREE.MeshBasicMaterial());
+					point.renderOrder = 10;
+					point.position.set(row.x, row.y, row.z);
+					point.visible = false;
+					point.material.depthTest = false;
+					bone.add(point);
+					
+					expressionAnims[num][i] = point;
+					$t.find('input').on('click', function(e){
+						expressionAnims[num][i].visible = $(this).is(':checked');
+					});
+				} else {
+					$t.find('input').prop('disabled', true);
+				}
+				$t.appendTo($div);
+			}
+			
 		}
 	},
 	
@@ -533,7 +594,7 @@ async function displayPokemonModel() {
 		}
 		let mon = await combined.toThree();
 		mon.name = "Pokemon";
-		mon.children[1].visible = false;
+		if (mon.children[1]) mon.children[1].visible = false;
 		root.add(mon); //TODO modelpack instead of model
 		
 		animMixer = new THREE.AnimationMixer(mon.children[0]);

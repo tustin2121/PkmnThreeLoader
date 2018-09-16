@@ -31,7 +31,7 @@ Pokemon Animations (Pak 4 - Battle):
 15 - Special Attack 4
 16 - *Take Hit 1
 17 - *Faint
-18 - 
+18 - [Begin Extra Data]
 19 - Right/Both Eye Expression Blend
 20 - Left Eye Expression Blend
 21 - 
@@ -42,7 +42,7 @@ Pokemon Animations (Pak 4 - Battle):
 26 - 
 27 - 
 28 - 
-29 - [IK Data]
+29 - [Attach Point Data]
 30 - 
 31 - 
 
@@ -136,3 +136,39 @@ frame 50 - Pleased (Eyes closed happy, mouth closed)
 frame 60 - Sad (Eyes open sad, mouth closed)
 frame 70 - Dead (Crossed out eyes) [Unsupported on many pokemon]
 frame 80 - [Unsupported] (Eyes in red textureless space, mouth ajar)
+
+===========================================================================================
+Attach Point Data
+Extra Animation Data 11 is a series of points which seemingly are to give extra information 
+about where things can attach to or focus on on the pokemon. There doesn't seem to be any 
+logical order to the data, but the format is as follows:
+  Padded String (0x20 long) = Bone Name to offset focus point from
+  Vector3 (3 floats) = Offset from bone
+  1 byte = "A" (Purpose?)
+  1 byte = "B" (Index?)
+
+The byte value A seems to correspond with a certain purpose to these points, outlined in 
+the list below. The byte value B is unique among A's. It is possible this is simply a 1-base
+index into the array that makes up a given purpose's points.
+
+A = Purposes:
+  0 - Center of Head (Wandering battle camera focuses on this point)
+  1 - Top of Head
+  2 - Eyes (Center, surface)
+  3 - Mouth (Center, surface, probably for falling crumbs)
+  4 - 
+  5 - Center of Pokemon
+  6 - Special Attack 0 Origin (beam origin)
+  7 - Hand Attach Points
+  8 - End of Tail (Location for Tail Whip attack)
+  9 - Ground Contact Points (usally under all feet, but might also be points that hit the ground (see Honedge))
+  10 - Contact Point for Physical Attack 0
+  11 - Contact Point for Physical Attack 1
+  12 - Contact Point for Physical Attack 2
+  13 - Contact Point for Physical Attack 3
+  14 - Pokeball Point (Above and in front of pokemon, where Pokeball floats during capture)
+  15 - Point used by Special Attack 1 (usually fixed to origin)
+  16 - Point used by Special Attack 2 (usually fixed to origin)
+  17 - Point used by Special Attack 3 (usually fixed to origin)
+  18 - (One for each of MegaSteelix's Floating Plates?)(Honedge's Sheith Eye?)(Mimikyu's Fake Head)
+

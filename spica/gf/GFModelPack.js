@@ -81,7 +81,8 @@ class GFModelPack {
 		await Promise.all(Object.values(textures).map(x=>x.decodeData()));
 		
 		// Compile Models
-		for (let gfModel of this.models){
+		// for (let gfModel of this.models){
+		{ let gfModel = this.models[0]; //TODO HACK to dodge shadow
 			let model = gfModel.toThree();
 			model.traverse((obj)=>{
 				if (!obj.isMesh) return; //continue;

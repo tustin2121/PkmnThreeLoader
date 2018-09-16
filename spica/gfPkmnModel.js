@@ -391,13 +391,13 @@ function parseExtraMotionPack(data, header, names) {
 			case  9: motionpack.extradata[i] = true; break; //Unknown, no examples yet
 			case 10: motionpack.extradata[i] = true; break; //Unknown, no examples yet
 			case 11: {
-				// Possibly IK Data
+				// Focus/Attachment Point Data!
 				// This section has no header information, and the header can claim it to be
 				// longer than the rest of the file allows.
 				// This data is formatted into 0x30 length sections.
 				// A Null-terminated 0x20 length string with a bone name.
-				// Followed by 3 floats (which is often integer values).
-				// Followed by 2 bytes and 2 bytes of null padding.
+				// Followed by 3 floats (An offset from the above bone)
+				// Followed by 2 bytes (A and B) and 2 bytes of null padding.
 				let info = [];
 				while (data.offset < entry.address + entry.length && data.offset + 0x30 < data.length) {
 					let name = data.readPaddedString(0x20);
