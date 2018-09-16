@@ -144,10 +144,11 @@ class GFModel {
 		// Meshes
 		let meshes = [];
 		for (let gfMesh of this.meshes) {
-			let boned=false, skinned = false;
+			let meshSkinned = false;
 			let matName = '';
 			let geoms = [];
 			for (let gfSub of gfMesh.submeshes) {
+				let boned = false, skinned = false;
 				let geom = new BufferGeometry();
 				
 				let bytebuf = new InterleavedBuffer(gfSub.rawBuffer.buffer, gfSub.vertexStride);
@@ -307,6 +308,7 @@ class GFModel {
 				
 				geoms.push(geom);
 				matName = gfSub.matName;
+				meshSkinned |= skinned;
 			}
 			let geom = BufferGeometryUtils.mergeBufferGeometries(geoms);
 			if (!geom) throw new ReferenceError('Could not merge geometries!');
@@ -315,7 +317,7 @@ class GFModel {
 			geom.computeBoundingSphere();
 			
 			let mesh;
-			if (skinned) {
+			if (meshSkinned) {
 				mats[matName].skinning = true;
 				mesh = new SkinnedMesh(geom, mats[matName]);
 				mesh.bindMode = 'detached';

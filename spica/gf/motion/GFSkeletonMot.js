@@ -164,19 +164,11 @@ class GFSkeletonMot {
 		}
 		
 		function makeTrack(path, vx, vy, vz) {
-			let num = 0;
-			if (vx.length) num++;
-			if (vy.length) num++;
-			if (vz.length) num++;
-        
-			if (num === 0) return [];
-			// if (num !== 3) {
-				let tracks = [];
-				if (vx.length) tracks.push(makeNumTrack(`${path}[x]`, vx));
-				if (vy.length) tracks.push(makeNumTrack(`${path}[y]`, vy));
-				if (vz.length) tracks.push(makeNumTrack(`${path}[z]`, vz));
-				return tracks;
-			// }
+			let tracks = [];
+			if (vx.length) tracks.push(makeNumTrack(`${path}[x]`, vx));
+			if (vy.length) tracks.push(makeNumTrack(`${path}[y]`, vy));
+			if (vz.length) tracks.push(makeNumTrack(`${path}[z]`, vz));
+			return tracks;
 		}
 		
 		function makeNumTrack(path, vt) {

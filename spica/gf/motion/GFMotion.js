@@ -49,6 +49,8 @@ class GFMotion {
 		this.animRegionMin = data.readVector3();
 		this.animRegionMax = data.readVector3();
 		this.hashid = data.readUint32();
+		this.numAffectedBones = data.readUint32();
+		this.ukn8 = data.readUint32();
 		
 		if (console.PARSE_DEBUG) console.PARSE_DEBUG['animNum'] = index;
 		
@@ -57,10 +59,7 @@ class GFMotion {
 			data.offset = pos + animSects[anim].addr;
 			let _addr = data.offset;
 			switch (animSects[anim].type) {
-				case SECT_SUBHEADER:
-					this.subheader = data.readBytes(animSects[anim].length);
-					this.subheader._addr = _addr;
-					break;
+				case SECT_SUBHEADER: break; // handled above
 				case SECT_SKELETAL:
 					this.skeletonAnimation = new GFSkeletonMot(data, this.frameCount);
 					break;

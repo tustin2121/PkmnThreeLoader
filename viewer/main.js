@@ -121,6 +121,11 @@ global.info = {
 			if (a && a.length) {
 				let $p = $(`#animList${i}`).show();
 				for (let [num, animInfo] of Object.entries(a)) {
+					if (!animInfo.clip) {
+						animInfo.clip = animInfo.anim.toThree();
+						animInfo.hash = animInfo.anim.calcAnimHash();
+					}
+					
 					let $t = $(`<li slot="${num}">${animInfo.anim.name || '[unnamed_'+i+':'+num+']'}</li>`).appendTo($p);
 					if (animHashes.has(animInfo.hash)) {
 						$t.append(`<span class="dup">dup of '${animHashes.get(animInfo.hash)}'</span>`);
@@ -138,6 +143,9 @@ global.info = {
 					if (!xanim) {
 						$(`#xanimExp${num}`).empty();
 						continue;
+					}
+					if (xanim.toThree) {
+						x[num] = xanim = xanim.toThree();
 					}
 					switch (num) {
 						case 1: // Eye expressions
@@ -344,15 +352,17 @@ global.info = {
 		this.currAnimpak = this.animpak[num] = { a:[], x:[] };
 	},
 	markAnimation(i, anim) {
-		let clip = anim.toThree();
-		this.currAnimpak.a[i] = { anim, clip, hash:anim.calcAnimHash() };
+		// let clip = anim.toThree();
+		// this.currAnimpak.a[i] = { anim, clip, hash:anim.calcAnimHash() };
+		this.currAnimpak.a[i] = { anim };
 	},
 	markXanim(xanim) {
 		if (!xanim || !xanim.length) return;
-		this.currAnimpak.x = xanim.map(x=>{
-			if (x.toThree) return x.toThree();
-			return x;
-		});
+		this.currAnimpak.x = xanim;
+		// this.currAnimpak.x = xanim.map(x=>{
+		// 	if (x.toThree) return x.toThree();
+		// 	return x;
+		// });
 	},
 	
 	bones: [],
@@ -424,6 +434,10 @@ $('#props button[name=loadPkmnFileBtn]').on('click', async function(){
 		// console.log(i, data);
 	}
 	global.loadedFiles = await SPICA.openPokemonPack(filenames);
+	let loadHack = $('#props select[name=hackName]').val();
+	if (loadHack) {
+		require('./loadingHacks')(loadHack, global.loadedFiles);
+	}
 	for (let i = 0; i <= 8; i++) {
 		console.log(i, global.loadedFiles[i]);
 	}
@@ -595,6 +609,7 @@ async function displayPokemonModel() {
 		let mon = await combined.toThree();
 		mon.name = "Pokemon";
 		if (mon.children[1]) mon.children[1].visible = false;
+		// mon.children[0].children.forEach(x=>x.visible = false);
 		root.add(mon); //TODO modelpack instead of model
 		
 		animMixer = new THREE.AnimationMixer(mon.children[0]);
