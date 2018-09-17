@@ -226,7 +226,7 @@ const GFTextureFormat = {
 					let out = new Uint8Array(width * height * 4);
 					let ioff = 0, ooff = 0, x, y;
 					let input = [], output = [];
-					input.readUint16 = ()=>{ return this[0]|(this[1] << 8); }
+					input.readUint16 = function(){ return this[0]|(this[1] << 8); }
 					for (let ty = 0; ty < height; ty += 8) {
 						for (let tx = 0; tx < width; tx += 8) {
 							for (let px = 0; px < 64; px++) {
