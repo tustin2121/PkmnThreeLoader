@@ -451,7 +451,13 @@ $('#props button[name=loadOtherFileBtn]').on('click', async function(){
 	global.loadedFiles = await SPICA.open(filename);
 	console.log(global.loadedFiles);
 	if (global.loadedFiles.modelpack) {
-		displayModelpack(global.loadedFiles.modelpack);
+		displayModelpack(global.loadedFiles.modelpack[0]);
+	}
+	if (global.loadedFiles.motion) {
+		global.info.markAnimationPack(0);
+		for (let anim of global.loadedFiles.motion) {
+			global.info.markAnimation(anim.index, anim);
+		}
 	}
 	global.info.populateSidebar();
 });

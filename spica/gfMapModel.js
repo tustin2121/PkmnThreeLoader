@@ -15,19 +15,24 @@ function parse(data, header, out={}) {
 		let magicNumber = data.readUint32(entry.address);
 		switch (magicNumber) {
 			case GFModel.MAGIC_NUMBER:
-				Object.assign(out, { model: new GFModel(data, "Model") });
+				if (!out.model) out.model = [];
+				out.model.push(new GFModel(data, "Model"));
 				break;
 			case GFTexture.MAGIC_NUMBER:
-				Object.assign(out, { tex: new GFTexture(data) });
+				if (!out.tex) out.tex = [];
+				out.tex.push(new GFTexture(data));
 				break;
 			case GFModelPack.MAGIC_NUMBER:
-				Object.assign(out, { modelpack: new GFModelPack(data) });
+				if (!out.modelpack) out.modelpack = [];
+				out.modelpack.push(new GFModelPack(data));
 				break;
 			case GFShader.MAGIC_NUMBER:
-				Object.assign(out, { modelpack: new GFShader(data) });
+				if (!out.shader) out.shader = [];
+				out.shader.push(new GFShader(data));
 				break;
 			case GFMotion.MAGIC_NUMBER: //parse to GFMotion and skeleton
-				Object.assign(out, { motion: new GFMotion(data, 0) });
+				if (!out.motion) out.motion = [];
+				out.motion.push(new GFMotion(data, i));
 				break;
 		}
 	}
