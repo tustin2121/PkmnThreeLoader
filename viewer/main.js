@@ -214,6 +214,7 @@ global.info = {
 			expressionAnims[num] = animMixer.clipAction(anim);
 			expressionAnims[num].reset().play();
 			expressionAnims[num].paused = true;
+			expressionAnims[num].enabled = false;
 			let $div = $(`#xanimExp${num}`).empty().show();
 			$div.append(`<label><input name="eye${num}" type="radio" value="0" checked/> Neutral</label>`);
 			$div.append(`<label><input name="eye${num}" type="radio" value="10"/> Half-Blink</label>`);
@@ -224,7 +225,8 @@ global.info = {
 			$div.append(`<label><input name="eye${num}" type="radio" value="60"/> Sad</label>`);
 			$div.append(`<label><input name="eye${num}" type="radio" value="70"/> Crossed</label>`);
 			$div.find(`input[name=eye${num}]`).on('click', function(e) {
-				expressionAnims[num].time = (parseInt($(this).val(),10)+2) / 30;
+				expressionAnims[num].time = (parseInt($(this).val(),10)) / 30;
+				expressionAnims[num].enabled = (expressionAnims[num].time > 0);
 			});
 		}
 		function _mouthExpressionBlock(num, anim) {
@@ -232,6 +234,7 @@ global.info = {
 			expressionAnims[num] = animMixer.clipAction(anim);
 			expressionAnims[num].reset().play();
 			expressionAnims[num].paused = true;
+			expressionAnims[num].enabled = false;
 			let $div = $(`#xanimExp${num}`).empty().show();
 			$div.append(`<label><input name="mouth${num}" type="radio" value="0" checked/> Neutral</label>`);
 			$div.append(`<label><input name="mouth${num}" type="radio" value="10"/> Half-Open</label>`);
@@ -242,7 +245,8 @@ global.info = {
 			$div.append(`<label><input name="mouth${num}" type="radio" value="60"/> [Unsupported]</label>`);
 			$div.append(`<label><input name="mouth${num}" type="radio" value="70"/> [Unsupported]</label>`);
 			$div.find(`input[name=mouth${num}]`).on('click', function(e) {
-				expressionAnims[num].time = (parseInt($(this).val(),10)+2) / 30;
+				expressionAnims[num].time = (parseInt($(this).val(),10)) / 30;
+				expressionAnims[num].enabled = (expressionAnims[num].time > 0);
 			});
 		}
 		function _constantMotionBlock(num, anim) {
