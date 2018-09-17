@@ -124,13 +124,16 @@ class GFModel {
 					boneNames[bone.parent].add(b);
 				}
 			}
+			if (!bones.length) return null;
 			bones[0].updateMatrixWorld(true); //force matrixWorld update, so zero-pose is correct on bind() below
 			return new Skeleton([...scaleBones, ...bones]);
 		})();
-		skeleton.calculateInverses();
-		// obj.userData.skeleton = skeleton;
-		obj.skeleton = skeleton;
-		obj.add(skeleton.bones[0]);
+		if (skeleton) {
+			skeleton.calculateInverses();
+			// obj.userData.skeleton = skeleton;
+			obj.skeleton = skeleton;
+			obj.add(skeleton.bones[0]);
+		}
 		
 		// Materials
 		let mats = {};
@@ -317,7 +320,7 @@ class GFModel {
 			geom.computeBoundingSphere();
 			
 			let mesh;
-			if (meshSkinned) {
+			if (meshSkinned && skeleton) {
 				mats[matName].skinning = true;
 				mesh = new SkinnedMesh(geom, mats[matName]);
 				mesh.bindMode = 'detached';

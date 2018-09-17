@@ -333,7 +333,7 @@ class GFMaterial {
 			
 			userData: info, //TODO: clear userData when saving off the pokemon
 		};
-		// if (this.alphaTest) Object.assign(opts, this.alphaTest.toThree());
+		if (this.alphaTest) Object.assign(opts, this.alphaTest.toThree());
 		if (this.blendFunction) Object.assign(opts, this.blendFunction.toThree());
 		if (this.colorOperation) Object.assign(opts, this.colorOperation.toThree());
 		//TODO?
@@ -360,6 +360,7 @@ class GFMaterial {
 		// opts.lights = true;
 		// opts.fog = true;
 		// opts.wireframe = true;
+		// opts.transparent = true;
 		
 		// return new THREE.ShaderMaterial(opts);
 		return new THREE.MeshBasicMaterial(opts);

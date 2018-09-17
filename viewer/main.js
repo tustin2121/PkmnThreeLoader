@@ -183,28 +183,29 @@ global.info = {
 		for (let bone of this.bones) {
 			let $t = $(`<li>${bone.name}</li>`).appendTo('#boneList');
 		}
-		
 		{
-			let { meta1 } = this.metadata;
-			$('#metaList1 [name=meta1_01]').val(meta1.unk01);
-			$('#metaList1 [name=meta1_02]').val(meta1.unk02);
-			$('#metaList1 [name=meta1_03]').val(meta1.unk03);
-			$('#metaList1 [name=meta1_04]').val(meta1.cameraLevel);
-			$('#metaList1 [name=meta1_05]').val(meta1.boundingBoxMin);
-			$('#metaList1 [name=meta1_06]').val(meta1.boundingBoxMax);
-			$('#metaList1 [name=meta1_07]').val(meta1.unk07);
-			$('#metaList1 [name=meta1_08]').val(meta1.unk08);
-			$('#metaList1 [name=meta1_09]').val(meta1.unk09);
-			$('#metaList1 [name=meta1_10]').val(meta1.unk10);
-			$('#metaList1 [name=meta1_11]').val(meta1.unk11);
-			for (let i = 0; i < meta1.unk12.length; i++) {
-				$(`#metaList1 [name=meta1_field${i.toString(16)}]`).prop('checked', meta1.unk12[i] !== 0);
-				$(`#metaList1 [name=meta1_field${i.toString(16)}]`).prop('indeterminate', meta1.unk12[i] !== 0 && meta1.unk12[i] !== 1);
+			let { meta1, meta2 } = this.metadata;
+			if (meta1) {
+				$('#metaList1 [name=meta1_01]').val(meta1.unk01);
+				$('#metaList1 [name=meta1_02]').val(meta1.unk02);
+				$('#metaList1 [name=meta1_03]').val(meta1.unk03);
+				$('#metaList1 [name=meta1_04]').val(meta1.cameraLevel);
+				$('#metaList1 [name=meta1_05]').val(meta1.boundingBoxMin);
+				$('#metaList1 [name=meta1_06]').val(meta1.boundingBoxMax);
+				$('#metaList1 [name=meta1_07]').val(meta1.unk07);
+				$('#metaList1 [name=meta1_08]').val(meta1.unk08);
+				$('#metaList1 [name=meta1_09]').val(meta1.unk09);
+				$('#metaList1 [name=meta1_10]').val(meta1.unk10);
+				$('#metaList1 [name=meta1_11]').val(meta1.unk11);
+				for (let i = 0; i < meta1.unk12.length; i++) {
+					$(`#metaList1 [name=meta1_field${i.toString(16)}]`).prop('checked', meta1.unk12[i] !== 0);
+					$(`#metaList1 [name=meta1_field${i.toString(16)}]`).prop('indeterminate', meta1.unk12[i] !== 0 && meta1.unk12[i] !== 1);
+				}
 			}
-		}{
-			let { meta2 } = this.metadata;
-			for (let i = 0; i < meta2.length; i++) {
-				
+			if (meta2) {
+				for (let i = 0; i < meta2.length; i++) {
+					
+				}
 			}
 		}
 		return;
@@ -433,9 +434,6 @@ $('#props button[name=loadPkmnFileBtn]').on('click', async function(){
 		console.log(i, file);
 		if (!file) continue;
 		filenames[i] = file;
-		// let data = await SPICA.open(file);
-		// global.loadedFiles[i] = data;
-		// console.log(i, data);
 	}
 	global.loadedFiles = await SPICA.openPokemonPack(filenames);
 	let loadHack = $('#props select[name=hackName]').val();
@@ -447,6 +445,18 @@ $('#props button[name=loadPkmnFileBtn]').on('click', async function(){
 	}
 	displayPokemonModel();
 });
+$('#props button[name=loadOtherFileBtn]').on('click', async function(){
+	clearDisplay();
+	let filename = $(`#props input[name=loadOtherFile0]`).val();
+	global.loadedFiles = await SPICA.open(filename);
+	console.log(global.loadedFiles);
+	if (global.loadedFiles.modelpack) {
+		displayModelpack(global.loadedFiles.modelpack);
+	}
+	global.info.populateSidebar();
+});
+
+
 $('#props input[name=poptShadow]').on('click', function(){
 	//TODO: Implement in shader?
 	// https://gamedev.stackexchange.com/questions/27252/draw-a-projection-of-a-mesh-on-a-surface
@@ -467,17 +477,6 @@ $('#props input[name=poptSkeleton]').on('click', function(){
 });
 $('#props input[name=poptColor]').on('click', function(){
 	displayPokemonModel();
-});
-$('#props button[name=loadOtherFileBtn]').on('click', async function(){
-	clearDisplay();
-	let filename = $(`#props input[name=loadOtherFile0]`).val();
-	global.loadedFiles = await SPICA.open(filename);
-	if (global.loadedFiles.modelpack
-		&& global.loadedFiles.modelpack.models
-		&& global.loadedFiles.modelpack.models[0])
-	{
-		displayModel(global.loadedFiles.modelpack.models[0]); //TODO just display modelpack
-	}
 });
 $('#animStop').on('dblclick', function(){
 	// if (animMixer) animMixer.stopAllAction();

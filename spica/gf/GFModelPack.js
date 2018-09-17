@@ -8,7 +8,7 @@ class GFModelPack {
 	constructor(data) {
 		this.models = [];
 		this.textures = [];
-		this.unk2 = [];
+		this.shaders1 = [];
 		this.unk3 = [];
 		this.shaders = [];
 		this.extra = [];
@@ -33,7 +33,7 @@ class GFModelPack {
 				switch(sect) {
 					case 0: this.models.push(new GFModel(data, name)); break;
 					case 1: this.textures.push(new GFTexture(data)); break;
-					case 2: this.unk2.push(data.offset.toString(16)); break; //More Shaders?
+					case 2: this.shaders1.push(new GFShader(data)); break; //More Shaders?
 					case 3: this.unk3.push(data.offset.toString(16)); break; //Unknown section
 					case 4: this.shaders.push(new GFShader(data)); break;
 				}

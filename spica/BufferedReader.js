@@ -3,6 +3,9 @@ const { Vector2, Vector3, Vector4, Quaternion, Matrix4, Matrix3 } = require('thr
 
 class BufferedReader {
 	constructor(data) {
+		if (!(data instanceof ByteBuffer)) {
+			data = ByteBuffer.wrap(data, 'binary', ByteBuffer.LITTLE_ENDIAN);
+		}
 		this.data = data;
 	}
 	

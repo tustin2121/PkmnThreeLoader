@@ -134,7 +134,7 @@ class PICAAlphaTest {
 		if (!this.enabled) return {};
 		return {
 			transparent:this.enabled,
-			alphaTest: (()=>{
+			alphaTest: Math.max((()=>{
 				switch (this.function) {
 					case PICATestFunc.Never: return 0;
 					case PICATestFunc.Always: return 1;
@@ -146,7 +146,7 @@ class PICAAlphaTest {
 					case PICATestFunc.Gequal: return 1 - ((this.reference+1)/255);
 					default: return 1;
 				}
-			})(),
+			})() - Number.EPSILON, 0),
 		};
 	}
 }

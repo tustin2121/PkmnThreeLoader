@@ -14,6 +14,8 @@ class GFShader {
 	constructor(data) {
 		/** @type {string} */
 		this.name = '';
+		/** @type {string} */
+		this.fileName = '';
 		/** @type {PICATexEnvStage[]} */
 		this.texEnvStages = new Array(6);
 		/** @type {RGBA} */
@@ -55,7 +57,7 @@ class GFShader {
 		let cmdsHash = data.readUint32();
 		data.skip(4);
 		
-		let fileName = data.readPaddedString(0x40);
+		this.fileName = data.readPaddedString(0x40);
 		let cmds = new Uint32Array(cmdsLen >> 2);
 		for (let i = 0; i < cmds.length; i++) {
 			cmds[i] = data.readUint32();

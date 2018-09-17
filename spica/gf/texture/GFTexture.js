@@ -4,6 +4,7 @@ const THREE = require('three');
 const { GFSection } = require('../GFSection');
 const ByteBuffer = require('bytebuffer');
 const BufferedReader = require('../../BufferedReader');
+const ETCDecompressor = require('./ETCDecompressor');
 
 const GFTextureFormat = {
 	RGB565 : 0x02,
@@ -141,8 +142,10 @@ const GFTextureFormat = {
 				}, 4];
 			
 			case GFTextureFormat.ETC1: //[?, 4];
+				return [ETCDecompressor.decompressETC1, 0];
+				
 			case GFTextureFormat.ETC1A4: //[?, 8];
-				throw new TypeError('Unsupported format!');
+				return [ETCDecompressor.decompressETC1A4, 0];
 		}
 	},
 	
@@ -216,13 +219,16 @@ const GFTextureFormat = {
 				while (data[0] === undefined) {
 					data = data.buffer; //this will either get to the buffer or throw an error
 				}
-				if (format === GFTextureFormat.ETC1 && format === GFTextureFormat.ETC1A4) {
-					return resolve(data); //TODO ?
-				}
+				// if (format === GFTextureFormat.ETC1 && format === GFTextureFormat.ETC1A4) {
+				// 	return resolve(data); //TODO ?
+				// }
 				const extraMapping = (tex.isPetMap)? PET_MAPPING : IDENTITY_MAPPING;
 				
 				process.nextTick(()=>{
 					let [convert, increment] = GFTextureFormat.getDecode(format);
+					if (!increment) { //ETC decompression
+						return resolve(convert(data, width, height));
+					}
 					let out = new Uint8Array(width * height * 4);
 					let ioff = 0, ooff = 0, x, y;
 					let input = [], output = [];
