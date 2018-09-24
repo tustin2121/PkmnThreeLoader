@@ -62,4 +62,4 @@ if (!Vector4.prototype.getFrom24Bits) {
 	};
 }
 
-module.exports = { Vector4 };
+module.exports = { Vector4, getFloat24, getWord24 };

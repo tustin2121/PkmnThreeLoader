@@ -46,7 +46,7 @@ class GFModelPack {
 		if (!(other instanceof GFModelPack)) throw new TypeError('Can only merge other GFModelPacks!');
 		this.models = this.models.concat(other.models);
 		this.textures = this.textures.concat(other.textures);
-		this.unk2 = this.unk2.concat(other.unk2);
+		this.shaders1 = this.shaders1.concat(other.shaders1);
 		this.unk3 = this.unk3.concat(other.unk3);
 		this.shaders = this.shaders.concat(other.shaders);
 		return this;

@@ -45,7 +45,7 @@ class BufferedReader {
 		let advance = (offset === undefined);
 		offset = offset || this.data.offset;
 		let vec = new Vector2(
-			this.data.readFloat32(offset),
+			this.data.readFloat32(offset+0),
 			this.data.readFloat32(offset+4)
 		);
 		if (advance) this.data.skip(4*2);
@@ -55,7 +55,7 @@ class BufferedReader {
 		let advance = (offset === undefined);
 		offset = offset || this.data.offset;
 		let vec = new Vector3(
-			this.data.readFloat32(offset),
+			this.data.readFloat32(offset+0),
 			this.data.readFloat32(offset+4),
 			this.data.readFloat32(offset+8)
 		);
@@ -66,7 +66,7 @@ class BufferedReader {
 		let advance = (offset === undefined);
 		offset = offset || this.data.offset;
 		let vec = new Vector4(
-			this.data.readFloat32(offset),
+			this.data.readFloat32(offset+0),
 			this.data.readFloat32(offset+4),
 			this.data.readFloat32(offset+8),
 			this.data.readFloat32(offset+12)
@@ -74,6 +74,20 @@ class BufferedReader {
 		if (advance) this.data.skip(4*4);
 		return vec;
 	}
+	
+	readByteVector4(offset) {
+		let advance = (offset === undefined);
+		offset = offset || this.data.offset;
+		let vec = new Vector4(
+			this.data.readUint8(offset+0),
+			this.data.readUint8(offset+1),
+			this.data.readUint8(offset+2),
+			this.data.readUint8(offset+3)
+		);
+		if (advance) this.data.skip(4*1);
+		return vec;
+	}
+	
 	readQuaternion(offset) {
 		let advance = (offset === undefined);
 		offset = offset || this.data.offset;

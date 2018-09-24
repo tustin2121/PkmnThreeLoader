@@ -68,7 +68,7 @@ class VertShaderGenerator extends ShaderGenerator {
 	 * @param {ProcInfo} proc - The procedure to generate.
 	 */
 	genProc(program, proc) {
-		this.buffer.push(`void ${proc.name}() {{`);
+		this.buffer.push(`void ${proc.name}() {`);
 		this.indent = `\t`;
 		
 		this.genProcBody(program, proc);
