@@ -10,7 +10,7 @@ class VertShaderGenerator extends ShaderGenerator {
 		super(shBin);
 	}
 	
-	getVtxShader(programIndex, hasGeoShader) {
+	getVtxShader(programIndex=0) {
 		/** @type {ShaderProgram} */
 		let program = this.shBin.programs[programIndex];
 		

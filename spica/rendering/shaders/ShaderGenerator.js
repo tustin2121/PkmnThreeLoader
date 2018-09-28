@@ -471,6 +471,49 @@ class ShaderGenerator {
 		}
 	}
 	
+	//////////////////////////////////////////////////////////////////////////////////
+	// Uniforms
+	
+	getVec4Uniforms(uniforms) {
+		return this._genVecUniforms(uniforms, this.vec4UniformNames, 'vec4');
+	}
+	getIVec4Uniforms(uniforms) {
+		return this._genVecUniforms(uniforms, this.ivec4UniformNames, 'ivec4');
+	}
+	_genVecUniforms(uniforms, names, type) {
+		let out = [];
+		for (let i = 0; i < uniforms.length; i++) {
+			const uniform = uniforms[i];
+			if (!uniform || uniform.isConstant) continue; //these will be generated into the shader
+			const name = `${type}_${i - uniform.arrayIndex}_${this.getValidName(name)}`;
+			
+			// For registers used as arrays, the name is stored with the indexer ([0], [1], [2]...),
+			// but a version without the indexer is also stored in Vec4UniformNamesNoIdx for getSrcRegister(),
+			// since it needs indexed array access with illegal memory access protection. --gdkchan
+			const indexer = uniform.isArray ? `[${uniform.arrayIndex}]` : '';
+			names[i] = name + indexer;
+			
+			if (names === this.vec4UniformNames) {
+				this.vec4UniformNames[i] = name;
+			}
+			if (uniform.arrayIndex === 0) {
+				if (uniform.isArray)
+					out.push(`uniform ${type} ${name}[${uniform.arrayLength}];`);
+				else
+					out.push(`uniform ${type} ${name};`);
+			}
+		}
+		return out;
+	}
+	getBoolUniforms(uniforms) {
+		let out = [`uniforms int BoolUniforms;\n`];
+		for (let i = 0; i < uniforms.length; i++) {
+			const name = `bool_${i}_${this.getValidName(uniforms[i].name)}`;
+			this.boolUniformNames[i] = name;
+			out.push(`#define ${name} (1 << ${i})`);
+		}
+		return out;
+	}
 }
 
 module.exports = ShaderGenerator;

@@ -1,8 +1,11 @@
 // https://github.com/gdkchan/SPICA/blob/master/SPICA/Formats/GFL2/GFModelPack.cs
 
+const { RawShaderMaterial } = require('three');
 const { GFModel } = require('./model/GFModel');
 const { GFTexture } = require('./texture/GFTexture');
 const { GFShader } = require('./shader/GFShader');
+const { GFMaterial } = require('./GFMaterial');
+const { VertShaderGenerator, FragShaderGenerator } = require('../rendering/shaders');
 
 class GFModelPack {
 	constructor(data) {
@@ -57,20 +60,21 @@ class GFModelPack {
 		let obj = new Group();
 		
 		// Transpile Shaders
-		let vShader = {}, gShader = {}, fShader = {};
+		let shaders = {}, gShader = {}, fShader = {};
 		for (let gfShader of this.shaders) {
-			if (gfShader.vtxShader) {
-				// TODO generate a Vertex Shader from gfShader.vtxShader
-				vShader[gfShader.name] = true;
-			}
-			if (gfShader.geoShader) {
-				// TODO generate a Geometry Shader replacement from gfShader.geoShader
-				gShader[gfShader.name] = true;
-			}
-			if (gfShader.texEnvStages) {
-				// TODO generate a Fragment Shader from gfShader.texEnvStages
-				fShader[gfShader.name] = true;
-			}
+			shaders[gfShader.name] = gfShader;
+			// if (gfShader.vtxShader) {
+			// 	// TODO generate a Vertex Shader from gfShader.vtxShader
+			// 	vShader[gfShader.name] = true;
+			// }
+			// if (gfShader.geoShader) {
+			// 	// TODO generate a Geometry Shader replacement from gfShader.geoShader
+			// 	gShader[gfShader.name] = true;
+			// }
+			// if (gfShader.texEnvStages) {
+			// 	// TODO generate a Fragment Shader from gfShader.texEnvStages
+			// 	fShader[gfShader.name] = true;
+			// }
 		}
 		
 		// Gather Textures
@@ -83,27 +87,42 @@ class GFModelPack {
 		// Compile Models
 		// for (let gfModel of this.models){
 		{ let gfModel = this.models[0]; //TODO HACK to dodge shadow
-			let model = gfModel.toThree();
+			let model = gfModel.toThree(false);
 			model.traverse((obj)=>{
 				if (!obj.isMesh) return; //continue;
 				// if (obj.isSkinnedMesh) obj.material.skinning = true; //TODO: Causing model to disappear!
 				
-				let matinfo = obj.material.userData;
-				// Apply Textures
-				if (matinfo.map && textures[matinfo.map.name]) {
-					let tex = textures[matinfo.map.name].toThree(matinfo.map);
-					obj.material.map = tex;
-				}
-				if (matinfo.normalMap && textures[matinfo.normalMap.name]) {
-					let tex = textures[matinfo.normalMap.name].toThree(matinfo.normalMap);
-					obj.material.normalMap = tex;
-				}
-				// Apply Shaders
-				if (matinfo.fragmentShader) {
-					// obj.material.fragmentShader = fShader[matinfo.fragmentShader];
-				}
-				if (matinfo.vertexShader) {
-					// obj.material.vertexShader = fShader[matinfo.vertexShader];
+				let mat = obj.material;
+				if (mat instanceof GFMaterial) {
+					let opts = {
+						extensions: {},
+						defines: {},
+						uniforms: {},
+					};
+					// Transpile and apply Shaders
+					if (mat.vtxShaderName) {
+						let shader = shaders[mat.vtxShaderName];
+						let gen = new VertShaderGenerator(shader.toShaderBinary());
+						opts.vertexShader = gen.getVtxShader();
+					}
+					if (mat.fragShaderName) {
+						let shader = shaders[mat.fragShaderName];
+						let gen = new FragShaderGenerator(shader.toShaderBinary(), { shader, mat });
+						opts.fragmentShader = gen.getFragShader();
+					}
+					
+					obj.material = new RawShaderMaterial(opts);
+				} else {
+					let matinfo = obj.material.userData;
+					// Apply Textures
+					if (matinfo.map && textures[matinfo.map.name]) {
+						let tex = textures[matinfo.map.name].toThree(matinfo.map);
+						obj.material.map = tex;
+					}
+					if (matinfo.normalMap && textures[matinfo.normalMap.name]) {
+						let tex = textures[matinfo.normalMap.name].toThree(matinfo.normalMap);
+						obj.material.normalMap = tex;
+					}
 				}
 			});
 			obj.add(model);

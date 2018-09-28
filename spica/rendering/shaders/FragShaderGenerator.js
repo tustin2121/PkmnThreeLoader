@@ -31,8 +31,8 @@ struct Light_t {
 	float AttBias;
 	float AngleLUTScale;
 	int AngleLUTInput;
-	int SpotAttEnb;
-	int DistAttEnb;
+	int SpotAttEnb; //Spotlight Attribute Enable
+	int DistAttEnb; //Diststant light Attribute Enabled
 	int TwoSidedDiff;
 	int Directional;
 };
