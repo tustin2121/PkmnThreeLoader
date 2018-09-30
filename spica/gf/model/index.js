@@ -4,5 +4,4 @@ module.exports = Object.assign({},
 	require('./GFBone'),
 	require('./GFMaterial'),
 	require('./GFMesh'),
-	require('./GFModel'),
-	require('./GFSubMesh'));
+	require('./GFModel'));

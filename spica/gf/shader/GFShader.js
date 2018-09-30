@@ -173,7 +173,7 @@ class GFShader {
 			if (outmap[i]===0) continue;
 			let reg = new ShaderOutputReg();
 			for (let j = 0; j < 4; j++) {
-				let value = (outmap[i] >> (j * 8)) && 0x1F;
+				let value = (outmap[i] >> (j * 8)) & 0x1F;
 				if (value !== 0x1F) {
 					reg.mask |= 0x1 << j;
 					

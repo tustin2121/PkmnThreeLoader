@@ -1,10 +1,9 @@
 // https://github.com/gdkchan/SPICA/blob/master/SPICA/Formats/GFL2/GFModelPack.cs
 
 const { RawShaderMaterial } = require('three');
-const { GFModel } = require('./model/GFModel');
+const { GFModel, GFMaterial } = require('./model');
 const { GFTexture } = require('./texture/GFTexture');
 const { GFShader } = require('./shader/GFShader');
-const { GFMaterial } = require('./GFMaterial');
 const { VertShaderGenerator, FragShaderGenerator } = require('../rendering/shaders');
 
 class GFModelPack {

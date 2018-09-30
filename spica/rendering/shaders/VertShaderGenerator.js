@@ -20,6 +20,8 @@ class VertShaderGenerator extends ShaderGenerator {
 		out.push(`// SPICA auto-generated code`);
 		out.push(`// This code was translated from a MAESTRO Vertex Shader`);
 		out.push(`#version 330 core`);
+		out.push('precision highp float;');
+		out.push('precision highp int;');
 		out.push('');
 		
 		out.push(...this.getVec4Uniforms(program.vec4Uniforms));
@@ -82,4 +84,4 @@ class VertShaderGenerator extends ShaderGenerator {
 	}
 }
 
-module.exports = VertShaderGenerator;
+module.exports = { VertShaderGenerator };

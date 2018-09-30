@@ -80,6 +80,13 @@ const INST_TABLE = [
  * @property {uint} length - Total length of the procedure
  */
 
+// Constants:
+// BoolUniforms - Boolean Uniforms as a bitmap of flags
+// reg_temp - Temporary register
+// reg_a0 - A0 Register
+// reg_al - AL Register
+// reg_cmp - Comparison register
+
 
 class ShaderGenerator {
 	/**
@@ -424,13 +431,6 @@ class ShaderGenerator {
 	}
 	
 	/**
-	 * @param {string} name 
-	 */
-	getValidName(name) {
-		return name.replace(/[^a-zA-Z0-9_]/ig, '');
-	}
-	
-	/**
 	 * 
 	 * @param {ShaderOutputReg[]} regs 
 	 * @param {string} prefix 
@@ -440,7 +440,7 @@ class ShaderGenerator {
 		let out = [];
 		for (let i = 0; i < regs.length; i++) {
 			let reg = regs[i];
-			if (reg.mask) {
+			if (reg && reg.mask) {
 				if (reg.name === ShaderOutputRegName.TexCoord0W) {
 					reg.name = ShaderOutputRegName.TexCoord0;
 				}
@@ -474,6 +474,13 @@ class ShaderGenerator {
 	//////////////////////////////////////////////////////////////////////////////////
 	// Uniforms
 	
+	/**
+	 * @param {string} name 
+	 */
+	getValidName(name) {
+		return name.replace(/[^a-zA-Z0-9_]/ig, '');
+	}
+	
 	getVec4Uniforms(uniforms) {
 		return this._genVecUniforms(uniforms, this.vec4UniformNames, 'vec4');
 	}
@@ -506,7 +513,7 @@ class ShaderGenerator {
 		return out;
 	}
 	getBoolUniforms(uniforms) {
-		let out = [`uniforms int BoolUniforms;\n`];
+		let out = [`uniform int BoolUniforms;\n`];
 		for (let i = 0; i < uniforms.length; i++) {
 			const name = `bool_${i}_${this.getValidName(uniforms[i].name)}`;
 			this.boolUniformNames[i] = name;

@@ -2,11 +2,11 @@
 
 class ShaderUniform {
 	constructor({ isConstant=false, isArray=false, name='' }={}) {
+		this.name = name;
 		this.isConstant = isConstant;
 		this.isArray = isArray;
 		this.arrayIndex = 0;
 		this.arrayLength = 1;
-		this.name = name;
 	}
 }
 

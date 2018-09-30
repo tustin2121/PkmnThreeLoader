@@ -60,9 +60,9 @@ class PICALUTInAbs {
 		this.dist1		= (param & 0x00000020) === 0;
 		this.specular	= (param & 0x00000200) === 0;
 		this.fresnel	= (param & 0x00002000) === 0;
-		this.reflexR	= (param & 0x00020000) === 0;
-		this.reflexG	= (param & 0x00200000) === 0;
-		this.reflexB	= (param & 0x02000000) === 0;
+		this.reflectR	= (param & 0x00020000) === 0;
+		this.reflectG	= (param & 0x00200000) === 0;
+		this.reflectB	= (param & 0x02000000) === 0;
 	}
 	//TODO ? https://github.com/gdkchan/SPICA/blob/master/SPICA/PICA/Commands/PICALUTInAbs.cs#L24
 	toUint32() { throw new Error('Not implemented'); }
@@ -75,9 +75,9 @@ class PICALUTInScale {
 		this.dist1		= ((param >>  4) & 7);
 		this.specular	= ((param >>  8) & 7);
 		this.fresnel	= ((param >> 12) & 7);
-		this.reflexR	= ((param >> 16) & 7);
-		this.reflexG	= ((param >> 20) & 7);
-		this.reflexB	= ((param >> 24) & 7);
+		this.reflectR	= ((param >> 16) & 7);
+		this.reflectG	= ((param >> 20) & 7);
+		this.reflectB	= ((param >> 24) & 7);
 	}
 	// TODO ? https://github.com/gdkchan/SPICA/blob/master/SPICA/PICA/Commands/PICALUTInScale.cs#L24
 	toUint32() { throw new Error('Not implemented'); }
@@ -90,9 +90,9 @@ class PICALUTInSel {
 		this.dist1		= ((param >>  4) & 7);
 		this.specular	= ((param >>  8) & 7);
 		this.fresnel	= ((param >> 12) & 7);
-		this.reflexR	= ((param >> 16) & 7);
-		this.reflexG	= ((param >> 20) & 7);
-		this.reflexB	= ((param >> 24) & 7);
+		this.reflectR	= ((param >> 16) & 7);
+		this.reflectG	= ((param >> 20) & 7);
+		this.reflectB	= ((param >> 24) & 7);
 	}
 	// TODO ? https://github.com/gdkchan/SPICA/blob/master/SPICA/PICA/Commands/PICALUTInSel.cs#L24
 	toUint32() { throw new Error('Not implemented'); }

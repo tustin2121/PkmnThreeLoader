@@ -9,6 +9,8 @@ const { GFTextureMappingType } = require('../../gf/model');
 const ShaderGenerator = require('./ShaderGenerator');
 
 const FRAG_SHADER_BASE = `#version 150
+precision highp float;
+precision highp int;
 
 uniform sampler2D LUTs[6];
 
@@ -74,7 +76,7 @@ in vec4 TexCoord1;
 in vec4 TexCoord2;
 in vec4 View;
 
-out vec4 Output;
+layout(location=0) out vec4 Output;
 `;
 
 class FragShaderGenerator extends ShaderGenerator {
@@ -204,12 +206,12 @@ class FragShaderGenerator extends ShaderGenerator {
 	
 	_genFragColors() {
 		// See Model and Mesh SPICA classes for the LUT mappings
-		let dist0 = getLUTInput(this.mat.LUTInputSelection.dist0, this.mat.LUTInputScale.dist0, 0);
-		let dist1 = getLUTInput(this.mat.LUTInputSelection.dist1, this.mat.LUTInputScale.dist1, 1);
-		let fresnel = getLUTInput(this.mat.LUTInputSelection.fresnel, this.mat.LUTInputScale.fresnel, 2);
-		let reflectR = getLUTInput(this.mat.LUTInputSelection.reflectR, this.mat.LUTInputScale.reflectR, 3);
-		let reflectG = getLUTInput(this.mat.LUTInputSelection.reflectG, this.mat.LUTInputScale.reflectG, 4);
-		let reflectB = getLUTInput(this.mat.LUTInputSelection.reflectB, this.mat.LUTInputScale.reflectB, 5);
+		let dist0 = getLUTInput(this.mat.lutInputSelection.dist0, this.mat.lutInputScale.dist0, 0);
+		let dist1 = getLUTInput(this.mat.lutInputSelection.dist1, this.mat.lutInputScale.dist1, 1);
+		let fresnel = getLUTInput(this.mat.lutInputSelection.fresnel, this.mat.lutInputScale.fresnel, 2);
+		let reflectR = getLUTInput(this.mat.lutInputSelection.reflectR, this.mat.lutInputScale.reflectR, 3);
+		let reflectG = getLUTInput(this.mat.lutInputSelection.reflectG, this.mat.lutInputScale.reflectG, 4);
+		let reflectB = getLUTInput(this.mat.lutInputSelection.reflectB, this.mat.lutInputScale.reflectB, 5);
 		const color = `u_EmissionColor + u_AmbientColor * SAmbient`;
 		
 		this.append(`vec4 FragPriColor = vec4((${color}).rgb, 1);`);

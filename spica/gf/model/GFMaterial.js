@@ -298,7 +298,7 @@ class GFMaterial {
 				
 				case PICARegister.GPUREG_LIGHTING_LUTINPUT_ABS: this.lutInputAbsolute = new PICALUTInAbs(param); break;
 				case PICARegister.GPUREG_LIGHTING_LUTINPUT_SELECT: this.lutInputSelection = new PICALUTInSel(param); break;
-				case PICARegister.GPUREG_LIGHTING_LUTINPUT_SCALE: this.lutInputScalen = new PICALUTInScale(param); break;
+				case PICARegister.GPUREG_LIGHTING_LUTINPUT_SCALE: this.lutInputScale = new PICALUTInScale(param); break;
 			}
 		}
 		

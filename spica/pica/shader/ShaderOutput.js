@@ -25,11 +25,11 @@ class ShaderOutputReg {
      * @param {ShaderOutputRegName} name 
      * @param {uint} mask 
      */
-	constructor({ name='', mask=0 }) {
+	constructor({ name='', mask=0 }={}) {
         /** @type {number} ShaderOutputRegName */
-        this.name = ''; 
+        this.name = name; 
         /** @type {uint} */
-		this.mask = 0;
+		this.mask = mask;
     }
     
     get nameStr() {

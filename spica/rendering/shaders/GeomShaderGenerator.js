@@ -4,3 +4,4 @@
 // see here: https://stackoverflow.com/questions/8641119/webgl-geometry-shader-equivalent
 // and here: https://acko.net/blog/yak-shading/
 
+module.exports = {};
