@@ -4,7 +4,7 @@ const { RawShaderMaterial } = require('three');
 const { GFModel, GFMaterial } = require('./model');
 const { GFTexture } = require('./texture/GFTexture');
 const { GFShader } = require('./shader/GFShader');
-const { VertShaderGenerator, FragShaderGenerator } = require('../rendering/shaders');
+const { VertShaderGenerator, FragShaderGenerator } = require('../rendering/shadergen');
 
 class GFModelPack {
 	constructor(data) {
@@ -94,34 +94,40 @@ class GFModelPack {
 				let mat = obj.material;
 				if (mat instanceof GFMaterial) {
 					let opts = {
-						extensions: {},
-						defines: {},
-						uniforms: {},
+						vertexShader: null,
+						geometryShader: null,
+						fragmentShader: null,
+						// extensions: {},
+						// defines: {},
+						// uniforms: {},
 					};
 					// Transpile and apply Shaders
 					if (mat.vtxShaderName) {
 						let shader = shaders[mat.vtxShaderName];
 						let gen = new VertShaderGenerator(shader.toShaderBinary());
-						opts.vertexShader = gen.getVtxShader();
+						opts.vertexShader = { name:mat.vtxShaderName, code: gen.getVtxShader() };
+					}
+					if (mat.geomShaderName) {
+						opts.geometryShader = { name:mat.geomShaderName, code:'exists' };
 					}
 					if (mat.fragShaderName) {
 						let shader = shaders[mat.fragShaderName];
 						let gen = new FragShaderGenerator(shader.toShaderBinary(), { shader, mat });
-						opts.fragmentShader = gen.getFragShader();
+						opts.fragmentShader = { name:mat.fragShaderName, code: gen.getFragShader() };
 					}
 					
-					obj.material = new RawShaderMaterial(opts);
-				} else {
-					let matinfo = obj.material.userData;
-					// Apply Textures
-					if (matinfo.map && textures[matinfo.map.name]) {
-						let tex = textures[matinfo.map.name].toThree(matinfo.map);
-						obj.material.map = tex;
-					}
-					if (matinfo.normalMap && textures[matinfo.normalMap.name]) {
-						let tex = textures[matinfo.normalMap.name].toThree(matinfo.normalMap);
-						obj.material.normalMap = tex;
-					}
+					obj.userData.shaderinfo = opts;
+					obj.material = obj.material.toThree(); //new RawShaderMaterial(opts);
+				}
+				let matinfo = obj.material.userData;
+				// Apply Textures
+				if (matinfo.map && textures[matinfo.map.name]) {
+					let tex = textures[matinfo.map.name].toThree(matinfo.map);
+					obj.material.map = tex;
+				}
+				if (matinfo.normalMap && textures[matinfo.normalMap.name]) {
+					let tex = textures[matinfo.normalMap.name].toThree(matinfo.normalMap);
+					obj.material.normalMap = tex;
 				}
 			});
 			obj.add(model);

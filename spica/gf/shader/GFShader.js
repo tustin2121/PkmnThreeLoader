@@ -197,7 +197,7 @@ class GFShader {
 		let lblId = 0;
 		
 		for (let i = 0; i < this.executable.length; i++) {
-			let opCode = this.executable[i] >> 26; /** @type {ShaderOpCode} */
+			let opCode = this.executable[i] >>> 26; /** @type {ShaderOpCode} */
 			
 			switch (opCode) {
 				case ShaderOpCode.Call:
@@ -215,8 +215,8 @@ class GFShader {
 							length: 0,
 							name,
 						});
-						if (!this.vtxShader) this.vtxShader.labels.push(label);
-						if (!this.geoShader) this.geoShader.labels.push(label);
+						if (this.vtxShader) this.vtxShader.labels.push(label);
+						if (this.geoShader) this.geoShader.labels.push(label);
 					}
 				} break;
 			}
@@ -251,13 +251,39 @@ Object.defineProperties(GFShader, {
 	'MAGIC_NUMBER': { value:0x15041213, },
 });
 
+const DEFAULT_NAMES = [
+	`WrldMtx[0]`, `WrldMtx[1]`, `WrldMtx[2]`, `WrldMtx[3]`,
+	`NormMtx[0]`, `NormMtx[1]`, `NormMtx[2]`, `NormMtx[3]`,
+	`PosOffs`, 
+	`IrScale[0]`, `IrScale[1]`,
+	`TexcMap`,
+	`TexMtx0[0]`, `TexMtx0[1]`, `TexMtx0[2]`, `TexMtx0[3]`,
+	`TexMtx1[0]`, `TexMtx1[1]`, `TexMtx1[2]`, `TexMtx1[3]`,
+	`TexMtx2[0]`, `TexMtx2[1]`,
+	`TexTran`,
+	`MatAmbi`,
+	`MatDiff`,
+	`HsLGCol`,
+	`HsLSCol`,
+	`HsLSDir`,
+];
+for (let i = 0; i < 60; i++) DEFAULT_NAMES.push(`UnivReg[${i}]`);
+DEFAULT_NAMES.push(
+	`ProjMtx[0]`, `ProjMtx[1]`, `ProjMtx[2]`, `ProjMtx[3]`,
+	`ViewMtx[0]`, `ViewMtx[1]`, `ViewMtx[2]`, `ViewMtx[3]`,
+);
+
 function makeArray(uniforms, name) {
 	//This is necessary because it's almost impossible to know what
     //is supposed to be an array without the SHBin information.
     //So we just make the entire thing an array to allow indexing.
 	if (!uniforms) return;
 	for (let i = 0; i < uniforms.length; i++) {
-		uniforms[i].name = name;
+		if (name === 'v_c') {
+			uniforms[i].name = DEFAULT_NAMES[i];
+		} else {
+			uniforms[i].name = name;
+		}
 		uniforms[i].isArray = true;
 		uniforms[i].arrayIndex = i;
 		uniforms[i].arrayLength = uniforms.length;
@@ -267,12 +293,15 @@ function makeArray(uniforms, name) {
 function findProgramEnd(program, executable) {
 	if (!program) return;
 	for (let i = program.mainOffset; i < executable.length; i++) {
-		if ((executable[i] >> 26) === ShaderOpCode.End)
+		if ((executable[i] >>> 26) === ShaderOpCode.End)
 		{
 			program.endMainOffset = i;
 			break;
 		}
 	}
+	if (program.endMainOffset === 0) {
+		program.endMainOffset = executable.length-1;
+	} 
 }
 
 module.exports = { GFShader };

@@ -3,6 +3,31 @@
 
 const { ShaderUniformBool, ShaderUniformVec4 } = require('./ShaderUniform');
 
+const INPUT_ATTRBS = [
+	`Position`,
+	`Normal`,
+	`Tangent`,
+	`Color`,
+	`TexCoord0`,
+	`TexCoord1`,
+	`TexCoord2`,
+	`BoneIndex`,
+	`BoneWeight`,
+	`UserAttribute0`,
+	`UserAttribute1`,
+	`UserAttribute2`,
+	`UserAttribute3`,
+	`UserAttribute4`,
+	`UserAttribute5`,
+	`UserAttribute6`,
+	`UserAttribute7`,
+	`UserAttribute8`,
+	`UserAttribute9`,
+	`UserAttribute10`,
+	`UserAttribute11`,
+	`Interleave`,
+];
+
 function initArray(clazz, len, baseName) {
 	let arr = new Array(len);
 	for (let i = 0; i < len; i++) {
@@ -22,7 +47,7 @@ class ShaderProgram {
 		this.labels = []; /** @type {List<ShaderLabel>} */
 		
 		for (let i = 0; i < this.inputRegs.length; i++) {
-			this.inputRegs[i] = `input_attrb_${i}`;
+			this.inputRegs[i] = INPUT_ATTRBS[i]; //`input_attrb_${i}`;
 		}
 		
 		this.isGeometryShader = false; /** @type {bool} */

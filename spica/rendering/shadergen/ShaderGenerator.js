@@ -270,7 +270,10 @@ class ShaderGenerator {
 	 * @param {uint} inst - Instruction to generate
 	 */
 	genInst(program, inst) {
-		GEN_INST[inst >> 26].call(this, program, inst);
+		let gen = INST_TABLE[inst >>> 26];
+		gen = GEN_INST[gen];
+		if (!gen) debugger;
+		gen.call(this, program, inst);
 	}
 	
 	/**
@@ -279,12 +282,12 @@ class ShaderGenerator {
 	 * @param {ProcInfo} proc 
 	 */
 	genProcBody(program, proc) {
-		for (this.ip = proc.offset; this.ip < proc.offset + proc.length; this.ip++) {
+		for (this.ip = proc.off; this.ip < proc.off + proc.len; this.ip++) {
 			// Split procedure if a label is found at the current address.
 			// This is done to support Jump instructions.
-			if (this.ip > proc.offset && !!this.labels[this.ip]) {
+			if (this.ip > proc.off && !!this.labels[this.ip]) {
 				let name = this.labels[this.ip];
-				this.addProc(name, this.ip, (proc.offset + proc.length) - this.ip);
+				this.addProc(name, this.ip, (proc.off + proc.len) - this.ip);
 				this.buffer.push(`\t${name}();`);
 				break;
 			}
@@ -401,7 +404,7 @@ class ShaderGenerator {
 	 * @param {bool} onTrue
 	 */
 	getBoolCondition(program, regid, onTrue = true) {
-		if (program.boolUniforms[regid].isConstant) {
+		if (program.boolUniforms[regid] && program.boolUniforms[regid].isConstant) {
 			return program.boolUniforms[regid].constant ? 'true' : 'false';
 		} else if (onTrue) {
 			return `(BoolUniforms & ${this.boolUniformNames[regid]}) != 0`;
@@ -416,7 +419,7 @@ class ShaderGenerator {
 	 */
 	parseInstructionType1(program, inst) {
 		let info = {
-			inst: (inst >> 26),
+			inst: (inst >>> 26),
 			dest: (inst >> 21) & 0x1F,
 			idx1: (inst >> 19) & 0x03,
 			src1: (inst >> 12) & 0x7F,
@@ -492,7 +495,7 @@ class ShaderGenerator {
 		for (let i = 0; i < uniforms.length; i++) {
 			const uniform = uniforms[i];
 			if (!uniform || uniform.isConstant) continue; //these will be generated into the shader
-			const name = `${type}_${i - uniform.arrayIndex}_${this.getValidName(name)}`;
+			const name = `${type}_${i - uniform.arrayIndex}_${this.getValidName(uniform.name)}`;
 			
 			// For registers used as arrays, the name is stored with the indexer ([0], [1], [2]...),
 			// but a version without the indexer is also stored in Vec4UniformNamesNoIdx for getSrcRegister(),
@@ -501,7 +504,7 @@ class ShaderGenerator {
 			names[i] = name + indexer;
 			
 			if (names === this.vec4UniformNames) {
-				this.vec4UniformNames[i] = name;
+				this.vec4UniformNamesNoIdx[i] = name;
 			}
 			if (uniform.arrayIndex === 0) {
 				if (uniform.isArray)
@@ -716,7 +719,7 @@ GEN_INST[ShaderOpCode.CallU] = function(program, inst, {}={}) {
 };
 GEN_INST[ShaderOpCode.IfU] = function(program, inst, {}={}) {
 	inst = this.getInst3Params(inst);
-	this.genIfBlock(program, this.getBoolCondition(inst, inst.regId), inst.dest, inst.count);
+	this.genIfBlock(program, this.getBoolCondition(program, inst.regId), inst.dest, inst.count);
 };
 GEN_INST[ShaderOpCode.IfC] = function(program, inst, {}={}) {
 	inst = this.getInst2Params(inst);
@@ -743,7 +746,7 @@ GEN_INST[ShaderOpCode.JmpC] = function(program, inst, {}={}) {
 };
 GEN_INST[ShaderOpCode.JmpU] = function(program, inst, {}={}) {
 	inst = this.getInst3Params(inst);
-	this.append(`if (${this.getBoolCondition(inst, inst.regId)}) { //jump`);
+	this.append(`if (${this.getBoolCondition(program, inst.regId)}) { //jump`);
 	this.append(`\t${this.labels[inst.dest]}();`);
 	this.append(`\treturn;`);
 	this.append(`}`);

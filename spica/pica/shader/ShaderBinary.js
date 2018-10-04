@@ -191,11 +191,11 @@ class ShaderBinary {
 		let sDst = null;
 		let sSrc  = new Array(3);
 		let sSrcM = new Array(3);
-		let swizzle = this.swizzles[descIdx][0];
+		let swizzle = this.swizzles[descIdx];
 		
-		sSrc[0] = this.getSwizzle(swizzle >>  5); //bits 6-14 
-		sSrc[1] = this.getSwizzle(swizzle >> 14); //bits 15-23
-		sSrc[2] = this.getSwizzle(swizzle >> 23); //bits 24-32
+		sSrc[0] = this.getSwizzle(swizzle >>>  5); //bits 6-14 
+		sSrc[1] = this.getSwizzle(swizzle >>> 14); //bits 15-23
+		sSrc[2] = this.getSwizzle(swizzle >>> 23); //bits 24-32
 		
 		let mask = swizzle & 0xF;
 		
@@ -242,7 +242,7 @@ class ShaderBinary {
 		const COMPS = 'xyzw';
 		let out = '';
 		for (let i = 0; i < 8; i+=2) {
-			out = COMPS[(comps>>i)&3] + out;
+			out = COMPS[(comps >>> i)&3] + out;
 		}
 		return out;
 	}

@@ -12,14 +12,14 @@ class ShaderUniform {
 
 class ShaderUniformBool extends ShaderUniform {
 	constructor(opts={}) {
-		super(Object.assign({ isConstant: true }, opts));
+		super(Object.assign({ isConstant: !!opts.val }, opts));
 		this.constant = opts.val;
 	}
 }
 
 class ShaderUniformVec4 extends ShaderUniform {
 	constructor(opts={}) {
-		super(Object.assign({ isConstant: true }, opts));
+		super(Object.assign({ isConstant: !!opts.val }, opts));
 		this.constant = opts.val;
 	}
 }
