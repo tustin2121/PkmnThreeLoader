@@ -27,6 +27,11 @@ if (window.gli) {
 let scene = new THREE.Scene();
 scene.add(new THREE.GridHelper(200, 20));
 scene.add(new THREE.AxesHelper(50));
+scene.add(new THREE.HemisphereLight(0xffffff, 0xffffff, 1.0));
+// scene.add((()=>{
+// 	let l = new THREE.
+// 	return 
+// })());
 
 let camera = new THREE.PerspectiveCamera(45, 1, 0.5, 100000);
 camera.position.set(0, 200, 200);

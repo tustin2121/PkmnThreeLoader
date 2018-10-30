@@ -349,6 +349,7 @@ class GFMaterial {
 			}
 			if (this.bumpTexture > -1) {
 				info.normalMap = this.textureCoords[this.bumpTexture].toThree();
+				info.alphaMap = info.normalMap;
 				info.coodMap[this.bumpTexture] = 'normalMap';
 			}
 		}
@@ -363,7 +364,9 @@ class GFMaterial {
 		// opts.transparent = true;
 		
 		// return new THREE.ShaderMaterial(opts);
-		return new THREE.MeshBasicMaterial(opts);
+		// return new THREE.MeshBasicMaterial(opts);
+		// return new THREE.MeshToonMaterial(opts);
+		return new THREE.MeshPhongMaterial(opts);
 	}
 }
 

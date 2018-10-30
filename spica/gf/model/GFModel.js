@@ -89,7 +89,7 @@ class GFModel {
 	}
 	
 	toThree(convertMats = true) {
-		require('three/examples/js/BufferGeometryUtils'); //need this first
+		require('three/examples/js/utils/BufferGeometryUtils'); //need this first
 		const {
 			Skeleton, SkinnedMesh, Mesh, BufferGeometry, InterleavedBuffer,
 			InterleavedBufferAttribute, BufferAttribute, Object3D, Box3,

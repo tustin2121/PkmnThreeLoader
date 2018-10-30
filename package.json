@@ -6,7 +6,7 @@
   "dependencies": {
     "bytebuffer": "^5.0.1",
     "nw": "^0.31.4-sdk",
-    "three": "^0.92.0"
+    "three": "^0.97.0"
   },
   "devDependencies": {},
   "scripts": {

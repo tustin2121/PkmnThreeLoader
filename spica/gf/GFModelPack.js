@@ -55,7 +55,7 @@ class GFModelPack {
 	}
 	
 	async toThree() {
-		const { Group } = require('three');
+		const { Group, ObjectSpaceNormalMap } = require('three');
 		let obj = new Group();
 		
 		// Transpile Shaders
@@ -89,7 +89,6 @@ class GFModelPack {
 			let model = gfModel.toThree(false);
 			model.traverse((obj)=>{
 				if (!obj.isMesh) return; //continue;
-				// if (obj.isSkinnedMesh) obj.material.skinning = true; //TODO: Causing model to disappear!
 				
 				let mat = obj.material;
 				if (mat instanceof GFMaterial) {
@@ -120,6 +119,7 @@ class GFModelPack {
 					obj.material = obj.material.toThree(); //new RawShaderMaterial(opts);
 				}
 				let matinfo = obj.material.userData;
+				if (obj.isSkinnedMesh) obj.material.skinning = true;
 				// Apply Textures
 				if (matinfo.map && textures[matinfo.map.name]) {
 					let tex = textures[matinfo.map.name].toThree(matinfo.map);
@@ -128,6 +128,11 @@ class GFModelPack {
 				if (matinfo.normalMap && textures[matinfo.normalMap.name]) {
 					let tex = textures[matinfo.normalMap.name].toThree(matinfo.normalMap);
 					obj.material.normalMap = tex;
+					obj.material.normalMapType = ObjectSpaceNormalMap;
+				}
+				if (matinfo.alphaMap && textures[matinfo.alphaMap.name]) {
+					let tex = textures[matinfo.alphaMap.name].toThree(matinfo.alphaMap);
+					obj.material.alphaMap = tex;
 				}
 			});
 			obj.add(model);

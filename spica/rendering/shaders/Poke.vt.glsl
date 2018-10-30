@@ -14,6 +14,8 @@ uniform vec3 cameraPosition;
 attribute vec4 position;
 attribute vec3 normal;
 attribute vec2 uv;
+attribute vec2 uv2;
+attribute vec2 uv3;
 #ifdef USE_SKINNING
 	attribute vec4 skinIndex;
 	attribute vec4 skinWeight;
