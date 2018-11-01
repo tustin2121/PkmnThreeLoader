@@ -8,6 +8,7 @@ const {
 	PICAStencilOperation, PICADepthColorMask, PICAFaceCulling,
 } = require('../../pica/commands');
 const { PICACommandReader, PICARegister } = require('../../pica');
+const { PokemonCommonMaterial } = require('../../rendering/shaders');
 
 const GFTextureMappingType = {
     UvCoordinateMap : 0,
@@ -366,7 +367,8 @@ class GFMaterial {
 		// return new THREE.ShaderMaterial(opts);
 		// return new THREE.MeshBasicMaterial(opts);
 		// return new THREE.MeshToonMaterial(opts);
-		return new THREE.MeshPhongMaterial(opts);
+		// return new THREE.MeshPhongMaterial(opts);
+		return new PokemonCommonMaterial(opts);
 	}
 }
 

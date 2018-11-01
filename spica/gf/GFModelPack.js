@@ -134,6 +134,10 @@ class GFModelPack {
 					let tex = textures[matinfo.alphaMap.name].toThree(matinfo.alphaMap);
 					obj.material.alphaMap = tex;
 				}
+				
+				if (typeof obj.material.register === 'function') {
+					obj.material.register(obj);
+				}
 			});
 			obj.add(model);
 		}
