@@ -15,8 +15,8 @@ module.exports = {
 	    // sourceType: "module"
 	},
 	globals: {
-		getLogger: false,
-		Bot: false,
+		// getLogger: false,
+		// Bot: false,
 	},
 	rules: {
 		"handle-callback-err": 1,
