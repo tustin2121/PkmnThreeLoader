@@ -28,11 +28,13 @@ varying vec2 vUv3;
 #include <lights_pars_begin>
 #include <lights_phong_pars_fragment>
 #include <bumpmap_pars_fragment>
-#include <normalmap_pars_fragment>
+uniform sampler2D normalMap;
+uniform vec2 normalScale;
+uniform mat3 normalMatrix; // always ObjectSpace
 #include <specularmap_pars_fragment>
 
 void main() {
-
+	// vec4 glDebugColor;
 
 	vec4 diffuseColor = vec4( diffuse, opacity );
 	ReflectedLight reflectedLight = ReflectedLight( vec3( 0.0 ), vec3( 0.0 ), vec3( 0.0 ), vec3( 0.0 ) );
@@ -45,11 +47,13 @@ void main() {
 #endif
 	#include <color_fragment>
 #ifdef USE_ALPHAMAP
-	diffuseColor.a *= texture2D( alphaMap, vUv2 ).g;
+	diffuseColor.a *= texture2D( alphaMap, vUv2 ).a;
 #endif
 	#include <alphatest_fragment>
 	#include <specularmap_fragment>
 	vec3 normal = normalize( vNormal );
+	// glDebugColor = vec4(normal, 1);
+	// normal = normal * 2.0 - 1.0;
 #ifdef USE_NORMALMAP
 	// Always use Object Space Normal Maps
 	normal = texture2D( normalMap, vUv2 ).xyz * 2.0 - 1.0; // overrides both flatShading and attribute normals
@@ -77,5 +81,6 @@ void main() {
 	#include <fog_fragment>
 	#include <premultiplied_alpha_fragment>
 	#include <dithering_fragment>
-
+	
+	// gl_FragColor = glDebugColor;
 }

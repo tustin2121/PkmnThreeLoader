@@ -105,6 +105,8 @@ class PokemonCommonMaterial extends ShaderMaterial {
 		this.morphTargets = false;
 		this.morphNormals = false;
 		this.lights = true;
+		
+		this.refUvMap = null;
 
 		this.setValues(params);
 	}
@@ -193,7 +195,14 @@ class PokemonCommonMaterial extends ShaderMaterial {
 			}
 		}
 		if (material.uniforms.uvTransform2) {
-			if (material.normalMap) {
+			if (material.refUvMap) {
+				let map = material.refUvMap;
+				if (map.isMaterial) map = map.map;
+				if (map.isWebGLRenderTarget) map = map.texture;
+				if (map.matrixAutoUpdate === true) map.updateMatrix();
+				material.uniforms.uvTransform2.value.copy( map.matrix );
+			}
+			else if (material.normalMap) {
 				let map = material.normalMap;
 				if (map.isWebGLRenderTarget) map = map.texture;
 				if (map.matrixAutoUpdate === true) map.updateMatrix();

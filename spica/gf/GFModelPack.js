@@ -132,6 +132,7 @@ class GFModelPack {
 				}
 				if (matinfo.alphaMap && textures[matinfo.alphaMap.name]) {
 					let tex = textures[matinfo.alphaMap.name].toThree(matinfo.alphaMap);
+					// obj.material.alphaTest = 1 - obj.material.alphaTest; //HACK?!
 					obj.material.alphaMap = tex;
 				}
 				

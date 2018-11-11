@@ -54,7 +54,8 @@ void main() {
 	#include <skinning_vertex>
 	#include <displacementmap_vertex>
 	#include <project_vertex>
-
+	
+	vNormal = transformedNormal;
 	vViewPosition = - mvPosition.xyz;
 
 	#include <worldpos_vertex>

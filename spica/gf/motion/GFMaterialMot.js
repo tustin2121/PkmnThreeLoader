@@ -84,7 +84,7 @@ class GFMaterialMot {
 	toThreeTracks(frameCount) {
 		const { VectorKeyframeTrack, NumberKeyframeTrack, InterpolateDiscrete } = require('three');
 		
-		const unitTrans = ['map', 'unkMap', 'normalMap'];
+		const unitTrans = ['map', 'alphaMap', 'normalMap'];
 		let tracks = [];
 		for (let mat of this.materials) {
 			let coord = unitTrans[mat.unitIndex];

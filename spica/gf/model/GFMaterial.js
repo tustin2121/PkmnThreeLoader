@@ -113,14 +113,12 @@ class GFTextureCoord {
 	
 	toThree() {
 		const THREE = require('three');
-		// let center = this.translation.clone();
 		let obj = {
 			name: this.name,
 			
 			offset: this.translation.clone(),
 			repeat: this.scale.clone(),
 			rotation: this.rotation,
-			// center,
 			center: this.translation.clone().negate(),
 			
 			mapping: GFTextureMappingType.toThree(this.mappingType),
