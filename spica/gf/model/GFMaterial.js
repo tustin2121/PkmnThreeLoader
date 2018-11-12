@@ -341,15 +341,21 @@ class GFMaterial {
 		// bumpTexture points to which of them is the bump/normal map
 		// https://github.com/gdkchan/SPICA/blob/09d56f40581847e4a81a657c8f35af0ec64059ee/SPICA/Formats/GFL2/Model/GFModel.cs#L313
 		if (this.textureCoords) {
-			info.coodMap = new Array(3);
+			info.coordMap = new Array(3);
 			if (this.textureCoords[0]) {
 				info.map = this.textureCoords[0].toThree();
-				info.coodMap[0] = 'map';
+				info.coordMap[0] = 'map';
+			}
+			if (this.textureCoords[1]) {
+				info.coordMap[1] = 'unk1Map-'+this.textureCoords[1].name;
+			}
+			if (this.textureCoords[2]) {
+				info.coordMap[2] = 'unk2Map-'+this.textureCoords[2].name;
 			}
 			if (this.bumpTexture > -1) {
 				info.normalMap = this.textureCoords[this.bumpTexture].toThree();
 				info.alphaMap = info.normalMap;
-				info.coodMap[this.bumpTexture] = 'normalMap';
+				info.coordMap[this.bumpTexture] = 'normalMap';
 			}
 		}
 		

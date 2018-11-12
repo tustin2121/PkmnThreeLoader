@@ -44,17 +44,25 @@ class PokemonCommonMaterial extends ShaderMaterial {
 		
 		this.type = 'PokemonCommonMaterial';
 		
+		this.coordMap = params.userData.coordMap.slice();
 		this.defines = {
+			'OP_ALPHATEST': '<',
 			'USE_UV2': false,
 			'USE_UV3': false,
+			'VU_MAP': 'vUv',
+			'VU_ALPHAMAP': 'vUv',
+			'VU_NORMALMAP': 'vUv',
+			'VU_EMISSIVEMAP': 'vUv',
+			'VU_ENVMAP': 'vUv',
 		};
 		this.uniforms = UniformsUtils.clone(ShaderLib.pkmnCommon.uniforms);
 		
 		this.defaultAttributeValues = {
-			color: [ 1, 1, 1 ],
-			uv: [ 0, 0 ],
-			uv2: [ 0, 0 ],
-			uv3: [ 0, 0 ],
+			color: [1,1,1],
+			normal: [0,1,0],
+			uv: [0,0],
+			uv2: [0,0],
+			uv3: [0,0],
 		};
 		
 		this.vertexShader = ShaderLib.pkmnCommon.vertexShader;
@@ -186,34 +194,32 @@ class PokemonCommonMaterial extends ShaderMaterial {
 			uniforms.gradientMap.value = material.gradientMap;
 		}
 		//*/
-		if (material.uniforms.uvTransform) {
-			if (material.map) {
-				let map = material.map;
+		if (material.coordMap) {
+			if (material.coordMap[0] && material.coordMap[0].indexOf('-')==-1 && material.uniforms.uvTransform) {
+				let map = material[material.coordMap[0]];
 				if (map.isWebGLRenderTarget) map = map.texture;
 				if (map.matrixAutoUpdate === true) map.updateMatrix();
 				material.uniforms.uvTransform.value.copy( map.matrix );
+				material.defines['UV_'+material.coordMap[0].toUpperCase()] = 'vUv';
+			}
+			if (material.coordMap[1] && material.coordMap[1].indexOf('-')==-1 && material.uniforms.uvTransform2) {
+				let map = material[material.coordMap[1]];
+				if (map.isWebGLRenderTarget) map = map.texture;
+				if (map.matrixAutoUpdate === true) map.updateMatrix();
+				material.uniforms.uvTransform2.value.copy( map.matrix );
+				material.defines['UV_'+material.coordMap[1].toUpperCase()] = 'vUv2';
+			}
+			if (material.coordMap[2] && material.coordMap[2].indexOf('-')==-1 && material.uniforms.uvTransform3) {
+				let map = material[material.coordMap[2]];
+				if (map.isWebGLRenderTarget) map = map.texture;
+				if (map.matrixAutoUpdate === true) map.updateMatrix();
+				material.uniforms.uvTransform3.value.copy( map.matrix );
+				material.defines['UV_'+material.coordMap[2].toUpperCase()] = 'vUv3';
 			}
 		}
-		if (material.uniforms.uvTransform2) {
-			if (material.refUvMap) {
-				let map = material.refUvMap;
-				if (map.isMaterial) map = map.map;
-				if (map.isWebGLRenderTarget) map = map.texture;
-				if (map.matrixAutoUpdate === true) map.updateMatrix();
-				material.uniforms.uvTransform2.value.copy( map.matrix );
-			}
-			else if (material.normalMap) {
-				let map = material.normalMap;
-				if (map.isWebGLRenderTarget) map = map.texture;
-				if (map.matrixAutoUpdate === true) map.updateMatrix();
-				material.uniforms.uvTransform2.value.copy( map.matrix );
-			} 
-			else if (material.alphaMap) {
-				let map = material.alphaMap;
-				if (map.isWebGLRenderTarget) map = map.texture;
-				if (map.matrixAutoUpdate === true) map.updateMatrix();
-				material.uniforms.uvTransform2.value.copy( map.matrix );
-			}
+		
+		if (material.defines['VU_NORMALMAP'] && material.defines['VU_ALPHAMAP']) {
+			material.defines['VU_NORMALMAP'] = material.defines['VU_ALPHAMAP'];
 		}
 		
 		if (geometry.attributes.uv2) {
@@ -224,7 +230,8 @@ class PokemonCommonMaterial extends ShaderMaterial {
 		}
 	}
 	
-	
+	get alphaTestOp(){ return this.defines['OP_ALPHATEST']; }
+	set alphaTestOp(val){ this.defines['OP_ALPHATEST'] = val; }
 	/*
 	get color(){ return this.uniforms.diffuse.value; }
 	set color(val){ this.uniforms.diffuse.value = val; }

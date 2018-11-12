@@ -41,22 +41,30 @@ void main() {
 	vec3 totalEmissiveRadiance = emissive;
 
 #ifdef USE_MAP
-	vec4 texelColor = texture2D( map, vUv );
+	vec4 texelColor = texture2D( map, VU_MAP );
 	texelColor = mapTexelToLinear( texelColor );
 	diffuseColor *= texelColor;
 #endif
 	#include <color_fragment>
 #ifdef USE_ALPHAMAP
-	diffuseColor.a *= texture2D( alphaMap, vUv2 ).a;
+	diffuseColor.a *= texture2D( alphaMap, VU_ALPHAMAP ).a;
 #endif
 	#include <alphatest_fragment>
-	#include <specularmap_fragment>
+	
+	float specularStrength;
+#ifdef USE_SPECULARMAP
+	vec4 texelSpecular = texture2D( specularMap, vUv );
+	specularStrength = texelSpecular.r;
+#else
+	specularStrength = 1.0;
+#endif
+	
 	vec3 normal = normalize( vNormal );
 	// glDebugColor = vec4(normal, 1);
 	// normal = normal * 2.0 - 1.0;
 #ifdef USE_NORMALMAP
 	// Always use Object Space Normal Maps
-	normal = texture2D( normalMap, vUv2 ).xyz * 2.0 - 1.0; // overrides both flatShading and attribute normals
+	normal = texture2D( normalMap, VU_NORMALMAP ).xyz * 2.0 - 1.0; // overrides both flatShading and attribute normals
 	normal = normalize( normalMatrix * normal );
 #endif
 	#include <emissivemap_fragment>
