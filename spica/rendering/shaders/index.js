@@ -6,5 +6,6 @@ require.extensions['.glsl'] = function(module, filename) {
 };
 
 module.exports = Object.assign({}, ...[
+	require('./BattlefieldCommonMaterial'),
 	require('./PokemonCommonMaterial'),
 ]);

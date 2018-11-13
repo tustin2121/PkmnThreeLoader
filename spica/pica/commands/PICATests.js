@@ -149,19 +149,6 @@ class PICAAlphaTest {
 					case PICATestFunc.Gequal: return '<=';
 				}
 			})(),
-			// alphaTest: Math.max((()=>{
-			// 	switch (this.function) {
-			// 		case PICATestFunc.Never: return 0;
-			// 		case PICATestFunc.Always: return 1;
-			// 		case PICATestFunc.Equal: throw new TypeError('Invalid operation for AlphaTest: Equal');
-			// 		case PICATestFunc.Notequal: throw new TypeError('Invalid operation for AlphaTest: NotEqual');
-			// 		case PICATestFunc.Less: return this.reference/255;
-			// 		case PICATestFunc.Lequal: return (this.reference+1)/255;
-			// 		case PICATestFunc.Greater: return 1 - (this.reference/255);
-			// 		case PICATestFunc.Gequal: return 1 - ((this.reference+1)/255);
-			// 		default: return 1;
-			// 	}
-			// })() - Number.EPSILON, 0),
 		};
 	}
 }

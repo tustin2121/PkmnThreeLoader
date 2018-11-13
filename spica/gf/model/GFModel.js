@@ -317,7 +317,12 @@ class GFModel {
 				matName = gfSub.matName;
 				meshSkinned |= skinned;
 			}
-			let geom = BufferGeometryUtils.mergeBufferGeometries(geoms);
+			let geom;
+			try {
+				geom = GFModel.mergeBufferGeometries(geoms);
+			} catch (e) {
+				throw e; //TODO
+			}
 			if (!geom) throw new ReferenceError('Could not merge geometries!');
 			
 			geom.boundingBox = new Box3(gfMesh.boundingBoxMax, gfMesh.boundingBoxMin);
@@ -340,6 +345,140 @@ class GFModel {
 			obj.add(mesh);
 		}
 		return obj;
+	}
+	
+	// Below copied and modified from BufferGeometryUtils
+	
+	/**
+	 * @param  {Array<THREE.BufferGeometry>} geometries
+	 * @return {THREE.BufferGeometry}
+	 */
+	static mergeBufferGeometries(geometries, useGroups) {
+		const { BufferGeometry } = require('three');
+		
+		let isIndexed = geometries[0].index !== null;
+
+		let attributesUsed = new Set( Object.keys( geometries[0].attributes ) );
+		let morphAttributesUsed = new Set( Object.keys( geometries[0].morphAttributes ) );
+
+		let attributes = {};
+		let morphAttributes = {};
+
+		let mergedGeometry = new BufferGeometry();
+		let offset = 0;
+
+		for (let i = 0; i < geometries.length; ++i) {
+			let geometry = geometries[i];
+
+			// ensure that all geometries are indexed, or none
+			if (isIndexed !== (geometry.index !== null)) throw new TypeError(`Could not merge geometries: Geometry ${i} is${isIndexed?'':' not'} indexed!`);
+
+			// gather attributes, exit early if they're different
+			for (let name in geometry.attributes) {
+				if (!attributesUsed.has(name)) throw new TypeError(`Could not merge geometries: Geometry ${i} has extranious '${name}' attribute!`);
+				if (attributes[name] === undefined) attributes[name] = [];
+				attributes[name].push(geometry.attributes[name]);
+			}
+
+			// gather morph attributes, exit early if they're different
+			for (let name in geometry.morphAttributes) {
+				if (!morphAttributesUsed.has(name)) throw new TypeError(`Could not merge geometries: Geometry ${i} has extranious '${name}' morph attribute!`);
+				if (morphAttributes[name] === undefined) morphAttributes[name] = [];
+				morphAttributes[name].push(geometry.morphAttributes[name]);
+			}
+
+			// gather .userData
+			mergedGeometry.userData.mergedUserData = mergedGeometry.userData.mergedUserData || [];
+			mergedGeometry.userData.mergedUserData.push(geometry.userData);
+
+			if (useGroups) {
+				let count;
+				if (isIndexed) {
+					count = geometry.index.count;
+				} else if (geometry.attributes.position !== undefined) {
+					count = geometry.attributes.position.count;
+				} else {
+					return null;
+				}
+				mergedGeometry.addGroup(offset, count, i);
+				offset += count;
+			}
+		}
+
+		// merge indices
+		if (isIndexed) {
+			let indexOffset = 0;
+			let mergedIndex = [];
+			for (let i = 0; i < geometries.length; ++ i) {
+				let index = geometries[i].index;
+				for (let j = 0; j < index.count; ++ j) {
+					mergedIndex.push(index.getX(j) + indexOffset);
+				}
+				indexOffset += geometries[i].attributes.position.count;
+			}
+			mergedGeometry.setIndex(mergedIndex);
+		}
+
+		// merge attributes
+		for (let name in attributes) {
+			let mergedAttribute = GFModel.mergeBufferAttributes(attributes[name]);
+			// if (!mergedAttribute) return null;
+			mergedGeometry.addAttribute(name, mergedAttribute);
+		}
+
+		// merge morph attributes
+
+		for (let name in morphAttributes) {
+			let numMorphTargets = morphAttributes[name][0].length;
+			if (numMorphTargets === 0) break;
+
+			mergedGeometry.morphAttributes = mergedGeometry.morphAttributes || {};
+			mergedGeometry.morphAttributes[name] = [];
+
+			for (let i = 0; i < numMorphTargets; ++ i) {
+				let morphAttributesToMerge = [];
+				for (let j = 0; j < morphAttributes[name].length; ++ j) {
+					morphAttributesToMerge.push(morphAttributes[name][j][i]);
+				}
+				let mergedMorphAttribute = GFModel.mergeBufferAttributes(morphAttributesToMerge);
+				// if (! mergedMorphAttribute) return null;
+				mergedGeometry.morphAttributes[name].push(mergedMorphAttribute);
+			}
+		}
+		return mergedGeometry;
+	}
+
+	/**
+	 * @param {Array<THREE.BufferAttribute>} attributes
+	 * @return {THREE.BufferAttribute}
+	 */
+	static mergeBufferAttributes (attributes) {
+		const { BufferAttribute } = require('three');
+		
+		let TypedArray;
+		let itemSize;
+		let normalized;
+		let arrayLength = 0;
+
+		for (let i = 0; i < attributes.length; ++ i) {
+			let attribute = attributes[i];
+			if (attribute.isInterleavedBufferAttribute) throw new TypeError(`Could not merge geometries: Geometry ${i} has interleaved attribute!`);
+			if (TypedArray === undefined) TypedArray = attribute.array.constructor;
+			if (TypedArray !== attribute.array.constructor) throw new TypeError(`Could not merge geometries: Geometry ${i} attribute does not match type!`);
+			if (itemSize === undefined) itemSize = attribute.itemSize;
+			if (itemSize !== attribute.itemSize) throw new TypeError(`Could not merge geometries: Geometry ${i} attribute does not match item size!`);
+			if (normalized === undefined) normalized = attribute.normalized;
+			if (normalized !== attribute.normalized) throw new TypeError(`Could not merge geometries: Geometry ${i} attribute does not match normalized flag!`);
+			arrayLength += attribute.array.length;
+		}
+
+		let array = new TypedArray(arrayLength);
+		let offset = 0;
+		for (let i = 0; i < attributes.length; ++ i) {
+			array.set(attributes[i].array, offset);
+			offset += attributes[i].array.length;
+		}
+		return new BufferAttribute(array, itemSize, normalized);
 	}
 }
 Object.defineProperties(GFModel, {

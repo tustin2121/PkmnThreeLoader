@@ -84,7 +84,8 @@ class GFMaterialMot {
 	toThreeTracks(frameCount) {
 		const { VectorKeyframeTrack, NumberKeyframeTrack, InterpolateDiscrete } = require('three');
 		
-		const unitTrans = ['map', 'alphaMap', 'normalMap'];
+		// const unitTrans = ['map', 'alphaMap', 'normalMap'];
+		const unitTrans = ['map0', 'map1', 'map2'];
 		let tracks = [];
 		for (let mat of this.materials) {
 			let coord = unitTrans[mat.unitIndex];
@@ -109,7 +110,7 @@ class GFMaterialMot {
 			track.setInterpolation(InterpolateDiscrete);
 			return track;
 		}
-		/*/
+		//*/
 		function makeStepTrack(path, vt, adjust=0) {
 			if (vt.length < 4) return makeNumTrack(path, vt, adjust);
 			
@@ -121,7 +122,7 @@ class GFMaterialMot {
 				shouldTest &= (vt[i-1].frame === vt[i-2].frame+1) && (vt[i-1].value != vt[i-2].value);
 				shouldTest &= (vt[i-2].frame === vt[i-3].frame+1) && (vt[i-2].value === vt[i-3].value);
 				
-				console.log('makeStepTrack 1', vt[i-0], vt[i-1], vt[i-2], vt[i-3], shouldTest);
+				console.log('makeStepTrack 1|', vt[i-0], vt[i-1], vt[i-2], vt[i-3], shouldTest);
 				
 				if (shouldTest) {
 					hasStep = true;
@@ -133,11 +134,11 @@ class GFMaterialMot {
 					newVt.push(vt[i-2]);
 				}
 			}
-			console.log('makeStepTrack 2', isStep, hasStep);
-			if (!isStep || !hasStep) return makeNumTrack(path, vt, adjust);
+			console.log('makeStepTrack 2|', isStep, hasStep);
+			if (!hasStep) return makeNumTrack(path, vt, adjust);
 			let track = makeNumTrack(path, newVt, adjust);
 			track.setInterpolation(InterpolateDiscrete);
-			console.log('makeStepTrack 3', track);
+			console.log('makeStepTrack 3|', track);
 			return track;
 		}
 		//*/

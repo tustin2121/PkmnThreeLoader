@@ -34,8 +34,8 @@ ShaderLib['pkmnCommon'] = {
 		UniformsLib.pkmnCommon,
 	]),
 	
-	vertexShader: require('./Common.vtx.glsl'),
-	fragmentShader: require('./Common.frg.glsl'),
+	vertexShader: require('./PokeCommon.vtx.glsl'),
+	fragmentShader: require('./PokeCommon.frg.glsl'),
 };
 
 class PokemonCommonMaterial extends ShaderMaterial {
@@ -49,11 +49,11 @@ class PokemonCommonMaterial extends ShaderMaterial {
 			'OP_ALPHATEST': '<',
 			'USE_UV2': false,
 			'USE_UV3': false,
-			'VU_MAP': 'vUv',
-			'VU_ALPHAMAP': 'vUv',
-			'VU_NORMALMAP': 'vUv',
-			'VU_EMISSIVEMAP': 'vUv',
-			'VU_ENVMAP': 'vUv',
+			'UV_MAP': 'vUv',
+			'UV_ALPHAMAP': 'vUv',
+			'UV_NORMALMAP': 'vUv',
+			'UV_EMISSIVEMAP': 'vUv',
+			'UV_ENVMAP': 'vUv',
 		};
 		this.uniforms = UniformsUtils.clone(ShaderLib.pkmnCommon.uniforms);
 		
@@ -218,8 +218,8 @@ class PokemonCommonMaterial extends ShaderMaterial {
 			}
 		}
 		
-		if (material.defines['VU_NORMALMAP'] && material.defines['VU_ALPHAMAP']) {
-			material.defines['VU_NORMALMAP'] = material.defines['VU_ALPHAMAP'];
+		if (material.defines['UV_ALPHAMAP'] && material.defines['UV_NORMALMAP']) {
+			material.defines['UV_ALPHAMAP'] = material.defines['UV_NORMALMAP'];
 		}
 		
 		if (geometry.attributes.uv2) {
@@ -232,6 +232,12 @@ class PokemonCommonMaterial extends ShaderMaterial {
 	
 	get alphaTestOp(){ return this.defines['OP_ALPHATEST']; }
 	set alphaTestOp(val){ this.defines['OP_ALPHATEST'] = val; }
+	
+	// easy shortcuts to the proper maps, for animations
+	get map0() { return this[this.coordMap[0]]; }
+	get map1() { return this[this.coordMap[1]]; }
+	get map2() { return this[this.coordMap[2]]; }
+	
 	/*
 	get color(){ return this.uniforms.diffuse.value; }
 	set color(val){ this.uniforms.diffuse.value = val; }
@@ -291,5 +297,6 @@ class PokemonCommonMaterial extends ShaderMaterial {
 	*/
 }
 PokemonCommonMaterial.prototype.isMeshPhongMaterial = true;
+PokemonCommonMaterial.matchNames = ['PokeNormal','Poke'];
 
 module.exports = { PokemonCommonMaterial };

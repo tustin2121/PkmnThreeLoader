@@ -101,7 +101,7 @@ class GFModelPack {
 						// uniforms: {},
 					};
 					// Transpile and apply Shaders
-					if (mat.vtxShaderName) {
+					if (mat.vtxShaderName && shaders[mat.vtxShaderName]) {
 						let shader = shaders[mat.vtxShaderName];
 						let gen = new VertShaderGenerator(shader.toShaderBinary());
 						opts.vertexShader = { name:mat.vtxShaderName, code: gen.getVtxShader() };
@@ -109,7 +109,7 @@ class GFModelPack {
 					if (mat.geomShaderName) {
 						opts.geometryShader = { name:mat.geomShaderName, code:'exists' };
 					}
-					if (mat.fragShaderName) {
+					if (mat.fragShaderName && shaders[mat.fragShaderName]) {
 						let shader = shaders[mat.fragShaderName];
 						let gen = new FragShaderGenerator(shader.toShaderBinary(), { shader, mat });
 						opts.fragmentShader = { name:mat.fragShaderName, code: gen.getFragShader() };

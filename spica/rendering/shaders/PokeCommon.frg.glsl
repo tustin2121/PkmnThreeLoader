@@ -41,13 +41,13 @@ void main() {
 	vec3 totalEmissiveRadiance = emissive;
 
 #ifdef USE_MAP
-	vec4 texelColor = texture2D( map, VU_MAP );
+	vec4 texelColor = texture2D( map, UV_MAP );
 	texelColor = mapTexelToLinear( texelColor );
 	diffuseColor *= texelColor;
 #endif
 	#include <color_fragment>
 #ifdef USE_ALPHAMAP
-	diffuseColor.a *= texture2D( alphaMap, VU_ALPHAMAP ).a;
+	diffuseColor.a *= texture2D( alphaMap, UV_ALPHAMAP ).a;
 #endif
 	#include <alphatest_fragment>
 	
@@ -64,7 +64,7 @@ void main() {
 	// normal = normal * 2.0 - 1.0;
 #ifdef USE_NORMALMAP
 	// Always use Object Space Normal Maps
-	normal = texture2D( normalMap, VU_NORMALMAP ).xyz * 2.0 - 1.0; // overrides both flatShading and attribute normals
+	normal = texture2D( normalMap, UV_NORMALMAP ).xyz * 2.0 - 1.0; // overrides both flatShading and attribute normals
 	normal = normalize( normalMatrix * normal );
 #endif
 	#include <emissivemap_fragment>

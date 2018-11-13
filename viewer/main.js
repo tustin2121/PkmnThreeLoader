@@ -450,6 +450,19 @@ $('#props button[name=loadPkmnFileBtn]').on('click', async function(){
 	}
 	displayPokemonModel();
 });
+$('#props button[name=loadBattleFileBtn]').on('click', async function(){
+	clearDisplay();
+	let filename = $(`#props input[name=loadBattleFile0]`).val();
+	global.loadedFiles = await SPICA.open(filename);
+	console.log(global.loadedFiles);
+	if (global.loadedFiles.modelpack) {
+		await displayModelpack(global.loadedFiles.modelpack[0]);
+	}
+	if (global.loadedFiles.motionpack) {
+		animMixer = new THREE.AnimationMixer(root.children[0].children[0]);
+	}
+	global.info.populateSidebar();
+});
 $('#props button[name=loadOtherFileBtn]').on('click', async function(){
 	clearDisplay();
 	let filename = $(`#props input[name=loadOtherFile0]`).val();

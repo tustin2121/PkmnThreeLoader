@@ -91,7 +91,7 @@ class GFTextureCoord {
 		this.hash = data.readUint32();
 		this.name = data.readByteLenString();
 		
-		let unitIndex = data.readUint8();
+		this.unitIndex = data.readUint8();
 		
 		/** @type {GFTextureMappingType} */
 		this.mappingType = data.readUint8();
