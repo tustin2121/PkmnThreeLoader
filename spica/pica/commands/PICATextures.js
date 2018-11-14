@@ -219,10 +219,10 @@ class PICATexEnvStage {
 		texEnvStages[3].updateColorBuffer = ((param & 0x0400) !== 0);
 		texEnvStages[4].updateColorBuffer = ((param & 0x0800) !== 0);
 		
-		texEnvStages[1].UpdateAlphaBuffer = ((param & 0x1000) !== 0);
-		texEnvStages[2].UpdateAlphaBuffer = ((param & 0x2000) !== 0);
-		texEnvStages[3].UpdateAlphaBuffer = ((param & 0x4000) !== 0);
-		texEnvStages[4].UpdateAlphaBuffer = ((param & 0x8000) !== 0);
+		texEnvStages[1].updateAlphaBuffer = ((param & 0x1000) !== 0);
+		texEnvStages[2].updateAlphaBuffer = ((param & 0x2000) !== 0);
+		texEnvStages[3].updateAlphaBuffer = ((param & 0x4000) !== 0);
+		texEnvStages[4].updateAlphaBuffer = ((param & 0x8000) !== 0);
 	}
 	/**
 	 * @param {PICATexEnvStage[]} texEnvStages
@@ -235,10 +235,10 @@ class PICATexEnvStage {
 		if (texEnvStages[3].updateColorBuffer) param |= 0x0400;
 		if (texEnvStages[4].updateColorBuffer) param |= 0x0800;
 		
-		if (texEnvStages[1].UpdateAlphaBuffer) param |= 0x1000;
-		if (texEnvStages[2].UpdateAlphaBuffer) param |= 0x2000;
-		if (texEnvStages[3].UpdateAlphaBuffer) param |= 0x4000;
-		if (texEnvStages[4].UpdateAlphaBuffer) param |= 0x8000;
+		if (texEnvStages[1].updateAlphaBuffer) param |= 0x1000;
+		if (texEnvStages[2].updateAlphaBuffer) param |= 0x2000;
+		if (texEnvStages[3].updateAlphaBuffer) param |= 0x4000;
+		if (texEnvStages[4].updateAlphaBuffer) param |= 0x8000;
 		return param;
 	}
 }

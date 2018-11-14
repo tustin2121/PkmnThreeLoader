@@ -114,6 +114,8 @@ class FragShaderGenerator extends ShaderGenerator {
 		];
 		
 		for (let stage of this.shader.texEnvStages) {
+			this.append('');
+			this.append(`// Stage `);
 			let hasColor = !stage.isColorPassThrough;
 			let hasAlpha = !stage.isAlphaPassThrough;
 			
@@ -190,13 +192,13 @@ class FragShaderGenerator extends ShaderGenerator {
 			
 			//Note: This is the condition to pass the test, so we actually inverse to discard
 			switch (this.mat.alphaTest.function) {
-				case PICATestFunc.Never:	this.append(`discard;`);
-				case PICATestFunc.Equal:	this.append(`if (Output.a != ${ref}) discard;`);
-				case PICATestFunc.Notequal:	this.append(`if (Output.a == ${ref}) discard;`);
-				case PICATestFunc.Less:		this.append(`if (Output.a >= ${ref}) discard;`);
-				case PICATestFunc.Lequal:	this.append(`if (Output.a > ${ref}) discard;`);
-				case PICATestFunc.Greater:	this.append(`if (Output.a <= ${ref}) discard;`);
-				case PICATestFunc.Gequal:	this.append(`if (Output.a < ${ref}) discard;`);
+				case PICATestFunc.Never:	this.append(`discard;`); break;
+				case PICATestFunc.Equal:	this.append(`if (Output.a != ${ref}) discard;`); break;
+				case PICATestFunc.Notequal:	this.append(`if (Output.a == ${ref}) discard;`); break;
+				case PICATestFunc.Less:		this.append(`if (Output.a >= ${ref}) discard;`); break;
+				case PICATestFunc.Lequal:	this.append(`if (Output.a > ${ref}) discard;`); break;
+				case PICATestFunc.Greater:	this.append(`if (Output.a <= ${ref}) discard;`); break;
+				case PICATestFunc.Gequal:	this.append(`if (Output.a < ${ref}) discard;`); break;
 			}
 		}
 		
@@ -322,7 +324,7 @@ class FragShaderGenerator extends ShaderGenerator {
 	}
 	
 	_genCombinerColor(stage, colorArgs) {
-		switch (stage.combiner.alpha) {
+		switch (stage.combiner.color) {
 			case PICATextureCombinerMode.Replace:
 				return this.append(`Output.rgb = (${colorArgs[0]}).rgb;`);
 			case PICATextureCombinerMode.Modulate:
@@ -406,9 +408,9 @@ function getCombinerSource(source, constant) {
 		case PICATextureCombinerSource.PrimaryColor: return `Color`;
 		case PICATextureCombinerSource.FragmentPrimaryColor: return 'FragPriColor';
 		case PICATextureCombinerSource.FragmentSecondaryColor: return 'FragSecColor';
-		case PICATextureCombinerSource.Texture0: return 'Color0';
-		case PICATextureCombinerSource.Texture1: return 'Color1';
-		case PICATextureCombinerSource.Texture2: return 'Color2';
+		case PICATextureCombinerSource.Texture0: return 'ColorTex0';
+		case PICATextureCombinerSource.Texture1: return 'ColorTex1';
+		case PICATextureCombinerSource.Texture2: return 'ColorTex2';
 		case PICATextureCombinerSource.PreviousBuffer: return 'CombBuffer';
 		case PICATextureCombinerSource.Constant: return constant;
 		case PICATextureCombinerSource.Previous: return 'Previous';

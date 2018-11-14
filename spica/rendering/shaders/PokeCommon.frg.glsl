@@ -49,7 +49,10 @@ void main() {
 #ifdef USE_ALPHAMAP
 	diffuseColor.a *= texture2D( alphaMap, UV_ALPHAMAP ).a;
 #endif
-	#include <alphatest_fragment>
+
+#ifdef ALPHATEST
+	if ( diffuseColor.a OP_ALPHATEST ALPHATEST ) discard;
+#endif
 	
 	float specularStrength;
 #ifdef USE_SPECULARMAP
