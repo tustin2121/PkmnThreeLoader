@@ -8,7 +8,35 @@ const {
 const { GFTextureMappingType } = require('../../gf/model');
 const ShaderGenerator = require('./ShaderGenerator');
 
-const FRAG_SHADER_BASE = `#version 150
+class FragShaderGenerator extends ShaderGenerator {
+	/**
+	 * @param {ShaderBinary} shBin -
+	 */
+	constructor(shBin, { shader, mat }) {
+		super(shBin);
+		
+		/** @type {GFShader} */
+		this.shader = shader
+		/** @type {GFMaterial} */
+		this.mat = mat;
+		
+		/** @type {string[]} */
+		this.sb = null;
+		/** @type {bool[]} */
+		this.hasTexColor = [];
+	}
+	
+	append(...str) {
+		this.sb.push(...(str.map(x=>'\t'+x)));
+	}
+	
+	getFragShader() {
+		let index = 0;
+		let hasFragColors = false;
+		this.hasTexColor = [false, false, false];
+		
+		this.sb = [
+			`#version 150
 precision highp float;
 precision highp int;
 
@@ -57,17 +85,17 @@ float SampleLUT(int lidx, float idx, float s) {
 }
 
 //SPICA auto-generated Fragment Shader
-uniform vec4 u_EmissionColor;
-uniform vec4 u_AmbientColor;
-uniform vec4 u_DiffuseColor;
-uniform vec4 u_Specular0Color;
-uniform vec4 u_Specular1Color;
-uniform vec4 u_Constant0Color;
-uniform vec4 u_Constant1Color;
-uniform vec4 u_Constant2Color;
-uniform vec4 u_Constant3Color;
-uniform vec4 u_Constant4Color;
-uniform vec4 u_Constant5Color;
+uniform vec4 u_EmissionColor;  // 0x${this.mat.emissionColor.toString(16)}
+uniform vec4 u_AmbientColor;   // 0x${this.mat.ambientColor.toString(16)}
+uniform vec4 u_DiffuseColor;   // 0x${this.mat.diffuseColor.toString(16)}
+uniform vec4 u_Specular0Color; // 0x${this.mat.specularColor[0].toString(16)}
+uniform vec4 u_Specular1Color; // 0x${this.mat.specularColor[1].toString(16)}
+uniform vec4 u_Constant0Color; // 0x${this.mat.constantColor[0].toString(16)}
+uniform vec4 u_Constant1Color; // 0x${this.mat.constantColor[1].toString(16)}
+uniform vec4 u_Constant2Color; // 0x${this.mat.constantColor[2].toString(16)}
+uniform vec4 u_Constant3Color; // 0x${this.mat.constantColor[3].toString(16)}
+uniform vec4 u_Constant4Color; // 0x${this.mat.constantColor[4].toString(16)}
+uniform vec4 u_Constant5Color; // 0x${this.mat.constantColor[5].toString(16)}
 
 in vec4 QuatNormal;
 in vec4 Color;
@@ -77,37 +105,7 @@ in vec4 TexCoord2;
 in vec4 View;
 
 layout(location=0) out vec4 Output;
-`;
-
-class FragShaderGenerator extends ShaderGenerator {
-	/**
-	 * @param {ShaderBinary} shBin -
-	 */
-	constructor(shBin, { shader, mat }) {
-		super(shBin);
-		
-		/** @type {GFShader} */
-		this.shader = shader
-		/** @type {GFMaterial} */
-		this.mat = mat;
-		
-		/** @type {string[]} */
-		this.sb = null;
-		/** @type {bool[]} */
-		this.hasTexColor = [];
-	}
-	
-	append(...str) {
-		this.sb.push(...(str.map(x=>'\t'+x)));
-	}
-	
-	getFragShader() {
-		let index = 0;
-		let hasFragColors = false;
-		this.hasTexColor = [false, false, false];
-		
-		this.sb = [
-			FRAG_SHADER_BASE,
+`,
 			`void main(){`,
 			`\tvec4 Previous;`,
 			`\tvec4 CombBuffer = ${vec4FromColor(this.shader.texEnvBufferColor)};`,
@@ -115,7 +113,7 @@ class FragShaderGenerator extends ShaderGenerator {
 		
 		for (let stage of this.shader.texEnvStages) {
 			this.append('');
-			this.append(`// Stage `);
+			this.append(`// Stage ${index} : Color=0x${stage.color.toString(16)}`);
 			let hasColor = !stage.isColorPassThrough;
 			let hasAlpha = !stage.isAlphaPassThrough;
 			
@@ -141,7 +139,7 @@ class FragShaderGenerator extends ShaderGenerator {
 				
 				// Check if any of the texture units are used
 				for (let unit = 0; unit < 3; unit++) {
-					if (this.hasTexColor[unit] && (
+					if (!this.hasTexColor[unit] && (
 						stage.source.color[p] == PICATextureCombinerSource.Texture0 + unit ||
 						stage.source.alpha[p] == PICATextureCombinerSource.Texture0 + unit
 					)) {
@@ -315,12 +313,12 @@ class FragShaderGenerator extends ShaderGenerator {
 			// Default H3DTexCoordConfig??? no modification needed
 			switch (coordIndex) {
 				default:
-				case 0: texture = `texture(Textures[${index}], TexCoord0.xy);`; break;
-				case 1: texture = `texture(Textures[${index}], TexCoord1.xy);`; break;
-				case 2: texture = `texture(Textures[${index}], TexCoord2.xy);`; break;
+				case 0: texture = `texture(Textures[${index}], TexCoord0.xy)`; break;
+				case 1: texture = `texture(Textures[${index}], TexCoord1.xy)`; break;
+				case 2: texture = `texture(Textures[${index}], TexCoord2.xy)`; break;
 			}
 		}
-		this.append(`vec4 Color${index} = ${texture};`);
+		this.append(`vec4 ColorTex${index} = ${texture};`);
 	}
 	
 	_genCombinerColor(stage, colorArgs) {
@@ -418,5 +416,13 @@ function getCombinerSource(source, constant) {
 }
 
 function vec4FromColor(color) {
-	return `vec4(${color.r/255}, ${color.g/255}, ${color.b/255}, ${color.a/255})`;
+	if (typeof color === 'number') {
+		let a = ( color >> 24 & 255 ) / 255;
+		let r = ( color >> 16 & 255 ) / 255;
+		let g = ( color >> 8 & 255 ) / 255;
+		let b = ( color & 255 ) / 255;
+		return `vec4(${r}, ${g}, ${b}, ${a}) /* 0x${color.toString(16)} */`
+	} else {
+		return `vec4(${color.r/255}, ${color.g/255}, ${color.b/255}, ${color.a/255})`;
+	}
 }

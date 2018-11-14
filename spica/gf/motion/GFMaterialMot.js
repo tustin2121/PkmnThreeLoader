@@ -93,7 +93,7 @@ class GFMaterialMot {
 			if (mat.scaleX.length) tracks.push(makeNumTrack(`${tn}.repeat[x]`, mat.scaleX));
 			if (mat.scaleY.length) tracks.push(makeNumTrack(`${tn}.repeat[y]`, mat.scaleY));
 			if (mat.rotX.length) tracks.push(makeNumTrack(`${tn}.rotation`, mat.rotX));
-			if (mat.transX.length) tracks.push(makeStepTrack(`${tn}.offset[x]`, mat.transX, { trans:-1, multi:2 }));
+			if (mat.transX.length) tracks.push(makeStepTrack(`${tn}.offset[x]`, mat.transX, { trans:0, }));
 			if (mat.transY.length) tracks.push(makeStepTrack(`${tn}.offset[y]`, mat.transY, { trans:0 }));
 		}
 		return tracks;
@@ -103,14 +103,15 @@ class GFMaterialMot {
 			let times=[], values=[];
 			for (let frame of vt) {
 				times.push(frame.frame/30);
-				values.push(((1-frame.value)*multi)+trans);
+				values.push(((-frame.value)*multi)+trans);
+				// values.push(frame.value);
 				//TODO frame.slope; ???
 			}
 			let track = new NumberKeyframeTrack(path, times, values);
 			track.setInterpolation(InterpolateDiscrete);
 			return track;
 		}
-		//*/
+		/*/
 		function makeStepTrack(path, vt, adjust=0) {
 			if (vt.length < 4) return makeNumTrack(path, vt, adjust);
 			

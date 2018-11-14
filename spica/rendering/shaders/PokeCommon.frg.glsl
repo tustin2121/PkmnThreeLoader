@@ -7,6 +7,11 @@ uniform vec3 specular;
 uniform float shininess;
 uniform float opacity;
 
+uniform float time;
+uniform float rimPower;
+uniform float rimScale;
+uniform vec3 rimColor;
+
 #include <common>
 #include <packing>
 #include <dithering_pars_fragment>
@@ -63,13 +68,18 @@ void main() {
 #endif
 	
 	vec3 normal = normalize( vNormal );
-	// glDebugColor = vec4(normal, 1);
+	// glDebugColor = vec4(vec3( dot(normalize(vViewPosition), normal) ), 1);
 	// normal = normal * 2.0 - 1.0;
 #ifdef USE_NORMALMAP
 	// Always use Object Space Normal Maps
 	normal = texture2D( normalMap, UV_NORMALMAP ).xyz * 2.0 - 1.0; // overrides both flatShading and attribute normals
 	normal = normalize( normalMatrix * normal );
 #endif
+	float rim = 1.0 - clamp( dot( normalize(vViewPosition), normal), 0.0, 1.0);
+	float rimscale = rimScale * ((sin(time*3.5) + 1.5) * 15.0);
+	float rimpower = rimPower + (cos(time*3.5) + 1.0) * 4.0;
+	totalEmissiveRadiance = rimColor * (pow(rim, rimpower) * rimscale);
+	
 	#include <emissivemap_fragment>
 
 	// accumulation

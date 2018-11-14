@@ -116,25 +116,25 @@ class GFModelPack {
 					}
 					
 					obj.userData.shaderinfo = opts;
-					obj.material = obj.material.toThree(); //new RawShaderMaterial(opts);
+					obj.material = obj.material.toThree(textures); //new RawShaderMaterial(opts);
 				}
-				let matinfo = obj.material.userData;
+				// let matinfo = obj.material.userData;
 				if (obj.isSkinnedMesh) obj.material.skinning = true;
-				// Apply Textures
-				if (matinfo.map && textures[matinfo.map.name]) {
-					let tex = textures[matinfo.map.name].toThree(matinfo.map);
-					obj.material.map = tex;
-				}
-				if (matinfo.normalMap && textures[matinfo.normalMap.name]) {
-					let tex = textures[matinfo.normalMap.name].toThree(matinfo.normalMap);
-					obj.material.normalMap = tex;
-					obj.material.normalMapType = ObjectSpaceNormalMap;
-				}
-				if (matinfo.alphaMap && textures[matinfo.alphaMap.name]) {
-					let tex = textures[matinfo.alphaMap.name].toThree(matinfo.alphaMap);
-					// obj.material.alphaTest = 1 - obj.material.alphaTest; //HACK?!
-					obj.material.alphaMap = tex;
-				}
+				// // Apply Textures
+				// if (matinfo.map && textures[matinfo.map.name]) {
+				// 	let tex = textures[matinfo.map.name].toThree(matinfo.map);
+				// 	obj.material.map = tex;
+				// }
+				// if (matinfo.normalMap && textures[matinfo.normalMap.name]) {
+				// 	let tex = textures[matinfo.normalMap.name].toThree(matinfo.normalMap);
+				// 	obj.material.normalMap = tex;
+				// 	obj.material.normalMapType = ObjectSpaceNormalMap;
+				// }
+				// if (matinfo.alphaMap && textures[matinfo.alphaMap.name]) {
+				// 	let tex = textures[matinfo.alphaMap.name].toThree(matinfo.alphaMap);
+				// 	// obj.material.alphaTest = 1 - obj.material.alphaTest; //HACK?!
+				// 	obj.material.alphaMap = tex;
+				// }
 				
 				if (typeof obj.material.register === 'function') {
 					obj.material.register(obj);

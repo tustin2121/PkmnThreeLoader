@@ -8,7 +8,7 @@ const {
 	PICAStencilOperation, PICADepthColorMask, PICAFaceCulling,
 } = require('../../pica/commands');
 const { PICACommandReader, PICARegister } = require('../../pica');
-const { PokemonBaseMaterial, BattlefieldMaterial } = require('../../rendering/shaders');
+const { getMaterialForName } = require('../../rendering/shaders');
 
 const GFTextureMappingType = {
     UvCoordinateMap : 0,
@@ -318,62 +318,9 @@ class GFMaterial {
 		data.offset = pos + matSection.length;
 	}
 	
-	toThree() {
-		const THREE = require('three');
-		let info = {};
-		let opts = {
-			name: this.matName,
-			color: this.diffuseColor >> 8,
-			emissive: this.emissionColor >> 8,
-			
-			colorWrite: this.colorBufferWrite,
-			depthWrite: this.depthBufferWrite,
-			depthTest: this.depthBufferRead,
-			
-			userData: info, //TODO: clear userData when saving off the pokemon
-		};
-		if (this.alphaTest) Object.assign(opts, this.alphaTest.toThree());
-		if (this.blendFunction) Object.assign(opts, this.blendFunction.toThree());
-		if (this.colorOperation) Object.assign(opts, this.colorOperation.toThree());
-		//TODO?
-		
-		// TODO: TexCoord[] holds the texture name to be used for this material
-		// bumpTexture points to which of them is the bump/normal map
-		// https://github.com/gdkchan/SPICA/blob/09d56f40581847e4a81a657c8f35af0ec64059ee/SPICA/Formats/GFL2/Model/GFModel.cs#L313
-		if (this.textureCoords) {
-			info.coordMap = new Array(3);
-			if (this.textureCoords[0]) {
-				info.map = this.textureCoords[0].toThree();
-				info.coordMap[0] = 'map';
-			}
-			if (this.textureCoords[1]) {
-				info.coordMap[1] = 'unk1Map-'+this.textureCoords[1].name;
-			}
-			if (this.textureCoords[2]) {
-				info.coordMap[2] = 'unk2Map-'+this.textureCoords[2].name;
-			}
-			if (this.bumpTexture > -1) {
-				info.normalMap = this.textureCoords[this.bumpTexture].toThree();
-				info.alphaMap = info.normalMap;
-				info.coordMap[this.bumpTexture] = 'normalMap';
-			}
-		}
-		
-		info.fragmentShader = this.fragShaderName;
-		info.vertexShader = this.vtxShaderName;
-		
-		// opts.skinning = true;
-		// opts.lights = true;
-		// opts.fog = true;
-		// opts.wireframe = true;
-		// opts.transparent = true;
-		
-		// return new THREE.ShaderMaterial(opts);
-		// return new THREE.MeshBasicMaterial(opts);
-		// return new THREE.MeshToonMaterial(opts);
-		// return new THREE.MeshPhongMaterial(opts);
-		return new BattlefieldMaterial(opts);
-		// return new PokemonBaseMaterial(opts);
+	toThree(textures) {
+		let MatClass = getMaterialForName(this.fragShaderName, this.vtxShaderName);
+		return MatClass.fromGFMaterial(this, textures);
 	}
 }
 

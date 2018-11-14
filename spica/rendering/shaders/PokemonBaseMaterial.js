@@ -110,136 +110,68 @@ class PokemonBaseMaterial extends CommonMaterial {
 	// Because we can't get automatic support for this stuff from the renderer...
 	onBeforeRender(renderer, scene, camera, geometry, material, group) {
 		super.onBeforeRender(renderer, scene, camera, geometry, material, group);
-		/*
-		uniforms.opacity.value = material.opacity;
-		if ( material.color ) {
-			uniforms.diffuse.value = material.color;
-		}
-		if ( material.emissive ) {
-			uniforms.emissive.value.copy( material.emissive ).multiplyScalar( material.emissiveIntensity );
-		}
-		if ( material.map ) {
-			uniforms.map.value = material.map;
-		}
-		if ( material.alphaMap ) {
-			uniforms.alphaMap.value = material.alphaMap;
-		}
-		if ( material.specularMap ) {
-			uniforms.specularMap.value = material.specularMap;
-		}
-		if ( material.envMap ) {
-			uniforms.envMap.value = material.envMap;
-			// don't flip CubeTexture envMaps, flip everything else:
-			//  WebGLRenderTargetCube will be flipped for backwards compatibility
-			//  WebGLRenderTargetCube.texture will be flipped because it's a Texture and NOT a CubeTexture
-			// this check must be handled differently, or removed entirely, if WebGLRenderTargetCube uses a CubeTexture in the future
-			uniforms.flipEnvMap.value = ( ! ( material.envMap && material.envMap.isCubeTexture ) ) ? 1 : - 1;
-
-			uniforms.reflectivity.value = material.reflectivity;
-			uniforms.refractionRatio.value = material.refractionRatio;
-
-			// uniforms.maxMipLevel.value = properties.get( material.envMap ).__maxMipLevel; //?!?!?!?!?!?!?!?!?!?!?!?! WebGLRenderer, line 2000
-		}
-		if ( material.lightMap ) {
-			uniforms.lightMap.value = material.lightMap;
-			uniforms.lightMapIntensity.value = material.lightMapIntensity;
-		}
-		if ( material.aoMap ) {
-			uniforms.aoMap.value = material.aoMap;
-			uniforms.aoMapIntensity.value = material.aoMapIntensity;
-		}
 		
-		uniforms.specular.value = material.specular;
-		uniforms.shininess.value = Math.max( material.shininess, 1e-4 ); // to prevent pow( 0.0, 0.0 )
-
-		if ( material.emissiveMap ) {
-			uniforms.emissiveMap.value = material.emissiveMap;
-		}
-
-		if ( material.bumpMap ) {
-			uniforms.bumpMap.value = material.bumpMap;
-			uniforms.bumpScale.value = material.bumpScale;
-			if ( material.side === BackSide ) uniforms.bumpScale.value *= - 1;
-		}
-
-		if ( material.normalMap ) {
-			uniforms.normalMap.value = material.normalMap;
-			uniforms.normalScale.value.copy( material.normalScale );
-			if ( material.side === BackSide ) uniforms.normalScale.value.negate();
-		}
-
-		if ( material.displacementMap ) {
-			uniforms.displacementMap.value = material.displacementMap;
-			uniforms.displacementScale.value = material.displacementScale;
-			uniforms.displacementBias.value = material.displacementBias;
-		}
-		
-		if ( material.gradientMap ) {
-			uniforms.gradientMap.value = material.gradientMap;
-		}
-		//*/
 		if (material.defines['UV_ALPHAMAP'] && material.defines['UV_NORMALMAP']) {
 			material.defines['UV_ALPHAMAP'] = material.defines['UV_NORMALMAP'];
 		}
 	}
 	
-	/*
-	get color(){ return this.uniforms.diffuse.value; }
-	set color(val){ this.uniforms.diffuse.value = val; }
-	
-	get map(){ return this.uniforms.map.value; }
-	set map(val){ this.uniforms.map.value = val; }
-	
-	get alphaMap(){ return this.uniforms.alphaMap.value; }
-	set alphaMap(val){ this.uniforms.alphaMap.value = val; }
-	
-	get specularMap(){ return this.uniforms.specularMap.value; }
-	set specularMap(val){ this.uniforms.specularMap.value = val; }
-	
-	get emissiveMap(){ return this.uniforms.emissiveMap.value; }
-	set emissiveMap(val){ this.uniforms.emissiveMap.value = val; }
-	
-	get normalMap(){ return this.uniforms.normalMap.value; }
-	set normalMap(val){ this.uniforms.normalMap.value = val; }
-	
-	get normalScale(){ return this.uniforms.normalScale.value; }
-	set normalScale(val){ this.uniforms.normalScale.value = val; }
-	
-	get displacementMap(){ return this.uniforms.displacementMap.value; }
-	set displacementMap(val){ this.uniforms.displacementMap.value = val; }
-	
-	get displacementScale(){ return this.uniforms.displacementScale.value; }
-	set displacementScale(val){ this.uniforms.displacementScale.value = val; }
-	
-	get displacementBias(){ return this.uniforms.displacementBias.value; }
-	set displacementBias(val){ this.uniforms.displacementBias.value = val; }
-	
-	get envMap(){ return this.uniforms.envMap.value; }
-	set envMap(val){ 
-		this.uniforms.envMap.value = val; 
-		this.uniforms.flipEnvMap.value = (!(val && val.isCubeTexture)) ? 1 : -1;
-		this.uniforms.maxMipLevel.value = 0; //?!?!?!?!?!?!?!?!?!?!?!?!
-		// WebGLRenderer, line 2000
+	/**
+	 * 
+	 * @param {GFMaterial} gfmat - Material to convert
+	 * @param {GFTexture[]} textures - Hash of textures to use
+	 */
+	static fromGFMaterial(gfmat, textures) {
+		let info = {
+			fragmentShader: gfmat.fragShaderName,
+			vertexShader: gfmat.vtxShaderName,
+		};
+		let opts = {
+			name: gfmat.matName,
+			color: gfmat.diffuseColor >> 8,
+			emissive: gfmat.emissionColor >> 8,
+			
+			colorWrite: gfmat.colorBufferWrite,
+			depthWrite: gfmat.depthBufferWrite,
+			depthTest: gfmat.depthBufferRead,
+			
+			userData: info, //TODO: clear userData when saving off the pokemon
+		};
+		if (gfmat.alphaTest) Object.assign(opts, gfmat.alphaTest.toThree());
+		if (gfmat.blendFunction) Object.assign(opts, gfmat.blendFunction.toThree());
+		if (gfmat.colorOperation) Object.assign(opts, gfmat.colorOperation.toThree());
+		
+		// TexCoord[] holds the texture name to be used for this material
+		// bumpTexture points to which of them is the bump/normal map
+		// https://github.com/gdkchan/SPICA/blob/09d56f40581847e4a81a657c8f35af0ec64059ee/SPICA/Formats/GFL2/Model/GFModel.cs#L313
+		if (gfmat.textureCoords) {
+			opts.coordMap = new Array(3);
+			info.texCoords = new Array(3);
+			if (gfmat.textureCoords[0]) {
+				let tc = gfmat.textureCoords[0].toThree();
+				info.texCoords[0] = tc;
+				opts.map = textures[tc.name].toThree(tc);
+				opts.coordMap[0] = 'map';
+			}
+			if (gfmat.textureCoords[1]) {
+				let tc = gfmat.textureCoords[1].toThree();
+				info.texCoords[1] = tc;
+				opts.coordMap[1] = 'unk1Map-'+tc.name;
+			}
+			if (gfmat.textureCoords[2]) {
+				let tc = gfmat.textureCoords[2].toThree();
+				info.texCoords[2] = tc;
+				opts.coordMap[2] = 'unk2Map-'+tc.name;
+			}
+			if (gfmat.bumpTexture > -1) {
+				let tc = info.texCoords[gfmat.bumpTexture];
+				opts.normalMap = textures[tc.name].toThree(tc);
+				opts.alphaMap = opts.normalMap;
+				opts.coordMap[gfmat.bumpTexture] = 'normalMap';
+			}
+		}
+		return new PokemonBaseMaterial(opts);
 	}
-	
-	get reflectivity(){ return this.uniforms.reflectivity.value; }
-	set reflectivity(val){ this.uniforms.reflectivity.value = val; }
-	
-	get refractionRatio(){ return this.uniforms.refractionRatio.value; }
-	set refractionRatio(val){ this.uniforms.refractionRatio.value = val; }
-	
-	get lightMap(){ return this.uniforms.lightMap.value; }
-	set lightMap(val){ this.uniforms.lightMap.value = val; }
-	
-	get lightMapIntensity(){ return this.uniforms.lightMapIntensity.value; }
-	set lightMapIntensity(val){ this.uniforms.lightMapIntensity.value = val; }
-	
-	get aoMap(){ return this.uniforms.aoMap.value; }
-	set aoMap(val){ this.uniforms.aoMap.value = val; }
-	
-	get aoMapIntensity(){ return this.uniforms.aoMapIntensity.value; }
-	set aoMapIntensity(val){ this.uniforms.aoMapIntensity.value = val; }
-	*/
 }
 PokemonBaseMaterial.prototype.isMeshPhongMaterial = true;
 PokemonBaseMaterial.matchNames = ['PokeNormal','Poke'];
