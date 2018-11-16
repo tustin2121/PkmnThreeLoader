@@ -38,6 +38,7 @@ camera.position.set(0, 200, 200);
 scene.add(camera);
 
 let root = new THREE.Object3D();
+root.name = 'Root';
 scene.add(root);
 
 let debugNodes = {};
@@ -104,6 +105,7 @@ global.info = {
 		$('.xanims > div').hide();
 		const self = this;
 		expressionAnims = [];
+		
 		for (let [i, val] of this.texpak.entries()){
 			$(`#texList${i}`).empty().hide();
 			if (!val || !Object.keys(val).length) continue;
@@ -577,6 +579,7 @@ function fillPkmnFilePaths(file0) {
 	global.loadedFiles = null;
 	root.remove(...root.children);
 	global.info.clear();
+	debugNodes = {};
 	resetView();
 	$('#pokemonDisplayOpts input').prop('disabled', true);
 }
@@ -633,7 +636,7 @@ async function displayPokemonModel() {
 			case 'shiny': combined.merge(paks[2].modelpack); break;
 			case 'shadow': combined.merge(paks[3].modelpack); break;
 		}
-		let mon = await combined.toThree();
+		let mon = await combined.toThreePokemon();
 		mon.name = "Pokemon";
 		if (mon.children[1]) mon.children[1].visible = false;
 		// mon.children[0].children.forEach(x=>x.visible = false);
@@ -643,6 +646,7 @@ async function displayPokemonModel() {
 		// animMixer.timeScale = 30;
 		{
 			let node = new THREE.SkeletonHelper(mon.children[0].skeleton.bones[0]);
+			node.name = 'Mon Skeleton';
 			node.visible = $('#props input[name=poptSkeleton]').is(':checked');
 			root.add(node);
 			debugNodes['skeletonHelper'] = node;
@@ -650,6 +654,7 @@ async function displayPokemonModel() {
 		}
 	}{
 		let node = new THREE.Group();
+		node.name = 'Meta Info';
 		{
 			let point = new THREE.Mesh(new THREE.SphereBufferGeometry(), new THREE.MeshBasicMaterial());
 			point.position.copy(paks[8].meta1.unk07);
@@ -665,6 +670,7 @@ async function displayPokemonModel() {
 	}{
 		let box = new THREE.Box3(paks[0].modelpack.models[0].boundingBoxMin, paks[0].modelpack.models[0].boundingBoxMax);
 		let help = new THREE.Box3Helper(box, 0x00FF00);
+		help.name = 'Model Boundries';
 		help.visible = $('#props input[name=poptModelBound]').is(':checked');
 		root.add(help);
 		debugNodes['boundingHelper'] = help;

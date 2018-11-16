@@ -54,26 +54,25 @@ class GFModelPack {
 		return this;
 	}
 	
+	async toThreePokemon() {
+		const { PokeModel } = require('../rendering/PokeModel');
+		let obj = new PokeModel();
+		await this._toThree(obj);
+		obj.finalize();
+		return obj;
+	}
+	
 	async toThree() {
-		const { Group, ObjectSpaceNormalMap } = require('three');
+		const { Group } = require('three');
 		let obj = new Group();
-		
+		return this._toThree(obj);
+	}
+	
+	async _toThree(obj) {
 		// Transpile Shaders
-		let shaders = {}, gShader = {}, fShader = {};
+		let shaders = {};
 		for (let gfShader of this.shaders) {
 			shaders[gfShader.name] = gfShader;
-			// if (gfShader.vtxShader) {
-			// 	// TODO generate a Vertex Shader from gfShader.vtxShader
-			// 	vShader[gfShader.name] = true;
-			// }
-			// if (gfShader.geoShader) {
-			// 	// TODO generate a Geometry Shader replacement from gfShader.geoShader
-			// 	gShader[gfShader.name] = true;
-			// }
-			// if (gfShader.texEnvStages) {
-			// 	// TODO generate a Fragment Shader from gfShader.texEnvStages
-			// 	fShader[gfShader.name] = true;
-			// }
 		}
 		
 		// Gather Textures

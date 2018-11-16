@@ -9,6 +9,7 @@ const {
 
 UniformsLib.pkmnCommon = {
 	time: { value: 0 },
+	rimEnable: { value: 0 },
 	rimPower: { value: 8 },
 	rimScale: { value: 0 },
 	rimColor: { value: new Color( 0xffa500 ) },

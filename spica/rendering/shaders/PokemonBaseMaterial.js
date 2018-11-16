@@ -40,6 +40,7 @@ class PokemonBaseMaterial extends CommonMaterial {
 		super(params);
 		
 		this.type = 'PokemonBaseMaterial';
+		this.parentModel = null;
 		
 		this.defines = Object.assign(this.defines, {
 			'UV_MAP': 'vUv',
@@ -114,6 +115,11 @@ class PokemonBaseMaterial extends CommonMaterial {
 		if (material.defines['UV_ALPHAMAP'] && material.defines['UV_NORMALMAP']) {
 			material.defines['UV_ALPHAMAP'] = material.defines['UV_NORMALMAP'];
 		}
+		if (material.parentModel) {
+			if (material.uniforms.rimEnable) {
+				material.uniforms.rimEnable.value = material.parentModel._zpowerEnable;
+			}
+		}
 	}
 	
 	/**
@@ -134,6 +140,9 @@ class PokemonBaseMaterial extends CommonMaterial {
 			colorWrite: gfmat.colorBufferWrite,
 			depthWrite: gfmat.depthBufferWrite,
 			depthTest: gfmat.depthBufferRead,
+			
+			rimPower: gfmat.rimPower,
+			rimScale: gfmat.rimScale,
 			
 			userData: info, //TODO: clear userData when saving off the pokemon
 		};
@@ -173,6 +182,7 @@ class PokemonBaseMaterial extends CommonMaterial {
 		return new PokemonBaseMaterial(opts);
 	}
 }
+PokemonBaseMaterial.prototype.isPokemonBaseMaterial = true;
 PokemonBaseMaterial.prototype.isMeshPhongMaterial = true;
 PokemonBaseMaterial.matchNames = ['PokeNormal','Poke'];
 
