@@ -85,27 +85,37 @@ class GFMotion {
 				case SECT_EFFECTS: { // Ground Shake Effect?
 					this.effectTriggers = new GFEffectMot(data, this.frameCount);
 					this.effectTriggers._addr = _addr;
-					/*
-					this.effectTriggers = {
-						_raw: data.readBytes(animSects[anim].length),
-						_addr,
-					};
-					let count = data.readUint32();
-					let tracks = [];
-					for (let i = 0; i < count; i++) {
-						let effect = data.readByteLenString(); //AK_EffectStart01.\xFF\xFF
-						let values = [];
-						let frameCount = data.readUint32(); //1
-						for (let f = 0; f < frameCount; f++) {
-							values.push({
-								frame: data.readUint32(), //0x19 ?
-								value: data.readFloat32(), //1.0
-							});
-						}
-						tracks.push({ effect, values });
-					}
-					this.effectTriggers.tracks = tracks; */
 				} break;
+				// case 8: { //? Only in Battle Backgrounds 141 & 142
+				// 	// let pos = data.offset;
+				// 	// let sec = this.section8 = {
+				// 	// 	_raw: data.readBytes(animSects[anim].length),
+				// 	// 	_addr,
+				// 	// };
+				// 	// let num = data.readUint32();
+				// 	// let off = data.readUint32();
+				// 	// sec.lightNames = [];
+				// 	// for (let i = 0; i < num; i++) {
+				// 	// 	sec.lightNames.push(data.readByteLenString());
+				// 	// }
+				// 	// num = data.readUint32();
+				// 	// sec.ukn1List = [];
+				// 	// for (let i = 0; i < num; i++) {
+				// 	// 	//TODO Unknown data, only known instance is 0
+				// 	// }
+				// 	// num = data.readUint32();
+				// 	// sec.ukn2List = [];
+				// 	// for (let i = 0; i < num; i++) {
+						
+				// 	// }
+					
+				// } break;
+				// case 10: { //? Only in Battle Backgrounds 141 & 142
+					
+				// } break;
+				// case 11: { //? Only in Battle Backgrounds 141 & 142
+					
+				// } break;
 				default:
 					this[`section${animSects[anim].type}`] = data.readBytes(animSects[anim].length);
 					this[`section${animSects[anim].type}`]._addr = _addr;

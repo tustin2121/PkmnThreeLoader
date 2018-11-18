@@ -19,18 +19,19 @@ function parse(data, out={}) {
 			default: throw new Error(`Unknown header '${header.magic}' !`);
 		}
 	} else {
+		reader.offset -= 2; //undo magic number offset
 		switch (magicNumber) {
 			case GFModel.MAGIC_NUMBER:
-				return Object.assign(out, { model: new GFModel(data, "Model") });
+				return Object.assign(out, { model: [new GFModel(reader, "Model")] });
 			case GFTexture.MAGIC_NUMBER:
-				return Object.assign(out, { tex: new GFTexture(data) });
+				return Object.assign(out, { tex: [new GFTexture(reader)] });
 			case GFModelPack.MAGIC_NUMBER:
-				return Object.assign(out, { modelpack: new GFModelPack(data) });
+				return Object.assign(out, { modelpack: [new GFModelPack(reader)] });
 			case GFShader.MAGIC_NUMBER:
-				return Object.assign(out, { modelpack: new GFShader(data) });
+				return Object.assign(out, { shader: [new GFShader(reader)] });
 			case GFMotion.MAGIC_NUMBER:
 				//parse to GFMotion and skeleton
-				return Object.assign(out, { motion: new GFMotion(data, 0) });
+				return Object.assign(out, { motion: [new GFMotion(reader, 0)] });
 		}
 		throw new Error('Invalid file type!');
 	}

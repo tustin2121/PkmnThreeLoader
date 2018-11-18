@@ -504,6 +504,26 @@ $('#props input[name=poptSkeleton]').on('click', function(){
 $('#props input[name=poptColor]').on('click', function(){
 	displayPokemonModel();
 });
+$('#props button[name=moptCenterGeom]').on('click', function(){
+	let bbox;
+	root.traverse((m)=>{
+		if (!m.isMesh) return;
+		if (!bbox) {
+			bbox = new THREE.Box3();
+			bbox.setFromObject(m);
+		} else {
+			bbox.expandByObject(m);
+		}
+	});
+	if (!bbox) return;
+	let trans = new THREE.Vector3();
+	bbox.getCenter(trans);
+	root.traverse(m=>{
+		if (!m.isMesh) return;
+		if (!m.geometry) return;
+		m.geometry.translate(-trans.x, 0, -trans.z);
+	});
+});
 $('#animStop').on('dblclick', function(){
 	// if (animMixer) animMixer.stopAllAction();
 	playAnimation();
@@ -619,6 +639,15 @@ async function displayModel(model) {
 }
 async function displayModelpack(pak) {
 	root.add(await pak.toThree());
+	
+	if (root.children[0] && root.children[0].children[0] && root.children[0].children[0].skeleton) {
+		let node = new THREE.SkeletonHelper(root.children[0].children[0].skeleton.bones[0]);
+		node.name = 'Mon Skeleton';
+		node.visible = $('#props input[name=poptSkeleton]').is(':checked');
+		root.add(node);
+		debugNodes['skeletonHelper'] = node;
+		global.info.markSkeleton(root.children[0].children[0].skeleton.bones);
+	}
 }
 async function displayPokemonModel() {
 	debugNodes = {};

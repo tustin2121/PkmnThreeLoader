@@ -321,7 +321,8 @@ class GFModel {
 			try {
 				geom = GFModel.mergeBufferGeometries(geoms);
 			} catch (e) {
-				throw e; //TODO
+				geom = GFModel.attemptCorrectBufferGeometries(geoms);
+				// throw e; //TODO
 			}
 			if (!geom) throw new ReferenceError('Could not merge geometries!');
 			
@@ -345,6 +346,51 @@ class GFModel {
 			obj.add(mesh);
 		}
 		return obj;
+	}
+	
+	static attemptCorrectBufferGeometries(geometries) {
+		const { BufferAttribute } = require('three');
+		let attributesUsed = {};
+		
+		for (let geom of geometries) {
+			// gather attributes, exit early if they're different
+			for (let name in geom.attributes) {
+				attributesUsed[name] = geom.attributes[name].array.constructor;
+			}
+		}
+		for (let geom of geometries) {
+			for (let name in attributesUsed) {
+				if (geom.attributes[name]) continue;
+				if (name === 'uv2' && geom.attributes['uv']) {
+					geom.attributes['uv2'] = geom.attributes['uv'];
+					continue;
+				}
+				if (name === 'uv3' && geom.attributes['uv']) {
+					geom.attributes['uv3'] = geom.attributes['uv'];
+					continue;
+				}
+				if (name === 'normal' && geom.attributes['position']) {
+					const CLASS = attributesUsed['normal'];
+					const NUM = geom.attributes['position'].count;
+					const array = new CLASS(NUM * 3);
+					for (let i = 0; i < NUM; i++) {
+						array[(i*3)+1] = 1.0;
+					}
+					geom.attributes['normal'] = new BufferAttribute(array, 3, false);
+					continue;
+				}
+				if (name === 'color' && geom.attributes['position']) {
+					const CLASS = attributesUsed['color'];
+					const NUM = geom.attributes['position'].count;
+					const array = new CLASS(NUM * 4);
+					array.fill(0xFF);
+					geom.attributes['color'] = new BufferAttribute(array, 4, false);
+					continue;
+				}
+			}
+		}
+		
+		return GFModel.mergeBufferGeometries(geometries);
 	}
 	
 	// Below copied and modified from BufferGeometryUtils
