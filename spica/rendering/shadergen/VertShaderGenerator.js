@@ -13,6 +13,7 @@ class VertShaderGenerator extends ShaderGenerator {
 	getVtxShader(programIndex=0) {
 		/** @type {ShaderProgram} */
 		let program = this.shBin.programs[programIndex];
+		if (program === undefined) return `// No shader code to transpile.`;
 		
 		this.init(program);
 		
