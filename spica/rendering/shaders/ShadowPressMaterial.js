@@ -6,6 +6,7 @@ const {
 	Vector2, Matrix3, Color, 
 	OneMinusSrcAlphaFactor, SrcAlphaFactor, CustomBlending, AddEquation,
 } = require('three');
+const { PICATestFunc, PICAStencilOp } = require('../../pica/commands/PICATests');
 
 const { CommonMaterial } = require('./CommonMaterial');
 
@@ -55,6 +56,14 @@ class ShadowPressMaterial extends CommonMaterial {
 		this.blendDst = OneMinusSrcAlphaFactor;
 		this.blendDstAlpha = OneMinusSrcAlphaFactor;
 		
+		this.stencilTest = true;
+		this.stencilFunc = [ PICATestFunc.toThree(PICATestFunc.Equal), 0, 0x01 ];
+		this.stencilOp = [ 
+			PICAStencilOp.toThree(PICAStencilOp.Keep), 
+			PICAStencilOp.toThree(PICAStencilOp.Keep), 
+			PICAStencilOp.toThree(PICAStencilOp.Increment), 
+		];
+		
 		this.color = new Color( 0x000000 ); // emissive
 
 		this.alphaMap = null;
@@ -81,23 +90,6 @@ class ShadowPressMaterial extends CommonMaterial {
 				material.uniforms.shadowDirection.value = material.parentModel._shadowDirection;
 			}
 		}
-		const gl = renderer.context;
-		const stencil = renderer.state.buffers.stencil;
-		
-		stencil.setTest(true);
-		stencil.setFunc( gl.EQUAL, 0, 0x0F );
-		stencil.setOp( gl.KEEP, gl.KEEP, gl.INCR );
-	}
-	
-	onAfterRender(args) {
-		const { renderer } = args;
-		super.onAfterRender(args);
-		const gl = renderer.context;
-		const stencil = renderer.state.buffers.stencil;
-		
-		stencil.setTest(false);
-		stencil.setFunc( gl.ALWAYS, 1, 0x0F );
-		stencil.setOp( gl.KEEP, gl.KEEP, gl.KEEP );
 	}
 	
 	get blendFunction() { return this.defines['TEX_BLEND_FUNC']; }
@@ -127,38 +119,10 @@ class ShadowPressMaterial extends CommonMaterial {
 		if (gfmat.alphaTest) Object.assign(opts, gfmat.alphaTest.toThree());
 		if (gfmat.blendFunction) Object.assign(opts, gfmat.blendFunction.toThree());
 		if (gfmat.colorOperation) Object.assign(opts, gfmat.colorOperation.toThree());
-		
-		// TexCoord[] holds the texture name to be used for this material
-		// bumpTexture points to which of them is the bump/normal map
-		// https://github.com/gdkchan/SPICA/blob/09d56f40581847e4a81a657c8f35af0ec64059ee/SPICA/Formats/GFL2/Model/GFModel.cs#L313
-		// if (gfmat.textureCoords) {
-		// 	opts.coordMap = new Array(3);
-		// 	info.texCoords = new Array(3);
-		// 	if (gfmat.textureCoords[0]) {
-		// 		let tc = gfmat.textureCoords[0].toThree();
-		// 		info.texCoords[0] = tc;
-		// 		opts.map = textures[tc.name].toThree(tc);
-		// 		opts.coordMap[0] = 'map';
-		// 	}
-		// 	if (gfmat.textureCoords[1]) {
-		// 		let tc = gfmat.textureCoords[0].toThree();
-		// 		info.texCoords[1] = tc;
-		// 		opts.detailMap = textures[tc.name].toThree(tc);
-		// 		opts.coordMap[1] = 'detailMap';
-		// 	}
-		// 	if (gfmat.textureCoords[2]) {
-		// 		let tc = gfmat.textureCoords[0].toThree();
-		// 		info.texCoords[2] = tc;
-		// 		opts.overlayMap = textures[tc.name].toThree(tc);
-		// 		opts.coordMap[2] = 'overlayMap';
-		// 	}
-		// 	if (gfmat.bumpTexture > -1) {
-		// 		let tc = info.texCoords[gfmat.bumpTexture];
-		// 		opts.normalMap = textures[tc.name].toThree(tc);
-		// 		opts.alphaMap = opts.normalMap;
-		// 		opts.coordMap[gfmat.bumpTexture] = 'normalMap';
-		// 	}
-		// }
+		if (gfmat.stencilTest && gfmat.stencilTest.enabled) {
+			Object.assign(opts, gfmat.stencilTest.toThree());
+			Object.assign(opts, gfmat.stencilOperation.toThree());
+		}
 		
 		return new ShadowPressMaterial(opts);
 	}

@@ -9,6 +9,20 @@ const PICATestFunc = {
 	Lequal : 5,
 	Greater : 6,
 	Gequal : 7,
+	
+	toThree : function(pica) {
+		switch (pica) {
+			// https://developer.mozilla.org/en-US/docs/Web/API/WebGL_API/Constants#Depth_or_stencil_tests
+			case PICATestFunc.Never:	return 0x0200;
+			case PICATestFunc.Always:	return 0x0207;
+			case PICATestFunc.Equal:	return 0x0202;
+			case PICATestFunc.Notequal:	return 0x0205;
+			case PICATestFunc.Less:		return 0x0201;
+			case PICATestFunc.Lequal:	return 0x0203;
+			case PICATestFunc.Greater:	return 0x0204;
+			case PICATestFunc.Gequal:	return 0x0206;
+		}
+	},
 };
 
 const PICAStencilOp = {
@@ -20,6 +34,20 @@ const PICAStencilOp = {
 	Invert : 5,
 	IncrementWrap : 6,
 	DecrementWrap : 7,
+	
+	toThree : function(pica) {
+		switch (pica) {
+			// https://developer.mozilla.org/en-US/docs/Web/API/WebGL_API/Constants#Stencil_actions
+			case PICAStencilOp.Keep:			return 0x1E00;
+			case PICAStencilOp.Zero:			throw new TypeError('Unsupported Stencil Operation: ZERO');
+			case PICAStencilOp.Replace:		return 0x1E01;
+			case PICAStencilOp.Increment:	return 0x1E02;
+			case PICAStencilOp.Decrement:	return 0x1E03;
+			case PICAStencilOp.Invert:		return 0x150A;
+			case PICAStencilOp.IncrementWrap:return 0x8507;
+			case PICAStencilOp.DecrementWrap:return 0x8508;
+		}
+	},
 };
 
 const PICABlendEquation = {
@@ -77,6 +105,12 @@ const PICABlendFunc = {
 const PICABlendMode = {
 	LogicalOp : 0,
 	Blend : 1,
+};
+
+const PICAFragOpMode = {
+	Default : 0,
+	Gas : 1,
+	Shadow : 3,
 };
 
 const PICALogicalOp = {
@@ -163,7 +197,13 @@ class PICAStencilOperation {
 	// TODO? https://github.com/gdkchan/SPICA/blob/master/SPICA/PICA/Commands/PICAStencilOperation.cs#L16
 	toUint32() { throw new Error('Not implemented'); }
 	toThree() {
-		return {}; //TODO
+		return {
+			stencilOp: [ 
+				PICAStencilOp.toThree(this.failOp),
+				PICAStencilOp.toThree(this.zfailOp),
+				PICAStencilOp.toThree(this.zpassOp),
+			],
+		};
 	}
 }
 
@@ -178,7 +218,10 @@ class PICAStencilTest {
 	// TODO? https://github.com/gdkchan/SPICA/blob/master/SPICA/PICA/Commands/PICAStencilTest.cs#L20
 	toUint32() { throw new Error('Not implemented'); }
 	toThree() {
-		return {}; //TODO
+		return {
+			stencilTest: this.enabled,
+			stencilFunc: [ PICATestFunc.toThree(this.func), this.reference, this.mask ],
+		};
 	}
 }
 
@@ -266,4 +309,5 @@ module.exports = {
 	PICADepthColorMask,
 	PICADrawMode,
 	PICAFaceCulling,
+	PICAFragOpMode,
 };

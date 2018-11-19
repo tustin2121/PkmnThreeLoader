@@ -1,11 +1,5 @@
 //
 
-const PICAFragOpMode = {
-	Default : 0,
-	Gas : 1,
-	Shadow : 3,
-};
-
 const PICAAttributeFormat = {
 	Byte : 0,
 	Ubyte : 1,
@@ -116,5 +110,4 @@ module.exports = {
 	PICAAttributeFormat,
 	PICAAttributeName,
 	PICAFixedAttribute,
-	PICAFragOpMode,
 };

@@ -48,6 +48,10 @@ class CommonMaterial extends ShaderMaterial {
 		this.vertexShader = '';
 		this.fragmentShader = '';
 		
+		this.stencilTest = false;
+		this.stencilFunc = null;
+		this.stencilOp = null;
+		
 		//Subclass needs to call:
 		//this.setValues(params);
 	}
@@ -61,7 +65,7 @@ class CommonMaterial extends ShaderMaterial {
 		};
 	}
 	
-	onBeforeRender({ geometry, material }) {
+	onBeforeRender({ renderer, geometry, material }) {
 		if (material.coordMap) {
 			if (material.coordMap[0] && material.coordMap[0].indexOf('-')==-1 && material.uniforms.uvTransform) {
 				let map = material[material.coordMap[0]];
@@ -99,10 +103,26 @@ class CommonMaterial extends ShaderMaterial {
 		if (geometry.attributes.uv3) {
 			material.defines.USE_UV3 = true;
 		}
+		
+		if (this.stencilTest) {
+			const gl = renderer.context;
+			const stencil = renderer.state.buffers.stencil;
+			
+			stencil.setTest(true);
+			stencil.setFunc(...this.stencilFunc);
+			stencil.setOp(...this.stencilOp);
+		}
 	}
 	
-	onAfterRender({ material }) {
-		// Empty
+	onAfterRender({ renderer }) {
+		if (this.stencilTest) {
+			const gl = renderer.context;
+			const stencil = renderer.state.buffers.stencil;
+			
+			stencil.setTest(false);
+			stencil.setFunc( gl.ALWAYS, 1, 0xFF );
+			stencil.setOp( gl.KEEP, gl.KEEP, gl.KEEP );
+		}
 	}
 	
 	/**

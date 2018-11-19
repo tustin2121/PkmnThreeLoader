@@ -94,6 +94,10 @@ class PokemonFireMaterial extends CommonMaterial {
 		if (gfmat.alphaTest) Object.assign(opts, gfmat.alphaTest.toThree());
 		if (gfmat.blendFunction) Object.assign(opts, gfmat.blendFunction.toThree());
 		if (gfmat.colorOperation) Object.assign(opts, gfmat.colorOperation.toThree());
+		if (gfmat.stencilTest && gfmat.stencilTest.enabled) {
+			Object.assign(opts, gfmat.stencilTest.toThree());
+			Object.assign(opts, gfmat.stencilOperation.toThree());
+		}
 		
 		// TexCoord[] holds the texture name to be used for this material
 		// bumpTexture points to which of them is the bump/normal map
