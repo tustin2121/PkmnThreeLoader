@@ -3,7 +3,7 @@
 
 const { 
 	ShaderMaterial, UniformsLib, UniformsUtils, ShaderLib, 
-	Vector2, Matrix3, Color, Clock,
+	Vector3, Matrix3, Color, Clock,
 	TangentSpaceNormalMap, MultiplyOperation, BackSide,
 } = require('three');
 
@@ -20,6 +20,9 @@ UniformsLib.pkmnMultiMap = {
 	detailMap: { value: null },
 	overlayMap: { value: null },
 };
+UniformsLib.pkmnShadowPress = {
+	shadowDirection: { value: new Vector3() },
+};
 
 class CommonMaterial extends ShaderMaterial {
 	constructor(params) {
@@ -27,7 +30,7 @@ class CommonMaterial extends ShaderMaterial {
 		
 		this.type = 'CommonMaterial';
 		
-		this.coordMap = params.coordMap.slice();
+		this.coordMap = (params.coordMap||[]).slice();
 		this.defines = {
 			'OP_ALPHATEST': '<',
 			'USE_UV2': false,
@@ -50,10 +53,15 @@ class CommonMaterial extends ShaderMaterial {
 	}
 	
 	register(obj) {
-		obj.onBeforeRender = (...params)=>this.onBeforeRender(...params);
+		obj.onBeforeRender = (renderer, scene, camera, geometry, material, group)=>{
+			this.onBeforeRender({ renderer, scene, camera, geometry, material, group });
+		};
+		obj.onAfterRender = (renderer, scene, camera, geometry, material, group)=>{
+			this.onAfterRender({ renderer, scene, camera, geometry, material, group });
+		};
 	}
 	
-	onBeforeRender(renderer, scene, camera, geometry, material, group) {
+	onBeforeRender({ geometry, material }) {
 		if (material.coordMap) {
 			if (material.coordMap[0] && material.coordMap[0].indexOf('-')==-1 && material.uniforms.uvTransform) {
 				let map = material[material.coordMap[0]];
@@ -93,6 +101,10 @@ class CommonMaterial extends ShaderMaterial {
 		}
 	}
 	
+	onAfterRender({ material }) {
+		// Empty
+	}
+	
 	/**
 	 * Sets a UV matrix from the given texture, bypassing Matrix3.setUvTransform(). This method 
 	 * uses a different formula than setUvTransform(), scaling the tx value with the scale value.
@@ -127,6 +139,7 @@ class CommonMaterial extends ShaderMaterial {
 	get map1() { return this[this.coordMap[1]]; }
 	get map2() { return this[this.coordMap[2]]; }
 }
+CommonMaterial.prototype.isPokemonCommonMaterial = true;
 CommonMaterial.CLOCK = new Clock();
 
 if (typeof console) console.CLOCK = CommonMaterial.CLOCK;

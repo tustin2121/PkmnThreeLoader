@@ -9,7 +9,7 @@ const {
 
 const { CommonMaterial } = require('./CommonMaterial');
 
-ShaderLib['pkmnCommon'] = {
+ShaderLib['pkmnBattlefield'] = {
 	uniforms: UniformsUtils.merge([
 		UniformsLib.common,
 		UniformsLib.specularmap,
@@ -35,6 +35,7 @@ class BattlefieldMaterial extends CommonMaterial {
 		super(params);
 		
 		this.type = 'BattlefieldMaterial';
+		this.parentModel = null;
 		
 		this.defines = Object.assign(this.defines, {
 			'TEX_BLEND_FUNC': 'texDefaultBlend',
@@ -44,15 +45,15 @@ class BattlefieldMaterial extends CommonMaterial {
 			'UV_ALPHAMAP': 'vUv',
 			'UV_ENVMAP': 'vUv',
 		});
-		this.uniforms = UniformsUtils.clone(ShaderLib.pkmnCommon.uniforms);
+		this.uniforms = UniformsUtils.clone(ShaderLib.pkmnBattlefield.uniforms);
 		
 		this.defaultAttributeValues = Object.assign(this.defaultAttributeValues, {
 			color: [1,1,1],
 			normal: [0,1,0],
 		});
 		
-		this.vertexShader = ShaderLib.pkmnCommon.vertexShader;
-		this.fragmentShader = ShaderLib.pkmnCommon.fragmentShader;
+		this.vertexShader = ShaderLib.pkmnBattlefield.vertexShader;
+		this.fragmentShader = ShaderLib.pkmnBattlefield.fragmentShader;
 		
 		this.color = new Color( 0xffffff ); // emissive
 
@@ -86,8 +87,9 @@ class BattlefieldMaterial extends CommonMaterial {
 	}
 	
 	// Because we can't get automatic support for this stuff from the renderer...
-	onBeforeRender(renderer, scene, camera, geometry, material, group) {
-		super.onBeforeRender(renderer, scene, camera, geometry, material, group);
+	onBeforeRender(args) {
+		const { material } = args;
+		super.onBeforeRender(args);
 		
 		if (material.detailMap) {
 			material.uniforms.detailMap.value = material.detailMap;

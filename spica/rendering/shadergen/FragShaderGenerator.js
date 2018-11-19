@@ -296,7 +296,9 @@ layout(location=0) out vec4 Output;
 		let texCoord = this.mat.textureCoords[index];
 		let texture;
 		
-		if (index == 0) {
+		if (!texCoord) {
+			texture = `textureERROR(Textures[${index}], TexCoord0.xy)`;
+		} else if (index == 0) {
 			switch (texCoord.mappingType) {
 				case GFTextureMappingType.CameraCubeEnvMap:
 					texture = `texture(TextureCube, TexCoord0.xyz)`;

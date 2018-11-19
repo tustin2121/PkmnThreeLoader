@@ -109,8 +109,9 @@ class PokemonBaseMaterial extends CommonMaterial {
 	}
 	
 	// Because we can't get automatic support for this stuff from the renderer...
-	onBeforeRender(renderer, scene, camera, geometry, material, group) {
-		super.onBeforeRender(renderer, scene, camera, geometry, material, group);
+	onBeforeRender(args) {
+		const { material } = args;
+		super.onBeforeRender(args);
 		
 		if (material.defines['UV_ALPHAMAP'] && material.defines['UV_NORMALMAP']) {
 			material.defines['UV_ALPHAMAP'] = material.defines['UV_NORMALMAP'];

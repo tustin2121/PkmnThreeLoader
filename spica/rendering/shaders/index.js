@@ -9,6 +9,7 @@ const MATS = Object.assign({}, ...[
 	require('./CommonMaterial'),
 	require('./BattlefieldMaterial'),
 	require('./PokemonBaseMaterial'),
+	require('./ShadowPressMaterial'),
 ]);
 
 /**
@@ -17,7 +18,7 @@ const MATS = Object.assign({}, ...[
  * @param {string} vertName - Vertex shader name to match against
  */
 function getMaterialForName(fragName, vertName) {
-	for (let mat in MATS) {
+	for (let mat of Object.values(MATS)) {
 		if (!mat.matchNames) continue;
 		// We're assuming matchNames is an array of strings and regexes.
 		for (let name of mat.matchNames) {

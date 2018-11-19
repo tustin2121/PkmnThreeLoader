@@ -484,10 +484,11 @@ $('#props button[name=loadOtherFileBtn]').on('click', async function(){
 
 
 $('#props input[name=poptShadow]').on('click', function(){
+	if (debugNodes['shadowModel']) debugNodes['shadowModel'].visible = $(this).is(':checked');
 	//TODO: Implement in shader?
 	// https://gamedev.stackexchange.com/questions/27252/draw-a-projection-of-a-mesh-on-a-surface
 	// https://en.wikibooks.org/wiki/GLSL_Programming/Unity/Shadows_on_Planes
-	displayPokemonModel();
+	
 });
 $('#props input[name=poptMeta]').on('click', function(){
 	// displayPokemonModel();
@@ -667,14 +668,17 @@ async function displayPokemonModel() {
 		}
 		let mon = await combined.toThreePokemon();
 		mon.name = "Pokemon";
-		if (mon.children[1]) mon.children[1].visible = false;
+		if (mon.children[1]) {
+			debugNodes['shadowModel'] = mon.children[1];
+			mon.children[1].visible = $('#props input[name=poptShadow]').is(':checked');;
+		}
 		// mon.children[0].children.forEach(x=>x.visible = false);
 		root.add(mon); //TODO modelpack instead of model
 		
 		animMixer = new THREE.AnimationMixer(mon.children[0]);
 		// animMixer.timeScale = 30;
 		{
-			let node = new THREE.SkeletonHelper(mon.children[0].skeleton.bones[0]);
+			let node = new THREE.SkeletonHelper(mon.skeleton.bones[0]);
 			node.name = 'Mon Skeleton';
 			node.visible = $('#props input[name=poptSkeleton]').is(':checked');
 			root.add(node);

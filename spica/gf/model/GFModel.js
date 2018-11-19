@@ -88,7 +88,7 @@ class GFModel {
 		}
 	}
 	
-	toThree(convertMats = true) {
+	toThree() {
 		require('three/examples/js/utils/BufferGeometryUtils'); //need this first
 		const {
 			Skeleton, SkinnedMesh, Mesh, BufferGeometry, InterleavedBuffer,
@@ -132,20 +132,14 @@ class GFModel {
 			skeleton.calculateInverses();
 			// obj.userData.skeleton = skeleton;
 			obj.skeleton = skeleton;
-			obj.add(skeleton.bones[0]);
+			// obj.add(skeleton.bones[0]);
 		}
 		
 		// Materials
 		let mats = {};
 		obj.mapNames = {};
 		for (let gfMat of this.materials) {
-			if (convertMats) {
-				let mat = gfMat.toThree();
-				mats[gfMat.matName] = mat;
-				obj.mapNames[gfMat.matName] = mat.map;
-			} else {
-				mats[gfMat.matName] = gfMat;
-			}
+			mats[gfMat.matName] = gfMat;
 		}
 		
 		// Meshes
@@ -331,9 +325,6 @@ class GFModel {
 			
 			let mesh;
 			if (meshSkinned && skeleton) {
-				if (convertMats) {
-					mats[matName].skinning = true;
-				}
 				mesh = new SkinnedMesh(geom, mats[matName]);
 				mesh.bindMode = 'detached';
 				// mesh.bind(skeleton, obj.matrixWorld);

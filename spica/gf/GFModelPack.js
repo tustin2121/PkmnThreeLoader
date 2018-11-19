@@ -82,22 +82,22 @@ class GFModelPack {
 		}
 		await Promise.all(Object.values(textures).map(x=>x.decodeData()));
 		
+		let skeleton;
+		
 		// Compile Models
-		// for (let gfModel of this.models){
-		{ let gfModel = this.models[0]; //TODO HACK to dodge shadow
-			let model = gfModel.toThree(false);
-			model.traverse((obj)=>{
-				if (!obj.isMesh) return; //continue;
+		for (let gfModel of this.models) {
+		// { let gfModel = this.models[0]; //TODO HACK to dodge shadow
+			let model = gfModel.toThree();
+			if (!skeleton) { skeleton = model.skeleton; }
+			model.traverse((mesh)=>{
+				if (!mesh.isMesh) return; //continue;
 				
-				let mat = obj.material;
+				let mat = mesh.material;
 				if (mat instanceof GFMaterial) {
 					let opts = {
 						vertexShader: null,
 						geometryShader: null,
 						fragmentShader: null,
-						// extensions: {},
-						// defines: {},
-						// uniforms: {},
 					};
 					// Transpile and apply Shaders
 					if (mat.vtxShaderName && shaders[mat.vtxShaderName]) {
@@ -114,32 +114,23 @@ class GFModelPack {
 						opts.fragmentShader = { name:mat.fragShaderName, code: gen.getFragShader() };
 					}
 					
-					obj.userData.shaderinfo = opts;
-					obj.material = obj.material.toThree(textures); //new RawShaderMaterial(opts);
+					mesh.userData.shaderinfo = opts;
+					mesh.material = mesh.material.toThree(textures); //new RawShaderMaterial(opts);
 				}
-				// let matinfo = obj.material.userData;
-				if (obj.isSkinnedMesh) obj.material.skinning = true;
-				// // Apply Textures
-				// if (matinfo.map && textures[matinfo.map.name]) {
-				// 	let tex = textures[matinfo.map.name].toThree(matinfo.map);
-				// 	obj.material.map = tex;
-				// }
-				// if (matinfo.normalMap && textures[matinfo.normalMap.name]) {
-				// 	let tex = textures[matinfo.normalMap.name].toThree(matinfo.normalMap);
-				// 	obj.material.normalMap = tex;
-				// 	obj.material.normalMapType = ObjectSpaceNormalMap;
-				// }
-				// if (matinfo.alphaMap && textures[matinfo.alphaMap.name]) {
-				// 	let tex = textures[matinfo.alphaMap.name].toThree(matinfo.alphaMap);
-				// 	// obj.material.alphaTest = 1 - obj.material.alphaTest; //HACK?!
-				// 	obj.material.alphaMap = tex;
-				// }
-				
-				if (typeof obj.material.register === 'function') {
-					obj.material.register(obj);
+				// let matinfo = mesh.material.userData;
+				if (mesh.isSkinnedMesh) {
+					mesh.material.skinning = true;
+					mesh.bind(skeleton, skeleton.bones[0].matrixWorld);
+				}
+				if (typeof mesh.material.register === 'function') {
+					mesh.material.register(mesh);
 				}
 			});
 			obj.add(model);
+		}
+		if (skeleton) {
+			obj.add(skeleton.bones[0]);
+			obj.skeleton = skeleton;
 		}
 		return obj;
 	}
