@@ -45,11 +45,12 @@ class GFMotion {
 		data.offset = pos + animSects[0].addr;
 		this.frameCount = data.readUint32();
 		this.isLooping = (data.readUint16() & 1) != 0;
-		this.isBlended = (data.readUint16() & 1) != 0; //probably
+		this.uknFlag = (data.readUint16() & 1) != 0; //probably
 		this.animRegionMin = data.readVector3();
 		this.animRegionMax = data.readVector3();
 		this.hashid = data.readUint32();
 		this.numAffectedBones = data.readUint32();
+		// this.ukn8 = data.readFloat16();
 		this.ukn8 = data.readUint32();
 		
 		if (console.PARSE_DEBUG) console.PARSE_DEBUG['animNum'] = index;

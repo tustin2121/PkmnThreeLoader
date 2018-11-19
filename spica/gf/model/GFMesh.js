@@ -137,8 +137,8 @@ class GFMesh {
 					case PICARegister.GPUREG_ATTRIBBUFFER0_CONFIG1: bufferAttr_L |= param; break;
 					case PICARegister.GPUREG_ATTRIBBUFFER0_CONFIG2:
 						bufferAttr_H |= (param & 0xFFFF);
-						SM.vertexStride = (param >> 16) & 0xFF;
-						attrCount = (param >> 28);
+						SM.vertexStride = (param >>> 16) & 0xFF;
+						attrCount = (param >>> 28);
 						break;
 					case PICARegister.GPUREG_FIXEDATTRIB_INDEX: fixedIndex = param; break;
 					case PICARegister.GPUREG_FIXEDATTRIB_DATA0: fixed[fixedIndex][0] = param; break;
@@ -157,13 +157,13 @@ class GFMesh {
 			
 			for (let i = 0; i < attrCount; i++) {
 				// if (((BufferFormats >> (48 + Index)) & 1) != 0)
-				if (((bufferAttr_H >> (16 + i)) & 1) !== 0) {
+				if (((bufferAttr_H >>> (16 + i)) & 1) !== 0) {
 					// PICAAttributeName Name = (PICAAttributeName)((BufferPermutation >> Index * 4) & 0xf);
 					let name;
 					if (i < 8) {
-						name = (bufferPermutation_L >> ((i-0)*4));
+						name = (bufferPermutation_L >>> ((i-0)*4));
 					} else {
-						name = (bufferPermutation_H >> ((i-8)*4));
+						name = (bufferPermutation_H >>> ((i-8)*4));
 					}
 					
 					let scale = (name === PICAAttributeName.Color || name === PICAAttributeName.BoneWeight)? SCALES[1] : 1;
@@ -175,20 +175,20 @@ class GFMesh {
 					// int PermutationIdx = (int)((BufferAttributes  >> Index          * 4) & 0xf);
 					// int AttributeName  = (int)((BufferPermutation >> PermutationIdx * 4) & 0xf);
 					// int AttributeFmt   = (int)((BufferFormats     >> PermutationIdx * 4) & 0xf);
-					let permIdx = ((i<8)? (bufferAttr_L >> (i*4)) : (bufferAttr_H >> ((i-8)*4))) & 0xF;
+					let permIdx = ((i<8)? (bufferAttr_L >>> (i*4)) : (bufferAttr_H >>> ((i-8)*4))) & 0xF;
 					if (permIdx<8) {
-						attrName = (bufferPermutation_L >> permIdx*4) & 0xF;
-						attrFmt  = (bufferFormats_L     >> permIdx*4) & 0xF;
+						attrName = (bufferPermutation_L >>> permIdx*4) & 0xF;
+						attrFmt  = (bufferFormats_L     >>> permIdx*4) & 0xF;
 					} else {
 						permIdx -= 8;
-						attrName = (bufferPermutation_H >> permIdx*4) & 0xF;
-						attrFmt  = (bufferFormats_H     >> permIdx*4) & 0xF;
+						attrName = (bufferPermutation_H >>> permIdx*4) & 0xF;
+						attrFmt  = (bufferFormats_H     >>> permIdx*4) & 0xF;
 					}
 					
 					let attrib = new PICAAttribute({
 						name : attrName,
 						format : (attrFmt & 3),
-						elements : (attrFmt >> 2) + 1,
+						elements : (attrFmt >>> 2) + 1,
 						scale : SCALES[attrFmt & 3],
 					});
 					if (attrib.Name === PICAAttributeName.BoneIndex) attrib.scale = 1;
@@ -207,7 +207,7 @@ class GFMesh {
 					case PICARegister.GPUREG_INDEXBUFFER_CONFIG: bufferAddr = param; break;
 					case PICARegister.GPUREG_NUMVERTICES: bufferCount = param; break;
 					case PICARegister.GPUREG_PRIMITIVE_CONFIG:
-						SM.primitiveMode = (param >> 8);
+						SM.primitiveMode = (param >>> 8);
 						break;
 				}
 			}
@@ -220,7 +220,7 @@ class GFMesh {
 			{
 				let idxAddress = data.offset;
 				for (let i = 0; i < bufferCount; i++) {
-					SM.indices[i] = ((bufferAddr >> 31) !== 0)? data.readUint16() : data.readUint8();
+					SM.indices[i] = ((bufferAddr >>> 31) !== 0)? data.readUint16() : data.readUint8();
 					// SM.indices[i] %= SM.verticesCount;
 				}
 				data.offset = idxAddress + SM.indicesLength;
