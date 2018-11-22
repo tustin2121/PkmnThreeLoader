@@ -20,8 +20,12 @@ class PokeModel extends Object3D {
 		this.traverse((obj)=>{
 			if (!obj.isMesh) return;
 			if (!obj.material) return;
-			if (!obj.material.isPokemonCommonMaterial) return;
-			obj.material.parentModel = this;
+			let mats = obj.material;
+			if (!Array.isArray(mats)) mats = [mats];
+			for (let mat of mats) {
+				if (!mat.isPokemonCommonMaterial) continue;
+				obj.material.parentModel = this;
+			}
 		});
 	}
 	

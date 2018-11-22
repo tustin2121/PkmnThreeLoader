@@ -1,10 +1,9 @@
 // https://github.com/gdkchan/SPICA/blob/master/SPICA/Formats/GFL2/GFModelPack.cs
 
-const { RawShaderMaterial } = require('three');
 const { GFModel, GFMaterial } = require('./model');
 const { GFTexture } = require('./texture/GFTexture');
 const { GFShader } = require('./shader/GFShader');
-const { VertShaderGenerator, FragShaderGenerator } = require('../rendering/shadergen');
+const { CommonMaterial } = require('../rendering/shaders');
 
 class GFModelPack {
 	constructor(data) {
@@ -92,39 +91,26 @@ class GFModelPack {
 			model.traverse((mesh)=>{
 				if (!mesh.isMesh) return; //continue;
 				
-				let mat = mesh.material;
-				if (mat instanceof GFMaterial) {
-					let opts = {
-						vertexShader: null,
-						geometryShader: null,
-						fragmentShader: null,
-					};
-					// Transpile and apply Shaders
-					if (mat.vtxShaderName && shaders[mat.vtxShaderName]) {
-						let shader = shaders[mat.vtxShaderName];
-						let gen = new VertShaderGenerator(shader.toShaderBinary());
-						opts.vertexShader = { name:mat.vtxShaderName, code: gen.getVtxShader() };
+				let materials = mesh.material;
+				if (!Array.isArray(materials)) materials = [materials];
+				materials = materials.map(mat=>{
+					if (mat instanceof GFMaterial) {
+						let shaderInfo = CommonMaterial.transpileShaders(mat, shaders);
+						mat = mat.toThree(textures);
+						mat.userData = Object.assign(mat.userData, shaderInfo);
 					}
-					if (mat.geomShaderName) {
-						opts.geometryShader = { name:mat.geomShaderName, code:'exists' };
+					if (mesh.isSkinnedMesh) {
+						mat.skinning = true;
 					}
-					if (mat.fragShaderName && shaders[mat.fragShaderName]) {
-						let shader = shaders[mat.fragShaderName];
-						let gen = new FragShaderGenerator(shader.toShaderBinary(), { shader, mat });
-						opts.fragmentShader = { name:mat.fragShaderName, code: gen.getFragShader() };
-					}
-					
-					mesh.userData.shaderinfo = opts;
-					mesh.material = mesh.material.toThree(textures); //new RawShaderMaterial(opts);
-				}
-				// let matinfo = mesh.material.userData;
+					return mat;
+				});
 				if (mesh.isSkinnedMesh) {
-					mesh.material.skinning = true;
 					mesh.bind(skeleton, skeleton.bones[0].matrixWorld);
 				}
 				if (typeof mesh.material.register === 'function') {
-					mesh.material.register(mesh);
+					materials[0].register(mesh);
 				}
+				mesh.material = (materials.length === 1)?materials[0] : materials;
 			});
 			obj.add(model);
 		}

@@ -146,7 +146,7 @@ class GFModel {
 		let meshes = [];
 		for (let gfMesh of this.meshes) {
 			let meshSkinned = false;
-			let matName = '';
+			let matNames = [];
 			let geoms = [];
 			for (let gfSub of gfMesh.submeshes) {
 				let boned = false, skinned = false;
@@ -308,30 +308,31 @@ class GFModel {
 				}
 				
 				geoms.push(geom);
-				matName = gfSub.matName;
+				matNames.push(gfSub.matName);
 				meshSkinned |= skinned;
 			}
+			let useGroups = true;//!matNames.every(x=>x===matNames[0]);
 			let geom;
 			try {
-				geom = GFModel.mergeBufferGeometries(geoms);
+				geom = GFModel.mergeBufferGeometries(geoms, useGroups);
 			} catch (e) {
-				geom = GFModel.attemptCorrectBufferGeometries(geoms);
-				// throw e; //TODO
+				geom = GFModel.attemptCorrectBufferGeometries(geoms, useGroups);
 			}
 			if (!geom) throw new ReferenceError('Could not merge geometries!');
 			
 			geom.boundingBox = new Box3(gfMesh.boundingBoxMax, gfMesh.boundingBoxMin);
 			geom.computeBoundingSphere();
 			
+			let meshMats = useGroups? matNames.map(x=>mats[x]) : mats[matNames[0]];
 			let mesh;
 			if (meshSkinned && skeleton) {
-				mesh = new SkinnedMesh(geom, mats[matName]);
+				mesh = new SkinnedMesh(geom, meshMats);
 				mesh.bindMode = 'detached';
 				// mesh.bind(skeleton, obj.matrixWorld);
 				mesh.bind(skeleton, skeleton.bones[0].matrixWorld);
 			}
 			else {
-				mesh = new Mesh(geom, mats[matName]);
+				mesh = new Mesh(geom, meshMats);
 			}
 			mesh.name = gfMesh.name;
 			obj.add(mesh);
@@ -339,7 +340,7 @@ class GFModel {
 		return obj;
 	}
 	
-	static attemptCorrectBufferGeometries(geometries) {
+	static attemptCorrectBufferGeometries(geometries, useGroups) {
 		const { BufferAttribute } = require('three');
 		let attributesUsed = {};
 		
@@ -381,7 +382,7 @@ class GFModel {
 			}
 		}
 		
-		return GFModel.mergeBufferGeometries(geometries);
+		return GFModel.mergeBufferGeometries(geometries, useGroups);
 	}
 	
 	// Below copied and modified from BufferGeometryUtils
@@ -435,7 +436,7 @@ class GFModel {
 				} else if (geometry.attributes.position !== undefined) {
 					count = geometry.attributes.position.count;
 				} else {
-					return null;
+					throw new TypeError(`Could not merge geometries: Geometry ${i} has nothing to form groups from!`);
 				}
 				mergedGeometry.addGroup(offset, count, i);
 				offset += count;

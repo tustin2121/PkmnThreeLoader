@@ -58,10 +58,12 @@ class CommonMaterial extends ShaderMaterial {
 	
 	register(obj) {
 		obj.onBeforeRender = (renderer, scene, camera, geometry, material, group)=>{
-			this.onBeforeRender({ renderer, scene, camera, geometry, material, group });
+			if (typeof material.onBeforeRender !== 'function') return;
+			material.onBeforeRender({ renderer, scene, camera, geometry, material, group });
 		};
 		obj.onAfterRender = (renderer, scene, camera, geometry, material, group)=>{
-			this.onAfterRender({ renderer, scene, camera, geometry, material, group });
+			if (typeof material.onAfterRender !== 'function') return;
+			material.onAfterRender({ renderer, scene, camera, geometry, material, group });
 		};
 	}
 	
@@ -104,24 +106,58 @@ class CommonMaterial extends ShaderMaterial {
 			material.defines.USE_UV3 = true;
 		}
 		
-		if (this.stencilTest) {
+		if (material.stencilTest) {
 			const gl = renderer.context;
 			const stencil = renderer.state.buffers.stencil;
 			
 			stencil.setTest(true);
-			stencil.setFunc(...this.stencilFunc);
-			stencil.setOp(...this.stencilOp);
+			stencil.setFunc(...material.stencilFunc);
+			stencil.setOp(...material.stencilOp);
 		}
 	}
 	
-	onAfterRender({ renderer }) {
-		if (this.stencilTest) {
+	onAfterRender({ renderer, material }) {
+		if (material.stencilTest) {
 			const gl = renderer.context;
 			const stencil = renderer.state.buffers.stencil;
 			
 			stencil.setTest(false);
 			stencil.setFunc( gl.ALWAYS, 1, 0xFF );
 			stencil.setOp( gl.KEEP, gl.KEEP, gl.KEEP );
+		}
+	}
+	
+	/**
+	 * 
+	 * @param {GFMaterial} mat - Material to use in the transpilation
+	 * @param {GFShader[]} shaders - Shader map
+	 */
+	static transpileShaders(mat, shaders) {
+		const { VertShaderGenerator, FragShaderGenerator } = require('../shadergen');
+		let opts = {
+			vertexShader: null,
+			geometryShader: null,
+			fragmentShader: null,
+		};
+		try {
+			// Transpile and apply Shaders
+			if (mat.vtxShaderName && shaders[mat.vtxShaderName]) {
+				let shader = shaders[mat.vtxShaderName];
+				let gen = new VertShaderGenerator(shader.toShaderBinary());
+				opts.vertexShader = { name:mat.vtxShaderName, code: gen.getVtxShader() };
+			}
+			if (mat.geomShaderName) {
+				opts.geometryShader = { name:mat.geomShaderName, code:'exists' };
+			}
+			if (mat.fragShaderName && shaders[mat.fragShaderName]) {
+				let shader = shaders[mat.fragShaderName];
+				let gen = new FragShaderGenerator(shader.toShaderBinary(), { shader, mat });
+				opts.fragmentShader = { name:mat.fragShaderName, code: gen.getFragShader() };
+			}
+		} catch (e) {
+			console.error('ERROR TRANSPILING SHADERS:', e);
+		} finally {
+			return opts;
 		}
 	}
 	
