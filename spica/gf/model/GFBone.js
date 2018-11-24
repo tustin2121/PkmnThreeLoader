@@ -29,16 +29,28 @@ class GFBone {
 		bone.position.copy(this.translation);
 		bone.rotation.setFromVector3(this.rotation, "ZYX");
 		bone.scale.copy(this.scale);
-		
-		let scaleBone = new Bone();
-		scaleBone.name = this.name+'_S';
+		if (this.useLocalScale) {
+			// Apply special matrix composition for local scale bones
+			bone.updateMatrix = updateMatrixCompensate;
+		}
 		
 		bone.userData.flags = this.flags;
 		bone.userData.useLocalScale = this.useLocalScale;
-		bone.userData.scaleBone = scaleBone;
-		// No reference back, prevent gc loop
-		
 		return bone;
 	}
 }
+
+// Scale compensation for bones
+const { Vector3, Matrix4 } = require('three');
+const IDENTITY = new Vector3(1,1,1);
+const VEC = new Vector3(1,1,1);
+const MAT = new Matrix4();
+function updateMatrixCompensate() {
+	let pScale = (this.parent)? this.parent.scale : IDENTITY;
+	this.matrix.compose(VEC.multiplyVectors(pScale, this.position), this.quaternion, this.scale);
+	MAT.makeScale( 1 / pScale.x, 1 / pScale.y, 1 / pScale.z, );
+	this.matrix.premultiply(MAT);
+	this.matrixWorldNeedsUpdate = true;
+}
+
 module.exports = { GFBone };
