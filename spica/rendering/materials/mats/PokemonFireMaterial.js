@@ -9,101 +9,45 @@ const {
 
 const { CommonMaterial } = require('./CommonMaterial');
 
-ShaderLib['pkmnCommon'] = {
+ShaderLib['pkmnFire'] = {
 	uniforms: UniformsUtils.merge([
-		UniformsLib.common,
-		UniformsLib.specularmap,
-		UniformsLib.envmap,
-		UniformsLib.aomap,
-		UniformsLib.lightmap,
-		UniformsLib.emissivemap,
-		UniformsLib.bumpmap,
-		UniformsLib.normalmap,
-		UniformsLib.displacementmap,
-		UniformsLib.gradientmap,
+		UniformsLib.points,
 		UniformsLib.fog,
-		UniformsLib.lights,
-		{
-			emissive: { value: new Color( 0x000000 ) },
-			specular: { value: new Color( 0x111111 ) },
-			shininess: { value: 30 }
-		},
-		UniformsLib.pkmnCommon,
 	]),
 	
-	vertexShader: require('./PokeCommon.vtx.glsl'),
-	fragmentShader: require('./PokeCommon.frg.glsl'),
+	vertexShader: require('../shaders/PokeFire.vtx.glsl'),
+	fragmentShader: require('../shaders/PokeFire.frg.glsl'),
 };
 
-class PokemonBaseMaterial extends CommonMaterial {
+class PokemonFireMaterial extends CommonMaterial {
 	constructor(params) {
 		super(params);
 		
-		this.type = 'PokemonBaseMaterial';
+		this.type = 'PokemonFireMaterial';
 		this.parentModel = null;
 		
-		this.defines = Object.assign(this.defines, {
-			'UV_MAP': 'vUv',
-			'UV_ALPHAMAP': 'vUv',
-			'UV_NORMALMAP': 'vUv',
-			'UV_EMISSIVEMAP': 'vUv',
-			'UV_ENVMAP': 'vUv',
-		});
-		this.uniforms = UniformsUtils.clone(ShaderLib.pkmnCommon.uniforms);
+		this.defines = Object.assign(this.defines, {});
+		this.uniforms = UniformsUtils.clone(ShaderLib.pkmnFire.uniforms);
 		
 		this.defaultAttributeValues = Object.assign(this.defaultAttributeValues, {
 			color: [1,1,1],
 			normal: [0,1,0],
 		});
 		
-		this.vertexShader = ShaderLib.pkmnCommon.vertexShader;
-		this.fragmentShader = ShaderLib.pkmnCommon.fragmentShader;
+		this.vertexShader = ShaderLib.pkmnFire.vertexShader;
+		this.fragmentShader = ShaderLib.pkmnFire.fragmentShader;
 		
 		this.color = new Color( 0xffffff ); // diffuse
-		this.specular = new Color( 0x111111 );
-		this.shininess = 30;
 
 		this.map = null;
 
-		this.lightMap = null;
-		this.lightMapIntensity = 1.0;
-
-		this.aoMap = null;
-		this.aoMapIntensity = 1.0;
-
-		this.emissive = new Color( 0x000000 );
-		this.emissiveIntensity = 1.0;
-		this.emissiveMap = null;
-
-		this.bumpMap = null;
-		this.bumpScale = 1;
-
-		this.normalMap = null;
-		this.normalMapType = TangentSpaceNormalMap;
-		this.normalScale = new Vector2( 1, 1 );
-
-		this.displacementMap = null;
-		this.displacementScale = 1;
-		this.displacementBias = 0;
-
-		this.specularMap = null;
-
-		this.alphaMap = null;
-
-		this.envMap = null;
-		this.combine = MultiplyOperation;
-		this.reflectivity = 1;
-		this.refractionRatio = 0.98;
-
-		this.wireframe = false;
-		this.wireframeLinewidth = 1;
-		this.wireframeLinecap = 'round';
-		this.wireframeLinejoin = 'round';
+		this.size = 1;
+		this.sizeAttenuation = true;
 
 		this.skinning = false;
 		this.morphTargets = false;
 		this.morphNormals = false;
-		this.lights = true;
+		this.lights = false;
 		
 		this.setValues(params);
 	}
@@ -184,11 +128,11 @@ class PokemonBaseMaterial extends CommonMaterial {
 				opts.coordMap[gfmat.bumpTexture] = 'normalMap';
 			}
 		}
-		return new PokemonBaseMaterial(opts);
+		return new PokemonFireMaterial(opts);
 	}
 }
-PokemonBaseMaterial.prototype.isPokemonBaseMaterial = true;
-PokemonBaseMaterial.prototype.isMeshPhongMaterial = true;
-PokemonBaseMaterial.matchNames = ['PokeNormal','Poke'];
+PokemonFireMaterial.prototype.isPokemonFireMaterial = true;
+PokemonFireMaterial.prototype.isPointsMaterial = true;
+PokemonFireMaterial.matchNames = ['PokeFire'];
 
-module.exports = { PokemonBaseMaterial };
+module.exports = { PokemonFireMaterial };

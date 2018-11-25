@@ -24,7 +24,7 @@ class PokeModel extends Object3D {
 			if (!Array.isArray(mats)) mats = [mats];
 			for (let mat of mats) {
 				if (!mat.isPokemonCommonMaterial) continue;
-				obj.material.parentModel = this;
+				mat.parentModel = this;
 			}
 		});
 	}

@@ -3,7 +3,7 @@
 const { GFModel, GFMaterial } = require('./model');
 const { GFTexture } = require('./texture/GFTexture');
 const { GFShader } = require('./shader/GFShader');
-const { CommonMaterial } = require('../rendering/shaders');
+const { CommonMaterial } = require('../rendering/materials');
 
 class GFModelPack {
 	constructor(data) {
@@ -98,6 +98,7 @@ class GFModelPack {
 						let shaderInfo = CommonMaterial.transpileShaders(mat, shaders);
 						mat = mat.toThree(textures);
 						mat.userData = Object.assign(mat.userData, shaderInfo);
+						mat.register(mesh);
 					}
 					if (mesh.isSkinnedMesh) {
 						mat.skinning = true;
@@ -107,9 +108,9 @@ class GFModelPack {
 				if (mesh.isSkinnedMesh) {
 					mesh.bind(skeleton, skeleton.bones[0].matrixWorld);
 				}
-				if (typeof mesh.material.register === 'function') {
-					materials[0].register(mesh);
-				}
+				// if (typeof mesh.material.register === 'function') {
+				// 	materials[0].register(mesh);
+				// }
 				mesh.material = (materials.length === 1)?materials[0] : materials;
 			});
 			obj.add(model);

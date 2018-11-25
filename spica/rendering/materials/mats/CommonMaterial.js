@@ -133,7 +133,7 @@ class CommonMaterial extends ShaderMaterial {
 	 * @param {GFShader[]} shaders - Shader map
 	 */
 	static transpileShaders(mat, shaders) {
-		const { VertShaderGenerator, FragShaderGenerator } = require('../shadergen');
+		const { VertShaderGenerator, FragShaderGenerator } = require('../../shadergen');
 		let opts = {
 			vertexShader: null,
 			geometryShader: null,

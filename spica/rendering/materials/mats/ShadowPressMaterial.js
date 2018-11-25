@@ -6,7 +6,7 @@ const {
 	Vector2, Matrix3, Color, 
 	OneMinusSrcAlphaFactor, SrcAlphaFactor, CustomBlending, AddEquation,
 } = require('three');
-const { PICATestFunc, PICAStencilOp } = require('../../pica/commands/PICATests');
+const { PICATestFunc, PICAStencilOp } = require('../../../pica/commands/PICATests');
 
 const { CommonMaterial } = require('./CommonMaterial');
 
@@ -19,8 +19,8 @@ ShaderLib['pkmnShadow'] = {
 		UniformsLib.pkmnShadowPress
 	]),
 	
-	vertexShader: require('./ShadowPress.vtx.glsl'),
-	fragmentShader: require('./ShadowPress.frg.glsl'),
+	vertexShader: require('../shaders/ShadowPress.vtx.glsl'),
+	fragmentShader: require('../shaders/ShadowPress.frg.glsl'),
 };
 
 class ShadowPressMaterial extends CommonMaterial {

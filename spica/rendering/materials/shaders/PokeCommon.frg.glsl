@@ -17,6 +17,9 @@ varying vec2 vUv2;
 varying vec2 vUv3;
 
 #include <map_pars_fragment>
+// #ifdef USE_DETAILMAP
+// uniform sampler2D detailMap;
+// #endif
 #include <alphamap_pars_fragment>
 #include <aomap_pars_fragment>
 #include <lightmap_pars_fragment>
@@ -58,6 +61,11 @@ void main() {
 	texelColor = mapTexelToLinear( texelColor );
 	diffuseColor *= texelColor;
 #endif
+// #ifdef USE_DETAILMAP
+// 	vec4 texelColor = texture2D( detailMap, UV_DETAILMAP );
+// 	texelColor = mapTexelToLinear( texelColor );
+// 	diffuseColor *= texelColor;
+// #endif
 	#include <color_fragment>
 #ifdef USE_ALPHAMAP
 	diffuseColor.a *= texture2D( alphaMap, UV_ALPHAMAP ).a;

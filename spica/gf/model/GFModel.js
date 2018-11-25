@@ -301,7 +301,7 @@ class GFModel {
 				matNames.push(gfSub.matName);
 				meshSkinned |= skinned;
 			}
-			let useGroups = true;//!matNames.every(x=>x===matNames[0]);
+			let useGroups = !matNames.every(x=>x===matNames[0]);
 			let geom;
 			try {
 				geom = GFModel.mergeBufferGeometries(geoms, useGroups);

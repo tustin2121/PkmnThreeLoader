@@ -9,60 +9,84 @@ const {
 
 const { CommonMaterial } = require('./CommonMaterial');
 
-ShaderLib['pkmnBattlefield'] = {
+ShaderLib['pkmnCommon'] = {
 	uniforms: UniformsUtils.merge([
 		UniformsLib.common,
 		UniformsLib.specularmap,
 		UniformsLib.envmap,
+		UniformsLib.aomap,
 		UniformsLib.lightmap,
+		UniformsLib.emissivemap,
+		UniformsLib.bumpmap,
+		UniformsLib.normalmap,
+		UniformsLib.displacementmap,
+		UniformsLib.gradientmap,
 		UniformsLib.fog,
+		UniformsLib.lights,
+		{
+			emissive: { value: new Color( 0x000000 ) },
+			specular: { value: new Color( 0x111111 ) },
+			shininess: { value: 30 }
+		},
 		UniformsLib.pkmnCommon,
-		UniformsLib.pkmnMultiMap,
 	]),
 	
-	vertexShader: require('./Battlefield.vtx.glsl'),
-	fragmentShader: require('./Battlefield.frg.glsl'),
+	vertexShader: require('../shaders/PokeCommon.vtx.glsl'),
+	fragmentShader: require('../shaders/PokeCommon.frg.glsl'),
 };
 
-const BLENDS = {
-	'BATTLE_bg_blend01GRE': 'texBlendGrass',
-	'btl_G_kusa_kusa01_Manual': 'texGrassWave',
-	'BATTLE_bg_default01GRE': 'texDefaultBlend',
-};
-
-class BattlefieldMaterial extends CommonMaterial {
+class PokemonBaseMaterial extends CommonMaterial {
 	constructor(params) {
 		super(params);
 		
-		this.type = 'BattlefieldMaterial';
+		this.type = 'PokemonBaseMaterial';
 		this.parentModel = null;
 		
 		this.defines = Object.assign(this.defines, {
-			'TEX_BLEND_FUNC': 'texDefaultBlend',
-			'USE_DETAILMAP': false,
-			'USE_OVERLAYMAP': false,
 			'UV_MAP': 'vUv',
+			'UV_DETAILMAP': 'vUv',
 			'UV_ALPHAMAP': 'vUv',
+			'UV_NORMALMAP': 'vUv',
+			'UV_EMISSIVEMAP': 'vUv',
 			'UV_ENVMAP': 'vUv',
 		});
-		this.uniforms = UniformsUtils.clone(ShaderLib.pkmnBattlefield.uniforms);
+		this.uniforms = UniformsUtils.clone(ShaderLib.pkmnCommon.uniforms);
 		
 		this.defaultAttributeValues = Object.assign(this.defaultAttributeValues, {
 			color: [1,1,1],
 			normal: [0,1,0],
 		});
 		
-		this.vertexShader = ShaderLib.pkmnBattlefield.vertexShader;
-		this.fragmentShader = ShaderLib.pkmnBattlefield.fragmentShader;
+		this.vertexShader = ShaderLib.pkmnCommon.vertexShader;
+		this.fragmentShader = ShaderLib.pkmnCommon.fragmentShader;
 		
-		this.color = new Color( 0xffffff ); // emissive
+		this.color = new Color( 0xffffff ); // diffuse
+		this.specular = new Color( 0x111111 );
+		this.shininess = 30;
 
 		this.map = null;
 		this.detailMap = null;
-		this.overlayMap = null;
 
 		this.lightMap = null;
 		this.lightMapIntensity = 1.0;
+
+		this.aoMap = null;
+		this.aoMapIntensity = 1.0;
+
+		this.emissive = new Color( 0x000000 );
+		this.emissiveIntensity = 1.0;
+		this.emissiveMap = null;
+
+		this.bumpMap = null;
+		this.bumpScale = 1;
+
+		this.normalMap = null;
+		this.normalMapType = TangentSpaceNormalMap;
+		this.normalScale = new Vector2( 1, 1 );
+
+		this.displacementMap = null;
+		this.displacementScale = 1;
+		this.displacementBias = 0;
 
 		this.specularMap = null;
 
@@ -80,9 +104,9 @@ class BattlefieldMaterial extends CommonMaterial {
 
 		this.skinning = false;
 		this.morphTargets = false;
-
+		this.morphNormals = false;
 		this.lights = true;
-
+		
 		this.setValues(params);
 	}
 	
@@ -91,18 +115,15 @@ class BattlefieldMaterial extends CommonMaterial {
 		const { material } = args;
 		super.onBeforeRender(args);
 		
-		if (material.detailMap) {
-			material.uniforms.detailMap.value = material.detailMap;
+		if (material.defines['UV_ALPHAMAP'] && material.defines['UV_NORMALMAP']) {
+			material.defines['UV_ALPHAMAP'] = material.defines['UV_NORMALMAP'];
 		}
-		if (material.overlayMap) {
-			material.uniforms.overlayMap.value = material.overlayMap;
+		if (material.parentModel) {
+			if (material.uniforms.rimEnable) {
+				material.uniforms.rimEnable.value = material.parentModel._zpowerEnable;
+			}
 		}
-		material.defines['USE_DETAILMAP'] = !!material.detailMap;
-		material.defines['USE_OVERLAYMAP'] = !!material.overlayMap;
 	}
-	
-	get blendFunction() { return this.defines['TEX_BLEND_FUNC']; }
-	set blendFunction(val) { this.defines['TEX_BLEND_FUNC'] = val; }
 	
 	/**
 	 * 
@@ -122,6 +143,11 @@ class BattlefieldMaterial extends CommonMaterial {
 			colorWrite: gfmat.colorBufferWrite,
 			depthWrite: gfmat.depthBufferWrite,
 			depthTest: gfmat.depthBufferRead,
+			
+			rimPower: gfmat.rimPower,
+			rimScale: gfmat.rimScale,
+			
+			renderOrder: gfmat.renderLayer + (gfmat.renderPriority * 0.01),
 			
 			userData: info, //TODO: clear userData when saving off the pokemon
 		};
@@ -146,31 +172,30 @@ class BattlefieldMaterial extends CommonMaterial {
 				opts.coordMap[0] = 'map';
 			}
 			if (gfmat.textureCoords[1]) {
-				let tc = gfmat.textureCoords[0].toThree();
+				let tc = gfmat.textureCoords[1].toThree();
 				info.texCoords[1] = tc;
-				opts.detailMap = textures[tc.name].toThree(tc);
-				opts.coordMap[1] = 'detailMap';
+				if (!/^DummyTex/.test(tc.name)) {
+					opts.detailMap = textures[tc.name].toThree(tc);
+					opts.coordMap[1] = 'detailMap';
+				}
 			}
 			if (gfmat.textureCoords[2]) {
-				let tc = gfmat.textureCoords[0].toThree();
+				let tc = gfmat.textureCoords[2].toThree();
 				info.texCoords[2] = tc;
-				opts.overlayMap = textures[tc.name].toThree(tc);
-				opts.coordMap[2] = 'overlayMap';
+				opts.coordMap[2] = 'unk2Map-'+tc.name;
 			}
 			if (gfmat.bumpTexture > -1) {
 				let tc = info.texCoords[gfmat.bumpTexture];
 				opts.normalMap = textures[tc.name].toThree(tc);
-				opts.alphaMap = opts.normalMap;
+				// opts.alphaMap = opts.normalMap;
 				opts.coordMap[gfmat.bumpTexture] = 'normalMap';
 			}
 		}
-		
-		opts.blendFunction = BLENDS[info.fragmentShader] || BLENDS[info.vertexShader] || 'texDefaultBlend';
-		
-		return new BattlefieldMaterial(opts);
+		return new PokemonBaseMaterial(opts);
 	}
 }
-BattlefieldMaterial.prototype.isMeshBasicMaterial = true;
-BattlefieldMaterial.matchNames = ['BattleFieldShader'];
+PokemonBaseMaterial.prototype.isPokemonBaseMaterial = true;
+PokemonBaseMaterial.prototype.isMeshPhongMaterial = true;
+PokemonBaseMaterial.matchNames = ['PokeNormal','Poke'];
 
-module.exports = { BattlefieldMaterial };
+module.exports = { PokemonBaseMaterial };

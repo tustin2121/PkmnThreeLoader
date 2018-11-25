@@ -8,7 +8,7 @@ const {
 	PICAStencilOperation, PICADepthColorMask, PICAFaceCulling,
 } = require('../../pica/commands');
 const { PICACommandReader, PICARegister } = require('../../pica');
-const { getMaterialForName } = require('../../rendering/shaders');
+const { getMaterialForName } = require('../../rendering/materials');
 
 const GFTextureMappingType = {
     UvCoordinateMap : 0,

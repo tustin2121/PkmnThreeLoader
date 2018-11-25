@@ -6,10 +6,10 @@ require.extensions['.glsl'] = function(module, filename) {
 };
 
 const MATS = Object.assign({}, ...[
-	require('./CommonMaterial'),
-	require('./BattlefieldMaterial'),
-	require('./PokemonBaseMaterial'),
-	require('./ShadowPressMaterial'),
+	require('./mats/CommonMaterial'),
+	require('./mats/BattlefieldMaterial'),
+	require('./mats/PokemonBaseMaterial'),
+	require('./mats/ShadowPressMaterial'),
 ]);
 
 /**
@@ -32,6 +32,6 @@ function getMaterialForName(fragName, vertName) {
 		}
 	}
 	return MATS.PokemonBaseMaterial;
-};
+}
 
 module.exports = Object.assign({ getMaterialForName }, MATS);

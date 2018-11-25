@@ -1,5 +1,5 @@
 module.exports = Object.assign({}, ...[
 	require('./shadergen'),
-	require('./shaders'),
+	require('./materials'),
 	require('./PokeModel'),
 ]);
