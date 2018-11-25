@@ -27,7 +27,11 @@ if (window.gli) {
 let scene = new THREE.Scene();
 scene.add(new THREE.GridHelper(200, 20));
 scene.add(new THREE.AxesHelper(50));
-scene.add(new THREE.HemisphereLight(0xffffff, 0xffffff, 1.0));
+// scene.add(new THREE.HemisphereLight(0xffffff, 0x888888, 1.0));
+let dirLight = new THREE.DirectionalLight(0xffffff, 1.0);
+dirLight.position.set(1, 2, 1);
+scene.add(dirLight);
+
 // scene.add((()=>{
 // 	let l = new THREE.
 // 	return 
@@ -672,6 +676,7 @@ async function displayPokemonModel() {
 			debugNodes['shadowModel'] = mon.children[1];
 			mon.children[1].visible = $('#props input[name=poptShadow]').is(':checked');;
 		}
+		mon.shadowLight = dirLight;
 		// mon.children[0].children.forEach(x=>x.visible = false);
 		root.add(mon); //TODO modelpack instead of model
 		

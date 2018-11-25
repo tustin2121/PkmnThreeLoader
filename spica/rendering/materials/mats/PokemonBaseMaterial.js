@@ -43,6 +43,7 @@ class PokemonBaseMaterial extends CommonMaterial {
 		this.parentModel = null;
 		
 		this.defines = Object.assign(this.defines, {
+			'TOON': '',
 			'UV_MAP': 'vUv',
 			'UV_DETAILMAP': 'vUv',
 			'UV_ALPHAMAP': 'vUv',
@@ -62,7 +63,7 @@ class PokemonBaseMaterial extends CommonMaterial {
 		
 		this.color = new Color( 0xffffff ); // diffuse
 		this.specular = new Color( 0x111111 );
-		this.shininess = 30;
+		this.shininess = 0;
 
 		this.map = null;
 		this.detailMap = null;
@@ -94,8 +95,10 @@ class PokemonBaseMaterial extends CommonMaterial {
 
 		this.envMap = null;
 		this.combine = MultiplyOperation;
-		this.reflectivity = 1;
+		this.reflectivity = 0;
 		this.refractionRatio = 0.98;
+		
+		this.gradientMap = null;
 
 		this.wireframe = false;
 		this.wireframeLinewidth = 1;
@@ -196,6 +199,7 @@ class PokemonBaseMaterial extends CommonMaterial {
 }
 PokemonBaseMaterial.prototype.isPokemonBaseMaterial = true;
 PokemonBaseMaterial.prototype.isMeshPhongMaterial = true;
+PokemonBaseMaterial.prototype.isMeshToonMaterial = true;
 PokemonBaseMaterial.matchNames = ['PokeNormal','Poke'];
 
 module.exports = { PokemonBaseMaterial };

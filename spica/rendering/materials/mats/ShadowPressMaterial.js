@@ -87,7 +87,17 @@ class ShadowPressMaterial extends CommonMaterial {
 		super.onBeforeRender(args);
 		if (material.parentModel) {
 			if (material.uniforms.shadowDirection) {
-				material.uniforms.shadowDirection.value = material.parentModel._shadowDirection;
+				if (material.parentModel._shadowLight) {
+					let vec = material.parentModel._shadowLight.position;
+					material.uniforms.shadowDirection.value.copy(vec);
+					material.uniforms.shadowDirection.value.normalize();
+				} else {
+					material.uniforms.shadowDirection.value = material.parentModel._shadowDirection;
+				}
+			}
+			if (material.uniforms.shadowPlane) {
+				let plane = material.parentModel._shadowPlane;
+				material.uniforms.shadowPlane.value.set(plane.normal.x, plane.normal.y, plane.normal.z, plane.constant);
 			}
 		}
 	}

@@ -3,6 +3,7 @@
 
 varying vec3 vViewPosition;
 varying vec3 vNormal;
+varying mat4 vSkinMatrix;
 
 #include <common>
 
@@ -48,6 +49,8 @@ void main() {
 	#include <skinbase_vertex>
 	#include <skinnormal_vertex>
 	#include <defaultnormal_vertex>
+	
+	vSkinMatrix = skinMatrix;
 
 	#include <begin_vertex>
 	#include <morphtarget_vertex>

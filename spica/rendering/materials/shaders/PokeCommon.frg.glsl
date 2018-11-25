@@ -16,6 +16,8 @@ varying vec2 vUv;
 varying vec2 vUv2;
 varying vec2 vUv3;
 
+varying mat4 vSkinMatrix;
+
 #include <map_pars_fragment>
 // #ifdef USE_DETAILMAP
 // uniform sampler2D detailMap;
@@ -25,7 +27,20 @@ varying vec2 vUv3;
 #include <lightmap_pars_fragment>
 #include <emissivemap_pars_fragment>
 #include <envmap_pars_fragment>
-#include <gradientmap_pars_fragment>
+
+#define GRAD_HIGH 0.6
+#define GRAD_LOW 0.5
+#define GRAD_SHADOW 0.7
+vec3 getGradientIrradiance( vec3 normal, vec3 lightDirection ) {
+	// dotNL will be from -1.0 to 1.0
+	float dotNL = dot( normal, lightDirection );
+	float coord = dotNL * 0.5 + 0.5;
+	if (coord > GRAD_HIGH) return vec3(1.0);
+	if (coord < GRAD_LOW) return vec3(GRAD_SHADOW);
+	return vec3( GRAD_SHADOW + ((coord-GRAD_LOW) * 3.0) );
+	// return ( coord.x < 0.4 ) ? vec3( 0.7 ) : vec3( 1.0 );
+}
+
 #include <fog_pars_fragment>
 #include <bsdfs>
 #include <lights_pars_begin>
@@ -50,7 +65,7 @@ vec3 calculateRimLight(vec3 normal) {
 }
 
 void main() {
-	// vec4 glDebugColor;
+	vec4 glDebugColor;
 
 	vec4 diffuseColor = vec4( diffuse, opacity );
 	ReflectedLight reflectedLight = ReflectedLight( vec3( 0.0 ), vec3( 0.0 ), vec3( 0.0 ), vec3( 0.0 ) );
@@ -89,11 +104,13 @@ void main() {
 #ifdef USE_NORMALMAP
 	// Always use Object Space Normal Maps
 	normal = texture2D( normalMap, UV_NORMALMAP ).xyz * 2.0 - 1.0; // overrides both flatShading and attribute normals
-	normal = normalize( normalMatrix * normal );
+	normal = normalize( normalMatrix * mat3(vSkinMatrix) * normal );
 #endif
 	totalEmissiveRadiance = calculateRimLight(normal);
 	
 	#include <emissivemap_fragment>
+	
+	glDebugColor = vec4(normal, 1.0);
 
 	// accumulation
 	#include <lights_phong_fragment>

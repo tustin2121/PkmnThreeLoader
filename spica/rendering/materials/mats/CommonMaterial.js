@@ -3,7 +3,7 @@
 
 const { 
 	ShaderMaterial, UniformsLib, UniformsUtils, ShaderLib, 
-	Vector3, Matrix3, Color, Clock,
+	Vector3, Vector4, Matrix3, Color, Clock,
 	TangentSpaceNormalMap, MultiplyOperation, BackSide,
 } = require('three');
 
@@ -22,6 +22,7 @@ UniformsLib.pkmnMultiMap = {
 };
 UniformsLib.pkmnShadowPress = {
 	shadowDirection: { value: new Vector3() },
+	shadowPlane: { value: new Vector4() },
 };
 
 class CommonMaterial extends ShaderMaterial {
