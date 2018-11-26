@@ -96,7 +96,7 @@ class PokemonBaseMaterial extends CommonMaterial {
 		this.envMap = null;
 		this.combine = MultiplyOperation;
 		this.reflectivity = 0;
-		this.refractionRatio = 0.98;
+		this.refractionRatio = 0.0;
 		
 		this.gradientMap = null;
 
@@ -171,13 +171,15 @@ class PokemonBaseMaterial extends CommonMaterial {
 			if (gfmat.textureCoords[0]) {
 				let tc = gfmat.textureCoords[0].toThree();
 				info.texCoords[0] = tc;
-				opts.map = textures[tc.name].toThree(tc);
-				opts.coordMap[0] = 'map';
+				if (!/^DummyTex/.test(tc.name) && textures[tc.name]) {
+					opts.map = textures[tc.name].toThree(tc);
+					opts.coordMap[0] = 'map';
+				}
 			}
 			if (gfmat.textureCoords[1]) {
 				let tc = gfmat.textureCoords[1].toThree();
 				info.texCoords[1] = tc;
-				if (!/^DummyTex/.test(tc.name)) {
+				if (!/^DummyTex/.test(tc.name) && textures[tc.name]) {
 					opts.detailMap = textures[tc.name].toThree(tc);
 					opts.coordMap[1] = 'detailMap';
 				}
@@ -185,13 +187,18 @@ class PokemonBaseMaterial extends CommonMaterial {
 			if (gfmat.textureCoords[2]) {
 				let tc = gfmat.textureCoords[2].toThree();
 				info.texCoords[2] = tc;
-				opts.coordMap[2] = 'unk2Map-'+tc.name;
+				if (!/^DummyTex/.test(tc.name) && textures[tc.name]) {
+					opts.coordMap[2] = 'unk2Map-'+tc.name;
+				}
 			}
 			if (gfmat.bumpTexture > -1) {
-				let tc = info.texCoords[gfmat.bumpTexture];
-				opts.normalMap = textures[tc.name].toThree(tc);
-				// opts.alphaMap = opts.normalMap;
-				opts.coordMap[gfmat.bumpTexture] = 'normalMap';
+				// let tc = info.texCoords[gfmat.bumpTexture];
+				let tc = gfmat.textureCoords[gfmat.bumpTexture].toThree(true);
+				if (textures[tc.name]) {
+					opts.normalMap = textures[tc.name].toThree(tc);
+					opts.alphaMap = opts.normalMap;
+					opts.coordMap[gfmat.bumpTexture] = 'normalMap';
+				}
 			}
 		}
 		return new PokemonBaseMaterial(opts);

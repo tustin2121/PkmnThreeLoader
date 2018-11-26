@@ -119,7 +119,7 @@ class GFTextureCoord {
 			offset: this.translation.clone(),
 			repeat: this.scale.clone(),
 			rotation: this.rotation,
-			center: this.translation.clone().negate(),
+			center: new THREE.Vector2(0.5, 0.5),
 			
 			mapping: GFTextureMappingType.toThree(this.mappingType),
 			wrapS: GFTextureWrap.toThree(this.wrapU),

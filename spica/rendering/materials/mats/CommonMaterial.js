@@ -4,7 +4,7 @@
 const { 
 	ShaderMaterial, UniformsLib, UniformsUtils, ShaderLib, 
 	Vector3, Vector4, Matrix3, Color, Clock,
-	TangentSpaceNormalMap, MultiplyOperation, BackSide,
+	MirroredRepeatWrapping,
 } = require('three');
 
 UniformsLib.pkmnCommon = {
@@ -13,6 +13,7 @@ UniformsLib.pkmnCommon = {
 	rimPower: { value: 8 },
 	rimScale: { value: 0 },
 	rimColor: { value: new Color( 0xffa500 ) },
+	uvTransform1: { value: new Matrix3() },
 	uvTransform2: { value: new Matrix3() },
 	uvTransform3: { value: new Matrix3() },
 };
@@ -73,24 +74,18 @@ class CommonMaterial extends ShaderMaterial {
 			if (material.coordMap[0] && material.coordMap[0].indexOf('-')==-1 && material.uniforms.uvTransform) {
 				let map = material[material.coordMap[0]];
 				if (map.isWebGLRenderTarget) map = map.texture;
-				// if (map.matrixAutoUpdate === true) map.updateMatrix();
-				// material.uniforms.uvTransform.value.copy( map.matrix );
-				CommonMaterial.setUVTransform(material.uniforms.uvTransform.value, map);
+				CommonMaterial.setUVTransform(material.uniforms.uvTransform1.value, map);
 				material.defines['UV_'+material.coordMap[0].toUpperCase()] = 'vUv';
 			}
 			if (material.coordMap[1] && material.coordMap[1].indexOf('-')==-1 && material.uniforms.uvTransform2) {
 				let map = material[material.coordMap[1]];
 				if (map.isWebGLRenderTarget) map = map.texture;
-				// if (map.matrixAutoUpdate === true) map.updateMatrix();
-				// material.uniforms.uvTransform2.value.copy( map.matrix );
 				CommonMaterial.setUVTransform(material.uniforms.uvTransform2.value, map);
 				material.defines['UV_'+material.coordMap[1].toUpperCase()] = 'vUv2';
 			}
 			if (material.coordMap[2] && material.coordMap[2].indexOf('-')==-1 && material.uniforms.uvTransform3) {
 				let map = material[material.coordMap[2]];
 				if (map.isWebGLRenderTarget) map = map.texture;
-				// if (map.matrixAutoUpdate === true) map.updateMatrix();
-				// material.uniforms.uvTransform3.value.copy( map.matrix );
 				CommonMaterial.setUVTransform(material.uniforms.uvTransform3.value, map);
 				material.defines['UV_'+material.coordMap[2].toUpperCase()] = 'vUv3';
 			}
@@ -172,12 +167,12 @@ class CommonMaterial extends ShaderMaterial {
 		let { x:tx, y:ty } = map.offset;
 		let { x:sx, y:sy } = map.repeat;
 		let { x:cx, y:cy } = map.center;
-		let c = Math.cos(map.rotation);
-		let s = Math.sin(map.rotation);
+		let rc = Math.cos(map.rotation);
+		let rs = Math.sin(map.rotation);
 		
 		matrix.set(
-			 sx * c,  sx * s,  -sx * (( c * cx + s * cy ) + tx) + cx,
-			-sy * s,  sy * c,  -sy * ((-s * cx + c * cy ) + ty) + cy,
+			sx * rc, sx * rs, sx * ((0.5 * rs - 0.5 * rc) + 0.5 - tx),// + cx,
+			sy *-rs, sy * rc, sy * ((0.5 *-rs - 0.5 * rc) + 0.5 - ty),// + cy,
 			0, 0, 1,
 		);
 	}

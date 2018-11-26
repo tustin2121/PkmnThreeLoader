@@ -7,7 +7,7 @@ varying mat4 vSkinMatrix;
 
 #include <common>
 
-uniform mat3 uvTransform;
+uniform mat3 uvTransform1;
 uniform mat3 uvTransform2;
 uniform mat3 uvTransform3;
 varying vec2 vUv;
@@ -30,7 +30,7 @@ attribute vec2 uv3;
 
 void main() {
 
-	vUv = (uvTransform * vec3(uv, 1)).xy;
+	vUv = (uvTransform1 * vec3(uv, 1)).xy;
 	#ifdef USE_UV2
 	vUv2 = (uvTransform2 * vec3(uv2, 1)).xy;
 	#else

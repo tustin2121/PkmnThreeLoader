@@ -228,14 +228,15 @@ global.info = {
 			expressionAnims[num].paused = true;
 			expressionAnims[num].enabled = false;
 			let $div = $(`#xanimExp${num}`).empty().show();
-			$div.append(`<label><input name="eye${num}" type="radio" value="0" checked/> Neutral</label>`);
-			$div.append(`<label><input name="eye${num}" type="radio" value="10"/> Half-Blink</label>`);
-			$div.append(`<label><input name="eye${num}" type="radio" value="20"/> Blink</label>`);
-			$div.append(`<label><input name="eye${num}" type="radio" value="30"/> Pained</label>`);
-			$div.append(`<label><input name="eye${num}" type="radio" value="40"/> Determined</label>`);
-			$div.append(`<label><input name="eye${num}" type="radio" value="50"/> Pleased</label>`);
-			$div.append(`<label><input name="eye${num}" type="radio" value="60"/> Sad</label>`);
-			$div.append(`<label><input name="eye${num}" type="radio" value="70"/> Crossed</label>`);
+			$div.append(`<label><input name="eye${num}" type="radio" value="0" checked/> [Off]</label>`);
+			$div.append(`<label><input name="eye${num}" type="radio" value="5"/> Neutral</label>`);
+			$div.append(`<label><input name="eye${num}" type="radio" value="15"/> Half-Blink</label>`);
+			$div.append(`<label><input name="eye${num}" type="radio" value="25"/> Blink</label>`);
+			$div.append(`<label><input name="eye${num}" type="radio" value="35"/> Pained</label>`);
+			$div.append(`<label><input name="eye${num}" type="radio" value="45"/> Determined</label>`);
+			$div.append(`<label><input name="eye${num}" type="radio" value="55"/> Pleased</label>`);
+			$div.append(`<label><input name="eye${num}" type="radio" value="65"/> Sad</label>`);
+			$div.append(`<label><input name="eye${num}" type="radio" value="75"/> Crossed</label>`);
 			$div.find(`input[name=eye${num}]`).on('click', function(e) {
 				expressionAnims[num].time = (parseInt($(this).val(),10)) / 30;
 				expressionAnims[num].enabled = (expressionAnims[num].time > 0);
@@ -248,14 +249,15 @@ global.info = {
 			expressionAnims[num].paused = true;
 			expressionAnims[num].enabled = false;
 			let $div = $(`#xanimExp${num}`).empty().show();
-			$div.append(`<label><input name="mouth${num}" type="radio" value="0" checked/> Neutral</label>`);
-			$div.append(`<label><input name="mouth${num}" type="radio" value="10"/> Half-Open</label>`);
-			$div.append(`<label><input name="mouth${num}" type="radio" value="20"/> Open</label>`);
-			$div.append(`<label><input name="mouth${num}" type="radio" value="30"/> Chew</label>`);
-			$div.append(`<label><input name="mouth${num}" type="radio" value="40"/> Bite</label>`);
-			$div.append(`<label><input name="mouth${num}" type="radio" value="50"/> Sad</label>`);
-			$div.append(`<label><input name="mouth${num}" type="radio" value="60"/> [Unsupported]</label>`);
-			$div.append(`<label><input name="mouth${num}" type="radio" value="70"/> [Unsupported]</label>`);
+			$div.append(`<label><input name="mouth${num}" type="radio" value="0" checked/> [Off]</label>`);
+			$div.append(`<label><input name="mouth${num}" type="radio" value="5"/> Neutral</label>`);
+			$div.append(`<label><input name="mouth${num}" type="radio" value="15"/> Half-Open</label>`);
+			$div.append(`<label><input name="mouth${num}" type="radio" value="25"/> Open</label>`);
+			$div.append(`<label><input name="mouth${num}" type="radio" value="35"/> Chew</label>`);
+			$div.append(`<label><input name="mouth${num}" type="radio" value="45"/> Bite</label>`);
+			$div.append(`<label><input name="mouth${num}" type="radio" value="55"/> Sad</label>`);
+			$div.append(`<label><input name="mouth${num}" type="radio" value="65"/> [Unsupported]</label>`);
+			$div.append(`<label><input name="mouth${num}" type="radio" value="75"/> [Unsupported]</label>`);
 			$div.find(`input[name=mouth${num}]`).on('click', function(e) {
 				expressionAnims[num].time = (parseInt($(this).val(),10)) / 30;
 				expressionAnims[num].enabled = (expressionAnims[num].time > 0);
@@ -374,7 +376,7 @@ global.info = {
 	},
 	markXanim(xanim) {
 		if (!xanim || !xanim.length) return;
-		this.currAnimpak.x = xanim;
+		this.currAnimpak.x = xanim.slice();
 		// this.currAnimpak.x = xanim.map(x=>{
 		// 	if (x.toThree) return x.toThree();
 		// 	return x;
