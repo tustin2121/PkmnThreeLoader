@@ -267,16 +267,16 @@ class GFModel {
 				geom.setIndex(new BufferAttribute(new Uint32Array(gfSub.indices), 1, false));
 				
 				// Parse Implied Attributes
-				if (gfSub.boneIndices && gfSub.boneIndices.length == 1) {
+				if (!boned && gfSub.boneIndices && gfSub.boneIndices.length > 0 && gfSub.boneIndices.length < 4) {
 					// Some pokemon have an entire mesh as a rigid part. To save space, they didn't define 
 					// an attribute for bone indexes for these meshes, since it'd just be the same bone for the whole thing.
 					// We need to add the bone as an attribute, however, if we want the mesh to stick with the bone's movement
 					let a = new Uint8Array(gfSub.verticesCount * 4)
 					for (let i = 0; i < gfSub.verticesCount; i++) {
-						a[(i*4)+0] = gfSub.boneIndices[0];
-						a[(i*4)+1] = 255;
-						a[(i*4)+2] = 255;
-						a[(i*4)+3] = 255;
+						a[(i*4)+0] = gfSub.boneIndices[0] || 255;
+						a[(i*4)+1] = gfSub.boneIndices[1] || 255;
+						a[(i*4)+2] = gfSub.boneIndices[2] || 255;
+						a[(i*4)+3] = gfSub.boneIndices[3] || 255;
 					}
 					let bufattr = new BufferAttribute(a, 4, false);
 					geom.addAttribute('skinIndex', bufattr);

@@ -111,7 +111,6 @@ body {
 }
 #props > section > div {
 	display: none;
-	background-color: ;
 }
 #props > section > div.selected {
 	display: block;
@@ -188,6 +187,12 @@ body {
     display: inline-block;
     float: right;
     color: red;
+	font-size: 0.8em;
+}
+#props li span.pos {
+    display: inline-block;
+    float: right;
+    color: green;
 	font-size: 0.8em;
 }
 

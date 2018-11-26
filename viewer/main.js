@@ -54,42 +54,11 @@ let expressionAnims = [];
 let trackball = new THREE.OrbitControls(camera, renderer.domElement);
 global.loadedFiles = null;
 
+let updateFns = [];
+
 hljs.configure({
 	// tabReplace: '<span class="tab">\t</span>',
 });
-
-// global.ttestNode = new THREE.Object3D();
-// scene.add(global.ttestNode);
-//
-// global.textureTests = {
-// 	$el : $('<div name="textureTests">').appendTo('#view'),
-// 	submit(tex) {
-// 		let canvas = $(`<canvas name="${tex.name}" width="${tex.image.width}" height="${tex.image.height}">`);
-// 		let ctx = canvas[0].getContext('2d');
-// 		ctx.imageSmoothingEnabled = false;
-// 		let data = tex.image.data;
-// 		if (data.length % 4 !== 0) console.log('Data not divisible by 4!');
-// 		for (let i = 0; i < data.length; i += 4) {
-// 			let a = data[i + 3];
-// 			let r = data[i + 0];
-// 			let g = data[i + 1];
-// 			let b = data[i + 2];
-// 			ctx.fillStyle = `rgba(${r},${g},${b},${a})`;
-// 			let x = (i>>2)%tex.image.width;
-// 			let y = tex.image.height - 1 - Math.floor((i>>2)/tex.image.width);
-// 			ctx.fillRect(x, y, 1, 1);
-// 		}
-// 		this.$el.append(canvas);
-// 		//////////////////////////////////////////////
-// 		/*
-// 		let geom = new THREE.PlaneGeometry(tex.image.width, tex.image.height, 8, 8);
-// 		let mat = new THREE.MeshBasicMaterial();
-// 		mat.map = tex;
-// 		let mesh = new THREE.Mesh(geom, mat);
-// 		mesh.position.z = global.ttestNode.children.length * 10;
-// 		global.ttestNode.add(mesh); //*/
-// 	},
-// };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Side Pane Info
@@ -193,6 +162,8 @@ global.info = {
 		$('#boneList').empty();
 		for (let bone of this.bones) {
 			let $t = $(`<li>${bone.name}</li>`).appendTo('#boneList');
+			let $u = $(`<span class='pos'></span>`).appendTo($t);
+			updateFns.push(()=>$u.text(`(${bone.position.x.toFixed(0)},${bone.position.y.toFixed(0)},${bone.position.z.toFixed(0)})`));
 		}
 		{
 			let { meta1, meta2 } = this.metadata;
@@ -546,7 +517,10 @@ function resize() {
 }
 function redraw() {
 	const dt = animclock.getDelta();
-	if (animMixer) animMixer.update(dt);
+	if (animMixer) {
+		animMixer.update(dt);
+		updateFns.forEach(x=>x(dt));
+	}
 	trackball.update();
 	renderer.render(scene, camera);
 	raf(redraw);
@@ -607,6 +581,7 @@ function fillPkmnFilePaths(file0) {
 	root.remove(...root.children);
 	global.info.clear();
 	debugNodes = {};
+	updateFns = [];
 	resetView();
 	$('#pokemonDisplayOpts input').prop('disabled', true);
 }
