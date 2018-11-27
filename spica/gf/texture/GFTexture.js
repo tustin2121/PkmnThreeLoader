@@ -43,13 +43,13 @@ const GFTextureFormat = {
 				return [(input, output)=>{
 					let val = input.readUint16(0);
 					let a =  (val &   1) * 0xFF;
-					let r = ((val >>  1) & 0x1F) << 3;
-					let g = ((val >>  6) & 0x1F) << 3;
-					let b = ((val >> 11) & 0x1F) << 3;
+					let r = ((val >>>  1) & 0x1F) << 3;
+					let g = ((val >>>  6) & 0x1F) << 3;
+					let b = ((val >>> 11) & 0x1F) << 3;
 					
-					output[0] = b | (b >> 5);
-					output[1] = g | (g >> 5);
-					output[2] = r | (r >> 5);
+					output[0] = b | (b >>> 5);
+					output[1] = g | (g >>> 5);
+					output[2] = r | (r >>> 5);
 					output[3] = a;
 				}, 16];
 			
@@ -57,28 +57,28 @@ const GFTextureFormat = {
 				return [(input, output)=>{
 					let val = input.readUint16(0);
 					let a = 0xFF;
-					let r = ((val >>  0) & 0x1F) << 3;
-					let g = ((val >>  5) & 0x3F) << 2;
-					let b = ((val >> 11) & 0x1F) << 3;
+					let r = ((val >>>  0) & 0x1F) << 3;
+					let g = ((val >>>  5) & 0x3F) << 2;
+					let b = ((val >>> 11) & 0x1F) << 3;
 					
-					output[0] = b | (b >> 5);
-					output[1] = g | (g >> 6);
-					output[2] = r | (r >> 5);
+					output[0] = b | (b >>> 5);
+					output[1] = g | (g >>> 6);
+					output[2] = r | (r >>> 5);
 					output[3] = a;
 				}, 16];
 			
 			case GFTextureFormat.RGBA4:
 				return [(input, output)=>{
 					let val = input.readUint16(0);
-					let a = ((val >>  0) & 0xF);
-					let r = ((val >>  4) & 0xF);
-					let g = ((val >>  8) & 0xF);
-					let b = ((val >> 12) & 0xF);
+					let a = ((val >>>  0) & 0xF);
+					let r = ((val >>>  4) & 0xF);
+					let g = ((val >>>  8) & 0xF);
+					let b = ((val >>> 12) & 0xF);
 					
-					output[0] = b | (b << 4);
-					output[1] = g | (g << 4);
-					output[2] = r | (r << 4);
-					output[3] = a | (a >> 4);
+					output[0] = b | (b <<  4);
+					output[1] = g | (g <<  4);
+					output[2] = r | (r <<  4);
+					output[3] = a | (a >>> 4);
 				}, 16];
 			
 			case GFTextureFormat.LA8:
@@ -115,10 +115,10 @@ const GFTextureFormat = {
 				
 			case GFTextureFormat.LA4:
 				return [(input, output)=>{
-					output[0] = (input[0] >> 4) | (input[0] & 0xF0);
-					output[1] = (input[0] >> 4) | (input[0] & 0xF0);
-					output[2] = (input[0] >> 4) | (input[0] & 0xF0);
-					output[3] = (input[0] << 4) | (input[0] & 0x0F);
+					output[0] = (input[0] >>> 4) | (input[0] & 0xF0);
+					output[1] = (input[0] >>> 4) | (input[0] & 0xF0);
+					output[2] = (input[0] >>> 4) | (input[0] & 0xF0);
+					output[3] = (input[0] <<  4) | (input[0] & 0x0F);
 				}, 8];
 				
 			case GFTextureFormat.L4:
@@ -237,15 +237,15 @@ const GFTextureFormat = {
 						for (let tx = 0; tx < width; tx += 8) {
 							for (let px = 0; px < 64; px++) {
 								let x =  SWIZZLE_TABLE[px] & 7;
-								let y = (SWIZZLE_TABLE[px] - x) >> 3;
+								let y = (SWIZZLE_TABLE[px] - x) >>> 3;
 								let ooff = (tx + x + ((height - 1 - (ty + y)) * width)) * 4;
-								for (let i = 0; i < increment >> 3; i++) {
+								for (let i = 0; i < increment >>> 3; i++) {
 									input[i] = data[ioff]; ioff++;
 									output[i] = 0;
 								}
 								convert(input, output);
 								extraMapping(output, input);
-								for (let i = 0; i < 4; i++) {
+								for (let i = 0; i < increment >>> 3; i++) {
 									out[ooff] = input[i]; ooff++;
 								}
 							}

@@ -128,24 +128,24 @@ PARSE_PAK[5] = function(data, header, out={}) {
 	if (global.info) global.info.markAnimationPack(5);
 	let motionpack = parseMotionPack(data, header, [
 		'idle1', //0
-		null,
-		null,
+		'intro_lookbehind1',
+		'intro_lookbehind2',
 		null,
 		'sleep_in', //4
 		'sleep_loop', //5
 		'sleep_out', //6
-		'sleep_intro_loop',
-		'sleep_intro_return',
+		'intro_sleep_loop',
+		'intro_sleep_return',
 		'resp_unhappy', //9
 		'idle1_confused',
 		'idle1_cry',
-		'resp_happy_avg', //12
+		'resp_happy', //12
 		'resp_happy_big',
-		'idle1_fidget0',
+		'idle1_lookaround',
 		'idle1_fidget1',
-		'idle1_fidget2', //16
+		'idle1_fidget0', //16
 		null,
-		'sad_intro',
+		'intro_sad',
 		'resp_happy_mild',
 		'resp_hop',
 		'resp_angry', //21
@@ -381,15 +381,17 @@ function parseExtraMotionPack(data, header, names) {
 				let mot = new GFMotion(data, i);
 				motionpack.extradata[i] = mot;
 			} break;
-			case 7: {
+			case  7:
+			case  8:
+			case  9:
+			case  10:
+			{
 				// Constant motion animation - run constantly under all other animations, and some animations can override.
 				// Used for Koffing's smoke, Mega Steelix's crystals
 				let mot = new GFMotion(data, i);
 				motionpack.extradata[i] = mot;
+				motionpack.extradata[i]._addr = entry.address;
 			} break;
-			case  8: motionpack.extradata[i] = true; break; //Unknown, no examples yet
-			case  9: motionpack.extradata[i] = true; break; //Unknown, no examples yet
-			case 10: motionpack.extradata[i] = true; break; //Unknown, no examples yet
 			case 11: {
 				// Focus/Attachment Point Data!
 				// This section has no header information, and the header can claim it to be

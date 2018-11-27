@@ -47,6 +47,12 @@ const OBJ = {
 			track.transZ.push({ frame:0, value:0, slope:0 });
 		}
 	},
+	vivillion(files) {
+		//TODO rename vivillion skins to a generic name
+		//TODO remove all visibility tracks for all other variations of vivillion,
+		// and rename the remaining to the generic name
+		
+	},
 };
 
 

@@ -255,7 +255,7 @@ global.info = {
 			let $div = $('#xanimInfo').empty().show();
 			for (let i = 0; i < info.length; i++) {
 				let row = info[i];
-				let $t = $(`<li slot="${row.a}/${row.b}"><label><input type='checkbox'/> ${row.name}<span class="dup"></span></br>(${row.x},${row.y},${row.z})</label></li>`);
+				let $t = $(`<li slot="${row.a}/${row.b}"><label><input type='checkbox'/> ${row.name}<span class="dup"></span></br>(${row.x.toFixed(2)},${row.y.toFixed(2)},${row.z.toFixed(2)})</label></li>`);
 				switch (row.a) {
 					case 0: $t.find('.dup').text(`Head Focus`); break;
 					case 1: $t.find('.dup').text(`Top of Head`); break;
