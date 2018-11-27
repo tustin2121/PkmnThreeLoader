@@ -101,7 +101,7 @@ PARSE_PAK[4] = function(data, header, out={}) {
 	let motionpack = parseMotionPack(data, header, [
 		'idle0', //0
 		'idle0_fidget0',
-		null,
+		'idle0_fidget1', //?
 		'appear_fall', //3
 		'appear_fall_loop',
 		'appear_land',
@@ -139,15 +139,15 @@ PARSE_PAK[5] = function(data, header, out={}) {
 		'resp_unhappy', //9
 		'idle1_confused',
 		'idle1_cry',
-		'resp_happy', //12
-		'resp_happy2',
-		'idle1_fidget2',
-		'idle1_fidget3',
-		'idle1_fidget0', //16
+		'resp_happy_avg', //12
+		'resp_happy_big',
+		'idle1_fidget0',
+		'idle1_fidget1',
+		'idle1_fidget2', //16
 		null,
-		null,
-		null,
-		null,
+		'sad_intro',
+		'resp_happy_mild',
+		'resp_hop',
 		'resp_angry', //21
 		'eat_in', //22
 		'eat_loop',

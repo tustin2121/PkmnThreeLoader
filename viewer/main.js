@@ -75,7 +75,7 @@ global.info = {
 		this.bones = [];
 	},
 	populateSidebar() {
-		$('.xanims > div').hide();
+		$('#sec-xanims > div').hide();
 		const self = this;
 		expressionAnims = [];
 		
@@ -150,12 +150,12 @@ global.info = {
 				$('#xanimPresets [name=preExp]').on('click', function(e) {
 					let vals = $(this).val().split('-');
 					
-					$(`.xanims input[name=eye1][value=${vals[0]*10}]`).click();
-					$(`.xanims input[name=eye2][value=${vals[0]*10}]`).click();
-					$(`.xanims input[name=eye3][value=${vals[0]*10}]`).click();
-					$(`.xanims input[name=mouth4][value=${vals[1]*10}]`).click();
-					$(`.xanims input[name=mouth5][value=${vals[1]*10}]`).click();
-					$(`.xanims input[name=mouth6][value=${vals[1]*10}]`).click();
+					$(`#sec-xanims input[name=eye1][value=${vals[0]*10}]`).click();
+					$(`#sec-xanims input[name=eye2][value=${vals[0]*10}]`).click();
+					$(`#sec-xanims input[name=eye3][value=${vals[0]*10}]`).click();
+					$(`#sec-xanims input[name=mouth4][value=${vals[1]*10}]`).click();
+					$(`#sec-xanims input[name=mouth5][value=${vals[1]*10}]`).click();
+					$(`#sec-xanims input[name=mouth6][value=${vals[1]*10}]`).click();
 				});
 			}
 		}
@@ -395,7 +395,8 @@ raf(redraw);
 
 $('#props > nav > li').on('click', function(){
 	$('#props .selected').removeClass('selected');
-	$('#props .'+this.className).addClass('selected');
+	$('#props > section').removeClass().addClass(this.className);
+	$('#props [name='+$(this).attr('name')+']').addClass('selected');
 	resetView();
 });
 $('#props .file').on('dblclick', function(){
@@ -657,7 +658,8 @@ async function displayPokemonModel() {
 		// mon.children[0].children.forEach(x=>x.visible = false);
 		root.add(mon); //TODO modelpack instead of model
 		
-		animMixer = new THREE.AnimationMixer(mon.children[0]);
+		animMixer = mon.animMixer;
+		// animMixer = new THREE.AnimationMixer(mon.children[0]);
 		// animMixer.timeScale = 30;
 		{
 			let node = new THREE.SkeletonHelper(mon.skeleton.bones[0]);

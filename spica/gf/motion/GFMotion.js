@@ -21,9 +21,16 @@ class GFMotion {
 		this.isBlended = false;
 		this.animRegionMin = new Vector3();
 		this.animRegionMax = new Vector3();
-		this.skeletonAnimation = null; /** @type {GFSkeletonMot} */
-		this.materialAnimation = null; /** @type {GFMaterialMot} */
-		this.visibilityAnimation = null; /** @type {GFVisibilityMot} */
+		
+		/** @type {GFSkeletonMot} */
+		this.skeletonAnimation = null; 
+		/** @type {GFMaterialMot} */
+		this.materialAnimation = null; 
+		/** @type {GFVisibilityMot} */
+		this.visibilityAnimation = null; 
+		/** @type {GFEffectMot} */
+		this.effectTriggers = null; 
+		
 		this.animHash = null;
 		
 		if (!data) return this;

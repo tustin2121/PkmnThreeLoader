@@ -102,12 +102,22 @@ body {
 	margin-top: 0;
 	background: linear-gradient(to bottom, #ffffff 0%,#f1f1f1 50%,#e1e1e1 51%,#f6f6f6 100%);
 }
+#props > nav li.export {
+	background-color: #cab9f3;
+	background: linear-gradient(to bottom, #d5cbeb 0%,#c9bee6 50%,#c2b3e5 51%,#baa1db 100%);
+}
+#props > nav li.export.selected {
+	background: linear-gradient(to bottom, #ccbcf2 0%,#bea8f0 50%,#b395f3 51%,#ab80e6 100%);
+}
 
 #props > section {
 	background-color: #efefef;
 	overflow-y: scroll;
 	position: absolute;
 	left: 20px; top: 0; right: 0; bottom: 0;
+}
+#props > section.export {
+	background-color: #e1d4ff;
 }
 #props > section > div {
 	display: none;
@@ -122,8 +132,16 @@ body {
 #props > section > div label input {
 	display: block;
 } */
+#props hr {
+    margin: 1em 6px; height: 0px;
+    border: 0px;
+    border-bottom: 1px solid #909090;
+}
 #props p {
 	margin: 2px 0px;
+}
+#props > p {
+	margin: 2px 6px;
 }
 
 #props .group {
@@ -138,6 +156,9 @@ body {
 	top: -0.5em; left: 1em;
 	background-color: #efefef;
 	padding: 0px 2px;
+}
+#props .export .group::before {
+	background-color: #e1d4ff;
 }
 
 #props label.file input[type=file] {

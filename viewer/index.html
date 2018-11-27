@@ -52,17 +52,17 @@
 	</div>
 	<div id="props">
 		<nav>
-			<li class="load selected">Load</li>
-			<!-- <li class="export">Export</li> -->
-			<li class="models">Model</li>
-			<li class="textures">Tex</li>
-			<li class="skeleton">Skel</li>
-			<li class="anims">Anims</li>
-			<li class="xanims">Anim Meta</li>
-			<li class="metadata">Metadata</li>
+			<li name="load" class="selected">Load</li>
+			<li name="models" class="">Model</li>
+			<li name="textures" class="">Tex</li>
+			<li name="skeleton" class="">Skel</li>
+			<li name="anims" class="">Anims</li>
+			<li name="xanims" class="">Anim Meta</li>
+			<li name="metadata" class="">Metadata</li>
+			<li name="xactions" class="export">Actions</li>
 		</nav>
 		<section>
-			<div class="load selected">
+			<div id="sec-load" name="load" class="selected">
 				<div class="group" group-name="Load Pokemon">
 					<p><label><input type="checkbox" name="loadPkmnFileAuto" checked />Autofill from Pack 0</label></p>
 					<p>Pack 0: <input type="text" readonly name="loadPkmnFile0" class="file"></input></p>
@@ -93,7 +93,7 @@
 					</select></p>
 				</div>
 			</div>
-			<div class="models">
+			<div id="sec-models" name="models">
 				<div class="group" group-name="Model List" id="modelList"></div>
 				<div class="group" group-name="Pokemon Display Options" id="pokemonDisplayOpts" style="display:none;">
 					<p><label><input type="checkbox" name="poptShadow" checked/> Show shadow projection</label></p>
@@ -110,7 +110,7 @@
 					<p><button name="moptCenterGeom">Center Model Geometry</button></p>
 				</div>
 			</div>
-			<div class="anims">
+			<div id="sec-anims" name="anims">
 				<li id="animStop">Stop animations</li>
 				<div class="group" group-name="Animations" id="animList0"></div>
 				<div class="group" group-name="Battle Animations" id="animList4"></div>
@@ -118,7 +118,7 @@
 				<div class="group" group-name="Movement Animations" id="animList6"></div>
 				<div class="group" group-name="Other Animations" id="animList7"></div>
 			</div>
-			<div class="xanims">
+			<div id="sec-xanims" name="xanims">
 				<div class="group" group-name="Info" id="xanimMsg"></div>
 				<div class="group" group-name="Constant Motion" id="xanimConst">
 					<p><label><input type="checkbox" name="xanimRunConst"/> Run constant motion anim</label></p>
@@ -143,17 +143,17 @@
 				<hr />
 				<div class="group" group-name="Extra Point Info" id="xanimInfo"></div>
 			</div>
-			<div class="skeleton">
+			<div id="sec-skeleton" name="skeleton">
 				<div class="group" group-name="Bones" id="boneList"></div>
 			</div>
-			<div class="textures">
+			<div id="sec-textures" name="textures">
 				<div class="group" group-name="Textures" id="texList0"></div>
 				<div class="group" group-name="Normal Textures" id="texList1" style="display:none;"></div>
 				<div class="group" group-name="Shiny Textures" id="texList2" style="display:none;"></div>
 				<div class="group" group-name="Amie Textures" id="texList3" style="display:none;"></div>
 				<div class="group" group-name="LookUp Tables"></div>
 			</div>
-			<div class="metadata">
+			<div id="sec-metadata" name="metadata">
 				<div class="group" group-name="Metadata 1" id="metaList1">
 					<p><label>01: <input type="text" name="meta1_01" readonly/></label></p>
 					<p><label>02: <input type="text" name="meta1_02" readonly/></label></p>
@@ -195,11 +195,11 @@
 					
 				</div>
 			</div>
-			<div class="export">
-				<div class="group" group-name="Animation Options" id="expAnimOpts">
-					
+			<div id="sec-xactions" name="xactions">
+				<div class="group" group-name="Battle Animator" id='baUnattached'>
+					<button name='baCreate'>Create</button>
 				</div>
-				<div class="group" group-name="Animations" id="expAnims">
+				<div class="group" group-name="Battle Animator" id='baAttached'>
 					
 				</div>
 			</div>
