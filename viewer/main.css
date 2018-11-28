@@ -217,7 +217,7 @@ body {
 	font-size: 0.8em;
 }
 
-#props .xanims .group > label {
+#props #sec-xanims .group > label {
     display: inline-block;
     border: #ccc 1px solid;
     border-radius: 10px;

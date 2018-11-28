@@ -159,7 +159,7 @@
 					<p><label>01: <input type="text" name="meta1_01" readonly/></label></p>
 					<p><label>02: <input type="text" name="meta1_02" readonly/></label></p>
 					<p><label>03: <input type="text" name="meta1_03" readonly/></label></p>
-					<p><label>Camera Level: <select name="meta1_04" readonly>
+					<p><label>Size Category: <select name="meta1_04" readonly>
 						<option value="0">Small Pokemon</option>
 						<option value="1">Medium Pokemon</option>
 						<option value="2">Large Pokemon</option>
@@ -209,6 +209,16 @@
 	
 	<script src="jquery-3.1.1.min.js"></script>
 	<script src="highlight.pack.js"></script>
+	<script>
+		const SPICA = global.SPICA = require('../spica');
+		const THREE = global.THREE = require('three');
+		require('./OrbitControls');
+	</script>
+	
+	<script src="modelinfo.js"></script>
+	<script src="viewerapp.js"></script>
+	<script src="viewerapp_file.js"></script>
+	<script src="viewerapp_model.js"></script>
 	<script src="main.js"></script>
 </body>
 </html>

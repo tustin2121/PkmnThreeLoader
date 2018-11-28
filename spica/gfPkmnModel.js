@@ -13,11 +13,11 @@ PARSE_PAK[0] = function(data, header, out={}) {
 	
 	// High Poly Pokemon model
 	data.offset = header.entries[0].address;
-	modelpack.models.push(new GFModel(data, "PM_HighPoly"));
+	modelpack.models.push(new GFModel(data, "PM_Main"));
 	
 	// Low Poly Pokemon model
 	data.offset = header.entries[1].address;
-	modelpack.models.push(new GFModel(data, "PM_LowPoly"));
+	modelpack.models.push(new GFModel(data, "PM_Shadow"));
 	
 	// Pokemon Shader package
 	data.offset = header.entries[2].address;
@@ -101,7 +101,7 @@ PARSE_PAK[4] = function(data, header, out={}) {
 	let motionpack = parseMotionPack(data, header, [
 		'idle0', //0
 		'idle0_fidget0',
-		'idle0_fidget1', //?
+		'idle0_fidget1', //assumed
 		'appear_fall', //3
 		'appear_fall_loop',
 		'appear_land',
@@ -169,9 +169,9 @@ PARSE_PAK[6] = function(data, header, out={}) {
 		'runloop', //3
 		null,
 		null,
-		null,
-		null,
-		'run_in', //Brionne (1040) has these two animations
+		'walk_in', //assumed
+		'walk_out', //assumed
+		'run_in', //Brionne (1040), and Jigglypuff has these two animations
 		'run_out',
 		null, //10
 		null,
@@ -274,7 +274,7 @@ PARSE_PAK[8] = function(data, header, out={}) {
 		meta.unk01 = data.readUint32();
 		meta.unk02 = data.readUint32();
 		meta.unk03 = data.readUint32();
-		meta.cameraLevel = data.readUint32(); //0 = small pokemon, 1 = medium, 2 = large+
+		meta.monSize = data.readUint32(); //0 = small pokemon, 1 = medium, 2 = large+
 		meta.boundingBoxMin = data.readVector3();
 		meta.boundingBoxMax = data.readVector3();
 		meta.unk07 = data.readVector3();

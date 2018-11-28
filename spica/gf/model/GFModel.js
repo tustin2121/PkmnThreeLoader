@@ -268,9 +268,10 @@ class GFModel {
 				
 				// Parse Implied Attributes
 				if (!boned && gfSub.boneIndices && gfSub.boneIndices.length > 0 && gfSub.boneIndices.length < 4) {
-					// Some pokemon have an entire mesh as a rigid part. To save space, they didn't define 
-					// an attribute for bone indexes for these meshes, since it'd just be the same bone for the whole thing.
-					// We need to add the bone as an attribute, however, if we want the mesh to stick with the bone's movement
+					// Some pokemon have an entire mesh as a rigid part, or have a mesh that only has up to 4 bones. 
+					// To save space, they didn't define an attribute for bone indexes for these meshes, since it'd
+					// just be the same for the whole mesh. We, however, need to add the bone index attribute, 
+					// if we want the mesh to stick with the bone's movement.
 					let a = new Uint8Array(gfSub.verticesCount * 4)
 					for (let i = 0; i < gfSub.verticesCount; i++) {
 						a[(i*4)+0] = gfSub.boneIndices[0] || 255;
@@ -318,13 +319,15 @@ class GFModel {
 			if (meshSkinned && skeleton) {
 				mesh = new SkinnedMesh(geom, meshMats);
 				mesh.bindMode = 'detached';
-				// mesh.bind(skeleton, obj.matrixWorld);
 				mesh.bind(skeleton, skeleton.bones[0].matrixWorld);
 			}
 			else {
 				mesh = new Mesh(geom, meshMats);
 			}
 			mesh.name = gfMesh.name;
+			// Meshes should never be culled individually, only as a whole pokemon, 
+			// otherwise culling errors happen in animation.
+			mesh.frustumCulled = false; 
 			obj.add(mesh);
 		}
 		return obj;
@@ -335,7 +338,6 @@ class GFModel {
 		let attributesUsed = {};
 		
 		for (let geom of geometries) {
-			// gather attributes, exit early if they're different
 			for (let name in geom.attributes) {
 				attributesUsed[name] = geom.attributes[name].array.constructor;
 			}
