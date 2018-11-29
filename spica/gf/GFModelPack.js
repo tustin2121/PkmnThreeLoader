@@ -68,7 +68,7 @@ class GFModelPack {
 	}
 	
 	async _toThree(obj) {
-		// Transpile Shaders
+		// Gather Shaders
 		let shaders = {};
 		for (let gfShader of this.shaders) {
 			shaders[gfShader.name] = gfShader;
@@ -85,7 +85,6 @@ class GFModelPack {
 		
 		// Compile Models
 		for (let gfModel of this.models) {
-		// { let gfModel = this.models[0]; //TODO HACK to dodge shadow
 			let model = gfModel.toThree();
 			if (!skeleton) { skeleton = model.skeleton; }
 			model.traverse((mesh)=>{
@@ -108,9 +107,6 @@ class GFModelPack {
 				if (mesh.isSkinnedMesh) {
 					mesh.bind(skeleton, skeleton.bones[0].matrixWorld);
 				}
-				// if (typeof mesh.material.register === 'function') {
-				// 	materials[0].register(mesh);
-				// }
 				mesh.material = (materials.length === 1)?materials[0] : materials;
 			});
 			obj.add(model);

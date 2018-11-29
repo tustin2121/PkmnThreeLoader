@@ -128,9 +128,6 @@ class ViewerApp {
 	
 	async displayPokemonModel() {
 		let paks = global.loadedFiles;
-		$('#pokemonDisplayOpts').show();
-		$('#modelList').hide();
-		$('#pokemonDisplayOpts input').prop('disabled', false);
 		{
 			let combined = new SPICA.gf.GFModelPack();
 			combined.merge(paks[0].modelpack);

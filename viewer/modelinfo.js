@@ -30,7 +30,8 @@ class DisplayTexture {
 }
 
 class ModelInfo {
-	constructor() {
+	constructor(type='other') {
+		this.type = type;
 		this.texpak = [{}];
 		this.currTexpak = this.texpak[0];
 		this.animpak = [[]];
@@ -39,6 +40,9 @@ class ModelInfo {
 		this.metadata = {};
 		this.bones = [];
 	}
+	
+	get isPokemon(){ return this.type === 'pokemon'; }
+	get isBattlefield(){ return this.type === 'battlefield'; }
 	
 	markTexturePack(num) {
 		this.currTexpak = this.texpak[num] = {};

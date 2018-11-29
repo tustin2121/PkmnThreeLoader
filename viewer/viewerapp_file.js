@@ -24,7 +24,7 @@ Object.assign(ViewerApp.prototype, {
 	},
 	
 	async loadPokemonFiles() {
-		global.info = new ModelInfo();
+		global.info = new ModelInfo('pokemon');
 		this.clearDisplay();
 		let filenames = new Array(9);
 		for (let i = 0; i <= 8; i++) {
@@ -45,7 +45,7 @@ Object.assign(ViewerApp.prototype, {
 	},
 	
 	async loadBattleFiles() {
-		global.info = new ModelInfo();
+		global.info = new ModelInfo('battlefield');
 		this.clearDisplay();
 		let filename = $(`#props input[name=loadBattleFile0]`).val();
 		global.loadedFiles = await SPICA.open(filename);

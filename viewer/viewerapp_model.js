@@ -51,8 +51,12 @@ Object.assign(ViewerApp.prototype, {
 		});
 	},
 	
-	populate_modelTab() {
+	populate_modelTab(info) {
+		let isMon = info.isPokemon;
 		
+		$('#pokemonDisplayOpts').show(isMon);
+		$('#modelList').show(!isMon);
+		$('#pokemonDisplayOpts input').prop('disabled', !isMon);
 	},
 	
 	///////////////////////////////////////////////////////////////////////////
