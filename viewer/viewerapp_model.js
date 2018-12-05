@@ -94,6 +94,7 @@ Object.assign(ViewerApp.prototype, {
 			let $u = $(`<span class='pos'></span>`).appendTo($t);
 			this.updateFns.push(()=>$u.text(`(${bone.position.x.toFixed(0)},${bone.position.y.toFixed(0)},${bone.position.z.toFixed(0)})`));
 		}
+		if (info.bones.length) $('#pokemonDisplayOpts [name=poptSkeleton]').prop('disabled', false);
 	},
 	
 	///////////////////////////////////////////////////////////////////////////

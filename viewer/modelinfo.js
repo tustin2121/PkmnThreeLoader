@@ -34,7 +34,7 @@ class ModelInfo {
 		this.type = type;
 		this.texpak = [{}];
 		this.currTexpak = this.texpak[0];
-		this.animpak = [[]];
+		this.animpak = [{ a:[], x:[] }];
 		this.currAnimpak = this.animpak[0];
 		this.luts = [];
 		this.metadata = {};
@@ -43,6 +43,8 @@ class ModelInfo {
 	
 	get isPokemon(){ return this.type === 'pokemon'; }
 	get isBattlefield(){ return this.type === 'battlefield'; }
+	get isTrainer(){ return this.type === 'trainer'; }
+	get isOverworldModel(){ return this.type === 'overworld'; }
 	
 	markTexturePack(num) {
 		this.currTexpak = this.texpak[num] = {};

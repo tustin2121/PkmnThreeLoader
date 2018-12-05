@@ -1,9 +1,10 @@
 // https://github.com/gdkchan/SPICA/blob/master/SPICA/Formats/GFL2/GFMotionPack.cs
 
 const { GFMotion } = require('./motion');
+const { GFModelPack } = require('./GFModelPack');
 
 class GFMotionPack {
-	constructor(data) {
+	constructor(data, names) {
 		this.animations = []; /** @type {List<GFMotion>} */
 		this.extradata = []; //new Array(14);
 		
@@ -17,6 +18,7 @@ class GFMotionPack {
 			if (addr === 0) continue;
 			data.offset = pos + addr;
 			let mot = new GFMotion(data, i);
+			if (names) mot.name = names[i];
 			if (global.info) global.info.markAnimation(i, mot);
 			this.animations.push(mot);
 		}
@@ -27,6 +29,7 @@ class GFMotionPack {
 	[Symbol.iterator]() { return this.animations[Symbol.iterator](); }
 	
 	push(...items) { this.animations.push(...items); }
+	
 }
 
 module.exports = { GFMotionPack };

@@ -19,6 +19,7 @@ Object.assign(ViewerApp.prototype, {
 		});
 		
 		$('#props button[name=loadPkmnFileBtn]').on('click', ()=>this.loadPokemonFiles());
+		$('#props button[name=loadTrainerBtn]').on('click', ()=>this.loadTrainerFiles());
 		$('#props button[name=loadBattleFileBtn]').on('click', ()=>this.loadBattleFiles());
 		$('#props button[name=loadOtherFileBtn]').on('click', ()=>this.loadOtherFile());
 	},
@@ -42,6 +43,24 @@ Object.assign(ViewerApp.prototype, {
 			console.log(i, global.loadedFiles[i]);
 		}
 		this.displayPokemonModel();
+	},
+	
+	async loadTrainerFiles() {
+		let ttype = $(`#props input[name=loadTrainerType]:checked`).val();
+		
+		global.info = new ModelInfo(ttype); //trainer or overworld
+		this.clearDisplay();
+		let filename = $(`#props input[name=loadTrainer0]`).val();
+		global.info.markTexturePack(0);
+		global.loadedFiles = await SPICA.open(filename);
+		console.log(global.loadedFiles);
+		if (global.loadedFiles.modelpack) {
+			await this.displayModelpack(global.loadedFiles.modelpack);
+		}
+		if (global.loadedFiles.motionpack) {
+			this.animMixer = new THREE.AnimationMixer(root.children[0].children[0]);
+		}
+		this.populateSidebar();
 	},
 	
 	async loadBattleFiles() {
