@@ -66,6 +66,9 @@ class ViewerApp {
 		this.clearDisplay();
 	}
 	
+	get appMode(){ return $('body')[0].className; }
+	set appMode(val) { $('body').removeClass().addClass(val); }
+	
 	resize() {
 		this.camera.aspect = this.$view.innerWidth() / this.$view.innerHeight();
 		this.camera.updateProjectionMatrix();
@@ -83,13 +86,30 @@ class ViewerApp {
 	
 	populateSidebar() {
 		let info = global.info;
-		this.populate_modelTab(info);
-		this.populate_textureTab(info);
-		this.populate_boneTab(info);
-		this.populate_animTab(info);
-		this.populate_xanimTab(info);
-		this.populate_shadersTab(info);
-		this.populate_metaTab(info);
+		switch (this.appMode) {
+			case 'model':
+				this.populate_modelTab(info);
+				this.populate_textureTab(info);
+				this.populate_boneTab(info);
+				this.populate_animTab(info);
+				this.populate_xanimTab(info);
+				this.populate_shadersTab(info);
+				this.populate_metaTab(info);
+				break;
+			case 'export':
+				//TODO
+				break;
+		}
+	}
+	
+	addDebugNode(name, node) {
+		this.debugNodes[name] = node;
+		let ui = $(`#props input[debugVis=${name}]`);
+		if (ui.length) {
+			node.visible = ui.is(':checked');
+		} else {
+			node.visible = true;
+		}
 	}
 	
 	///////////////////////////////////////////////////////////////////////////
@@ -126,7 +146,12 @@ class ViewerApp {
 		}
 	}
 	
-	async displayPokemonModel() {
+	async displayPokemonModel(exportReady=false) {
+		// Clear any previous pokemon models currently residing in the scene
+		this.root.remove(...this.root.children);
+		this.debugNodes = {};
+		
+		let mon = null;
 		let paks = global.loadedFiles;
 		{
 			let combined = new SPICA.gf.GFModelPack();
@@ -135,51 +160,56 @@ class ViewerApp {
 			switch (val) {
 				case 'normal': combined.merge(paks[1].modelpack); break;
 				case 'shiny': combined.merge(paks[2].modelpack); break;
-				case 'shadow': combined.merge(paks[3].modelpack); break;
+				case 'petmap': combined.merge(paks[3].modelpack); break;
 			}
-			let mon = await combined.toThreePokemon();
+			mon = await combined.toThreePokemon();
+			//TODO give mon animations
 			mon.name = "Pokemon";
+			this.root.add(mon);
+		}
+		if (exportReady) return;
+		
+		this.animMixer = mon.animMixer;
+		
+		let debugNode = new THREE.Group();
+		debugNode.name = 'Debug Info';
+		{
 			if (mon.children[1]) {
-				this.debugNodes['shadowModel'] = mon.children[1];
-				mon.children[1].visible = $('#props input[name=poptShadow]').is(':checked');;
+				this.addDebugNode('shadowModel', mon.children[1]);
 			}
 			mon.shadowLight = this.dirLight;
-			this.root.add(mon);
-			
-			this.animMixer = mon.animMixer;
-			{
-				let node = new THREE.SkeletonHelper(mon.skeleton.bones[0]);
-				node.name = 'Mon Skeleton';
-				node.visible = $('#props input[name=poptSkeleton]').is(':checked');
-				this.root.add(node);
-				this.debugNodes['skeletonHelper'] = node;
-				global.info.markSkeleton(mon.children[0].skeleton.bones);
-			}
 		}{
-			let node = new THREE.Group();
-			node.name = 'Meta Info';
-			{
-				let point = new THREE.Mesh(new THREE.SphereBufferGeometry(), new THREE.MeshBasicMaterial());
-				point.position.copy(paks[8].meta1.unk07);
-				node.add(point);
-			}{
-				let box = new THREE.Box3(paks[8].meta1.boundingBoxMin, paks[8].meta1.boundingBoxMax);
-				let help = new THREE.Box3Helper(box);
-				node.add(help);
-			}
-			node.visible = $('#props input[name=poptMeta]').is(':checked');
-			this.root.add(node);
-			this.debugNodes['metaHelper'] = node;
+			let node = new THREE.SkeletonHelper(mon.skeleton.bones[0]);
+			node.name = 'Mon Skeleton';
+			this.addDebugNode('skeletonHelper', node);
+			debugNode.add(node);
+			global.info.markSkeleton(mon.children[0].skeleton.bones);
+		}{
+			let point = new THREE.Mesh(new THREE.SphereBufferGeometry(), new THREE.MeshBasicMaterial());
+			point.name = 'Meta 07';
+			point.position.copy(paks[8].meta1.unk07);
+			this.addDebugNode('metaPoint', point);
+			debugNode.add(point);
+		}{
+			let box = new THREE.Box3(paks[8].meta1.boundingBoxMin, paks[8].meta1.boundingBoxMax);
+			let help = new THREE.Box3Helper(box);
+			help.name = 'Idle Bounds';
+			this.addDebugNode('idleBounds', help);
+			debugNode.add(help);
 		}{
 			let box = new THREE.Box3(paks[0].modelpack.models[0].boundingBoxMin, paks[0].modelpack.models[0].boundingBoxMax);
 			let help = new THREE.Box3Helper(box, 0x00FF00);
-			help.name = 'Model Boundries';
-			help.visible = $('#props input[name=poptModelBound]').is(':checked');
+			help.name = 'Model Bounds';
 			this.root.add(help);
-			this.debugNodes['boundingHelper'] = help;
+			this.addDebugNode('modelBounds', help);
+		}{
 		}
-		this.populateSidebar();
+		this.root.add(debugNode);
+		this.addDebugNode('allMetaNodes', debugNode);
 	}
+	
+	
+	
 
 	playAnimation({ clip }={}) {
 		if (this.currAnim) {

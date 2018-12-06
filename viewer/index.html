@@ -51,7 +51,10 @@
 		<div id="shaderView"></div>
 	</div>
 	<div id="props">
-		<nav>
+		<nav name="empty">
+			<li name="load" class="selected">Load</li>
+		</nav>
+		<nav name="model">
 			<li name="load" class="selected">Load</li>
 			<li name="models" class="">Model</li>
 			<li name="textures" class="">Tex</li>
@@ -59,6 +62,9 @@
 			<li name="anims" class="">Anims</li>
 			<li name="xanims" class="">Anim Meta</li>
 			<li name="metadata" class="">Metadata</li>
+		</nav>
+		<nav name="export">
+			<li name="load" class="selected">Load</li>
 			<li name="xactions" class="export">Actions</li>
 		</nav>
 		<section>
@@ -107,15 +113,15 @@
 			<div id="sec-models" name="models">
 				<div class="group" group-name="Model List" id="modelList"></div>
 				<div class="group" group-name="Pokemon Display Options" id="pokemonDisplayOpts" style="display:none;">
-					<p><label><input type="checkbox" name="poptShadow" checked/> Show shadow projection</label></p>
+					<p><label><input type="checkbox" debugVis="shadowModel" checked/> Show shadow projection</label></p>
 					<p>
 						<label><input type="radio" name="poptColor" value="normal" checked/> Normal</label>
 						<label><input type="radio" name="poptColor" value="shiny"/> Shiny</label>
-						<label><input type="radio" name="poptColor" value="shadow"/> Pet Spots</label>
+						<label><input type="radio" name="poptColor" value="petmap"/> Pet Spots</label>
 					</p>
-					<p><label><input type="checkbox" name="poptMeta" checked/> Show metadata boxes</label></label></p>
-					<p><label><input type="checkbox" name="poptModelBound"/> Show model bounding box</label></label></p>
-					<p><label><input type="checkbox" name="poptSkeleton" checked/> Show skeleton</label></p>
+					<p><label><input type="checkbox" debugVis="allMetaNodes" checked/> Show metadata and debug</label></label></p>
+					<p><label><input type="checkbox" debugVis="modelBounds"/> Show model bounding box</label></label></p>
+					<p><label><input type="checkbox" debugVis="skeletonHelper" checked/> Show skeleton</label></p>
 				</div>
 				<div class="group" group-name="Model Options" id="modelOpts">
 					<p><button name="moptCenterGeom">Center Model Geometry</button></p>

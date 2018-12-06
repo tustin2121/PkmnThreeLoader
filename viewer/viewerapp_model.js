@@ -9,22 +9,11 @@ Object.assign(ViewerApp.prototype, {
 	
 	init_modelTab() {
 		let self = this;
-		$('#props input[name=poptShadow]').on('click', function(){
-			if (self.debugNodes['shadowModel']) 
-				self.debugNodes['shadowModel'].visible = $(this).is(':checked');
+		$(`#props input[debugVis]`).on('click', function(){
+			let node = self.debugNodes[$(this).attr('debugVis')];
+			if (node) node.visible = $(this).is(':checked');
 		});
-		$('#props input[name=poptMeta]').on('click', function(){
-			if (self.debugNodes['metaHelper']) 
-				self.debugNodes['metaHelper'].visible = $(this).is(':checked');
-		});
-		$('#props input[name=poptModelBound]').on('click', function(){
-			if (self.debugNodes['boundingHelper']) 
-				self.debugNodes['boundingHelper'].visible = $(this).is(':checked');
-		});
-		$('#props input[name=poptSkeleton]').on('click', function(){
-			if (self.debugNodes['skeletonHelper']) 
-				self.debugNodes['skeletonHelper'].visible = $(this).is(':checked');
-		});
+		
 		$('#props input[name=poptColor]').on('click', function(){
 			self.displayPokemonModel();
 		});
@@ -54,8 +43,8 @@ Object.assign(ViewerApp.prototype, {
 	populate_modelTab(info) {
 		let isMon = info.isPokemon;
 		
-		$('#pokemonDisplayOpts').show(isMon);
-		$('#modelList').show(!isMon);
+		$('#pokemonDisplayOpts').toggle(isMon);
+		$('#modelList').toggle(!isMon);
 		$('#pokemonDisplayOpts input').prop('disabled', !isMon);
 	},
 	
@@ -70,7 +59,7 @@ Object.assign(ViewerApp.prototype, {
 			for (let [name, texInfo] of Object.entries(val)) {
 				let $t = $(`<li>${texInfo.tex.name}</li>`).appendTo($p);
 				$t.on('dblclick', ()=>{
-					this.displayTexture(texInfo.canvas);
+					this.displayTexture(texInfo);
 					texInfo.tex.decodeData().then(x=>{
 						texInfo.repaint();
 					});
@@ -79,9 +68,10 @@ Object.assign(ViewerApp.prototype, {
 		}
 	},
 	
-	displayTexture(canvas) {
+	displayTexture(texInfo) {
 		$('#view > canvas').hide();
-		$('#textureView').show().empty().append(canvas);
+		$('#textureView').show().empty().append(texInfo.$canvas);
+		$('#textureView').attr('info', texInfo.tex.getInfoString());
 	},
 	
 	///////////////////////////////////////////////////////////////////////////

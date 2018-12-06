@@ -245,7 +245,7 @@ const GFTextureFormat = {
 								}
 								convert(input, output);
 								extraMapping(output, input);
-								for (let i = 0; i < increment >>> 3; i++) {
+								for (let i = 0; i < 4; i++) { //NOT related to increment
 									out[ooff] = input[i]; ooff++;
 								}
 							}
@@ -292,13 +292,24 @@ class GFTexture {
 	}
 	
 	decodeData() {
-		if (this._decoded) return Promise.resolve(true);
+		if (this._decoded) return Promise.resolve(this.buffer);
 		return GFTextureFormat.decodeBuffer(this)
 			.then((d)=>{
 				this.buffer = d;
 				this._decoded = true;
 				return d;
 			});
+	}
+	
+	getInfoString() {
+		let str = 'UNKOWN_FORMAT';
+		for (let type in GFTextureFormat) {
+			if (GFTextureFormat[type] === this.format) {
+				str = type;
+				break;
+			}
+		}
+		return `${str} ${this.width}x${this.height} [texCount=${this._texCount}]`;
 	}
 	
 	toThree(opts={}) {

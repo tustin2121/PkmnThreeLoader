@@ -27,6 +27,7 @@ Object.assign(ViewerApp.prototype, {
 	async loadPokemonFiles() {
 		global.info = new ModelInfo('pokemon');
 		this.clearDisplay();
+		this.appMode = 'model';
 		let filenames = new Array(9);
 		for (let i = 0; i <= 8; i++) {
 			let file = $(`#props input[name=loadPkmnFile${i}]`).val();
@@ -43,6 +44,7 @@ Object.assign(ViewerApp.prototype, {
 			console.log(i, global.loadedFiles[i]);
 		}
 		this.displayPokemonModel();
+		this.populateSidebar();
 	},
 	
 	async loadTrainerFiles() {
@@ -50,6 +52,7 @@ Object.assign(ViewerApp.prototype, {
 		
 		global.info = new ModelInfo(ttype); //trainer or overworld
 		this.clearDisplay();
+		this.appMode = 'model';
 		let filename = $(`#props input[name=loadTrainer0]`).val();
 		global.info.markTexturePack(0);
 		global.loadedFiles = await SPICA.open(filename);
@@ -66,6 +69,7 @@ Object.assign(ViewerApp.prototype, {
 	async loadBattleFiles() {
 		global.info = new ModelInfo('battlefield');
 		this.clearDisplay();
+		this.appMode = 'model';
 		let filename = $(`#props input[name=loadBattleFile0]`).val();
 		global.loadedFiles = await SPICA.open(filename);
 		console.log(global.loadedFiles);
@@ -81,6 +85,7 @@ Object.assign(ViewerApp.prototype, {
 	async loadOtherFile() {
 		global.info = new ModelInfo();
 		this.clearDisplay();
+		this.appMode = 'model';
 		let filename = $(`#props input[name=loadOtherFile0]`).val();
 		global.loadedFiles = await SPICA.open(filename);
 		console.log(global.loadedFiles);

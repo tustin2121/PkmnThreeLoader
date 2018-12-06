@@ -382,7 +382,7 @@ function parseExtraMotionPack(data, header, names) {
 				motionpack.extradata[i] = mot;
 			} break;
 			case  7:
-			case  8:
+			case  8: //Spinda's spots take up the other three "constants" slots
 			case  9:
 			case  10:
 			{
@@ -417,8 +417,14 @@ function parseExtraMotionPack(data, header, names) {
 				}
 				motionpack.extradata[i] = info;
 			} break;
-			case 12: motionpack.extradata[i] = true; break; //Unknown, no examples yet
-			case 13: motionpack.extradata[i] = true; break; //Unknown, no examples yet
+			case 12: //Used by some Gen 1 Pokemon
+				motionpack.extradata[i] = data.readBytes(entry.length);
+				motionpack.extradata[i]._addr = entry.address;
+				break;
+			case 13: // Unused: no examples
+				motionpack.extradata[i] = data.readBytes(entry.length);
+				motionpack.extradata[i]._addr = entry.address;
+				break; 
 		}
 	}
 	if (global.info) global.info.markXanim(motionpack.extradata);
