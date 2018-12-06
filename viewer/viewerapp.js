@@ -26,7 +26,11 @@ class ViewerApp {
 
 		this.scene = new THREE.Scene();
 		this.scene.add(new THREE.GridHelper(200, 20));
-		this.scene.add(new THREE.AxesHelper(50));
+		{
+			let x = new THREE.AxesHelper(50);
+			x.name = 'AxisHelper';
+			this.scene.add(x);
+		}
 		// this.scene.add(new THREE.HemisphereLight(0xffffff, 0x888888, 1.0));
 		this.dirLight = new THREE.DirectionalLight(0xffffff, 1.0);
 		this.dirLight.position.set(1, 2, 1);
@@ -200,8 +204,8 @@ class ViewerApp {
 			let box = new THREE.Box3(paks[0].modelpack.models[0].boundingBoxMin, paks[0].modelpack.models[0].boundingBoxMax);
 			let help = new THREE.Box3Helper(box, 0x00FF00);
 			help.name = 'Model Bounds';
-			this.root.add(help);
 			this.addDebugNode('modelBounds', help);
+			debugNode.add(help);
 		}{
 		}
 		this.root.add(debugNode);

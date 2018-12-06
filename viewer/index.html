@@ -111,7 +111,9 @@
 				</div>
 			</div>
 			<div id="sec-models" name="models">
-				<div class="group" group-name="Model List" id="modelList"></div>
+				<div class="group" group-name="Display Options">
+					<p><label><input type="checkbox" name="doptAxis" checked /> Show axis</label></p>
+				</div>
 				<div class="group" group-name="Pokemon Display Options" id="pokemonDisplayOpts" style="display:none;">
 					<p><label><input type="checkbox" debugVis="shadowModel" checked/> Show shadow projection</label></p>
 					<p>
@@ -119,13 +121,16 @@
 						<label><input type="radio" name="poptColor" value="shiny"/> Shiny</label>
 						<label><input type="radio" name="poptColor" value="petmap"/> Pet Spots</label>
 					</p>
-					<p><label><input type="checkbox" debugVis="allMetaNodes" checked/> Show metadata and debug</label></label></p>
-					<p><label><input type="checkbox" debugVis="modelBounds"/> Show model bounding box</label></label></p>
-					<p><label><input type="checkbox" debugVis="skeletonHelper" checked/> Show skeleton</label></p>
+					<p><label><input type="checkbox" debugVis="allMetaNodes" checked /> Show metadata</label></label></p>
+					<div class="group" group-name="Metadata Visibility">
+						<p><label><input type="checkbox" debugVis="modelBounds" /> Show model bounding box</label></label></p>
+						<p><label><input type="checkbox" debugVis="skeletonHelper" checked /> Show skeleton</label></p>
+					</div>
 				</div>
 				<div class="group" group-name="Model Options" id="modelOpts">
 					<p><button name="moptCenterGeom">Center Model Geometry</button></p>
 				</div>
+				<div class="group" group-name="Model List" id="modelList"></div>
 			</div>
 			<div id="sec-anims" name="anims">
 				<li id="animStop">Stop animations</li>

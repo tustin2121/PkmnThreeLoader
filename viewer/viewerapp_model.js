@@ -14,6 +14,9 @@ Object.assign(ViewerApp.prototype, {
 			if (node) node.visible = $(this).is(':checked');
 		});
 		
+		$('#props input[name=doptAxis]').on('click', function(){
+			this.scene.getObjectByName('AxisHelper').visible = $(this).is(':checked');
+		});
 		$('#props input[name=poptColor]').on('click', function(){
 			self.displayPokemonModel();
 		});
