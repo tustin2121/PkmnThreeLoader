@@ -70,8 +70,8 @@ class ViewerApp {
 		this.clearDisplay();
 	}
 	
-	get appMode(){ return $('body')[0].className; }
-	set appMode(val) { $('body').removeClass().addClass(val); }
+	get appMode(){ return $('html')[0].className; }
+	set appMode(val) { $('html').removeClass().addClass(val); }
 	
 	resize() {
 		this.camera.aspect = this.$view.innerWidth() / this.$view.innerHeight();

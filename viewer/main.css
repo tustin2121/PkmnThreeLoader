@@ -1,7 +1,10 @@
 html { width:100vw; height:100vh; }
 body {
 	display: grid;
-	grid-template: "display props" / 4fr 1.4fr;
+	grid-template: 
+		"display props" 4fr
+		"bottom  props" 1.4fr
+		/ 4fr 1.4fr;
 	margin:0; padding:0;
 	width:100vw; height:100vh;
 }
@@ -69,7 +72,7 @@ body {
 	position: absolute;
 	width: 0; height: 0;
 	top: -5px; left: 52px;
-	left: calc(52px + attr(locx, em, 0))
+	left: calc(52px + attr(locx, em, 0));
 	border-bottom: 5px solid #FFDDDD;
 	border-left: 5px solid transparent;
     border-right: 5px solid transparent;
@@ -118,12 +121,12 @@ body {
 	background: linear-gradient(to bottom, #ccbcf2 0%,#bea8f0 50%,#b395f3 51%,#ab80e6 100%);
 }
 
-body #props > nav { display: none; }
-body #props > nav[name=empty] { display: block; }
-body.model #props > nav { display: none; }
-body.model #props > nav[name=model] { display: block; }
-body.export #props > nav { display: none; }
-body.export #props > nav[name=export] { display: block; }
+html #props > nav { display: none; }
+html #props > nav[name=empty] { display: block; }
+html.model #props > nav { display: none; }
+html.model #props > nav[name=model] { display: block; }
+html.export #props > nav { display: none; }
+html.export #props > nav[name=export] { display: block; }
 
 #props > section {
 	background-color: #efefef;
@@ -245,4 +248,17 @@ body.export #props > nav[name=export] { display: block; }
 #props #sec-load .group > p input[type=text] {
 	flex-grow: 2;
 	margin-left: 4px;
+}
+
+
+#bbar {
+	grid-area: bottom;
+	position: relative;
+	overflow: hidden;
+}
+#bbar > div {
+	background-color: #efefef;
+	overflow-y: scroll;
+	position: absolute;
+	left: 0; top: 0; right: 0; bottom: 0;
 }
