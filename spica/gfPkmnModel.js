@@ -458,17 +458,34 @@ function parse(data, header, out={}) {
 /**
  *
  */
-function toThree({ modelpack, motionpacks }) {
-	if (!modelpack) throw new ReferenceError('No modelpack provided!');
-	if (!modelpack.models || modelpack.models.length !== 2) throw new ReferenceError('No models provided!');
-	if (!modelpack.shaders || !modelpack.shaders.length) throw new ReferenceError('No shaders provided!');
-	if (!modelpack.textures || !modelpack.textures.length) throw new ReferenceError('No textures provided!');
+async function toThree(paks, { texPak='normal', customTexPak }) {
+	const { PokeModel } = require('./rendering/PokeModel');
+	let combined = new GFModelPack();
+	combined.merge(paks[0].modelpack);
+	if (customTexPak) {
+		//TODO
+	} else {
+		switch (texPak) {
+			case 'normal': combined.merge(paks[1].modelpack); break;
+			case 'shiny': combined.merge(paks[2].modelpack); break;
+			case 'petmap':  combined.merge(paks[3].modelpack); break;
+			default: throw new TypeError('Invalid color!');
+		}
+	}
+	let mon = new PokeModel();
+	await combined._toThree(mon);
+	mon.sizeCategory = paks[8].monSize;
 	
-	let pkmn = modelpack.toThree();
+	mon.addAnimations(paks[4].animations.map(x=>x.toPAClip()));
+	mon.addAnimations(paks[5].animations.map(x=>x.toPAClip()));
+	mon.addAnimations(paks[6].animations.map(x=>x.toPAClip()));
+	mon.setEmotionAnimations(paks[4].extradata.slice(1, 7));
+	mon.setConstantAnimations(paks[4].extradata.slice(7, 11));
+	mon.setMetaPoints(paks[[4].extradata[11]]);
 	
-	//TODO motionpack
-	
-	return pkmn;
+	mon.name = "Pokemon";
+	mon.finalize();
+	return mon;
 }
 
 module.exports = { parse, parsePack:PARSE_PAK, toThree };

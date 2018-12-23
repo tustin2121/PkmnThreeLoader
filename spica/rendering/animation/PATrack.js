@@ -13,16 +13,62 @@ class PATrack {
 		/** @type {Float32Array} */
 		this.values = AnimationUtils.convertArray(values, this._valueBufferType);
 		/** @type {Float32Array} */
-		this.slopes = AnimationUtils.convertArray(slopes, this._slopeBufferType);
+		this.slopes = (slopes)?AnimationUtils.convertArray(slopes, this._slopeBufferType) : null;
 		
 		//TODO interpoation
 	}
 	
-	//TODO shift()
-	//TODO scale()
-	//TODO trim()
-	//TODO validate()
-	//TODO optimize()
+	shift(){ return this; } //TODO
+	scale(){ return this; } //TODO 
+	trim(){ return this; } //TODO 
+	validate(){ return this; } //TODO 
+	optimize(){ return this; } //TODO 
+	
+	toJson() {
+		let json = {
+			name: this.name,
+			valueType: this.valueType,
+			times: AnimationUtils.convertArray(this.times, Array),
+			values: AnimationUtils.convertArray(this.values, Array),
+			slopes: AnimationUtils.convertArray(this.slopes, Array),
+		};
+		return json;
+	}
+	
+	static parse(json) {
+		if (json.valueType === undefined) throw new Error(`PATrack: track valueType undefined!`);
+		
+		let trackClass = PATrack.getClassForValueType(json.valueType);
+		//TODO flatten?
+		
+		return new trackClass(json);
+	}
+	
+	static getClassForValueType(typeName) {
+		switch (typeName.toLowerCase()) {
+			case 'scalar':
+			case 'double':
+			case 'float':
+			case 'number':
+			case 'integer':
+				return PANumberTrack;
+			case 'vector':
+			case 'vector2':
+			case 'vector3':
+			case 'vector4':
+				return PAVectorTrack;
+			case 'color':
+				return PAColorTrack;
+			case 'quaternion':
+				return PAQuaternionTrack;
+			case 'bool':
+			case 'boolean':
+				return PABooleanTrack;
+			case 'string':
+				return PAStringTrack;
+		}
+		throw new Error(`Unsupported track type: ${typeName}`);
+	}
 }
 PATrack.prototype.valueType = 'undefined';
 PATrack.prototype._timeBufferType = Float32Array;

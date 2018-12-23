@@ -47,6 +47,23 @@ class GFMotUVTransform {
 		hash = this.transY.reduce(GFMotKeyFrame.hashCode, hash);
 		return hash;
 	}
+	
+	calcFrameHash(frame) {
+		let hash = 0;
+		const props = [ this.scaleX, this.scaleY, this.rot, this.transX, this.transY, ];
+		for (let prop of props) {
+			if (!prop || !prop.length) continue; //skip prop
+			let closestFrame = null;
+			for (let f of prop) {
+				if (f.frame === frame) { closestFrame = f; break; }
+				if (closestFrame === null) { closestFrame = f; continue; }
+				if (Math.abs(f.frame - frame) < Math.abs(closestFrame.frame - frame)) { closestFrame = f; continue; }
+			}
+			if (closestFrame === null) continue; //skip prop
+			hash = GFMotKeyFrame.hashCode(hash, closestFrame);
+		}
+		return hash;
+	}
 }
 
 class GFMaterialMot {
@@ -77,6 +94,14 @@ class GFMaterialMot {
 		let hash = (this.materials.length * 23) % 0xFFFFFFFF;
 		for (let mat of this.materials) {
 			hash ^= mat.calcAnimHash();
+		}
+		return hash;
+	}
+	
+	calcFrameHash(frame) {
+		let hash = (this.materials.length * 23) % 0xFFFFFFFF;
+		for (let mat of this.materials) {
+			hash ^= mat.calcFrameHash(frame);
 		}
 		return hash;
 	}
@@ -150,6 +175,45 @@ class GFMaterialMot {
 				//TODO frame.slope; ???
 			}
 			let track = new NumberKeyframeTrack(path, times, values);
+			return track;
+		}
+	}
+	
+	toPATracks(frameCount) {
+		const { PANumberTrack } = require('../../rendering/animation/PATrack');
+		
+		// const unitTrans = ['map', 'alphaMap', 'normalMap'];
+		const unitTrans = ['map0', 'map1', 'map2'];
+		let tracks = [];
+		for (let mat of this.materials) {
+			let coord = unitTrans[mat.unitIndex];
+			let tn = `.mat[${mat.name}].${coord}`;
+			if (mat.scaleX.length) tracks.push(makeNumTrack(`${tn}.repeat[x]`, mat.scaleX));
+			if (mat.scaleY.length) tracks.push(makeNumTrack(`${tn}.repeat[y]`, mat.scaleY));
+			if (mat.rotX.length) tracks.push(makeNumTrack(`${tn}.rotation`, mat.rotX));
+			if (mat.transX.length) tracks.push(makeStepTrack(`${tn}.offset[x]`, mat.transX));
+			if (mat.transY.length) tracks.push(makeStepTrack(`${tn}.offset[y]`, mat.transY));
+		}
+		return tracks;
+		
+		function makeStepTrack(name, vt) {
+			let times=[], values=[], slopes=[];
+			for (let frame of vt) {
+				times.push(frame.frame/30);
+				values.push(frame.value);
+				slopes.push(frame.slope);
+			}
+			let track = new PANumberTrack({ name, times, values, slopes, interpolation:'discrete' });
+			return track;
+		}
+		function makeNumTrack(name, vt, adjust=0) {
+			let times=[], values=[], slopes=[];
+			for (let frame of vt) {
+				times.push(frame.frame/30);
+				values.push(frame.value+adjust);
+				slopes.push(frame.slope);
+			}
+			let track = new PANumberTrack({ name, times, values, slopes });
 			return track;
 		}
 	}

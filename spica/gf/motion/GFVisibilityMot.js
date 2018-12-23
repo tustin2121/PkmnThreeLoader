@@ -69,6 +69,29 @@ class GFVisibilityMot {
 			return track;
 		}
 	}
+	
+	toPATracks(frameCount) {
+		const { PABooleanTrack } = require('../../rendering/animation/PATrack');
+		
+		let tracks = [];
+		for (let vis of this.visibilities) {
+			tracks.push(makeBoolTrack(`.vis[${vis.name}]`, vis.values));
+		}
+		return tracks;
+		
+		function makeBoolTrack(name, vt) {
+			let times=[], values=[];
+			let val = undefined;
+			for (let i = 0; i < vt.length; i++) {
+				if (val === vt[i]) continue;
+				times.push(i/30);
+				values.push(vt[i]);
+				val = vt[i];
+			}
+			let track = new PABooleanTrack({ name, times, values });
+			return track;
+		}
+	}
 }
 
 module.exports = { GFVisibilityMot, GFMotBoolean };

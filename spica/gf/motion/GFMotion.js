@@ -143,6 +143,23 @@ class GFMotion {
 		return this.animHash;
 	}
 	
+	calcCompatabilityHashes() {
+		if (this.firstFrameHash === null) {
+			let hash = 0;
+			if (this.skeletonAnimation) hash ^= this.skeletonAnimation.calcFrameHash(0);
+			if (this.materialAnimation) hash ^= this.materialAnimation.calcFrameHash(0);
+			if (this.visibilityAnimation) hash ^= this.visibilityAnimation.calcFrameHash(0);
+			this.firstFrameHash = hash;
+		}
+		if (this.lastFrameHash === null) {
+			let hash = 0;
+			if (this.skeletonAnimation) hash ^= this.skeletonAnimation.calcFrameHash(this.frameCount);
+			if (this.materialAnimation) hash ^= this.materialAnimation.calcFrameHash(this.frameCount);
+			if (this.visibilityAnimation) hash ^= this.visibilityAnimation.calcFrameHash(this.frameCount);
+			this.lastFrameHash = hash;
+		}
+	}
+	
 	toThree() {
 		const { AnimationClip } = require('three');
 		let tracks = [];
@@ -152,6 +169,18 @@ class GFMotion {
 		if (this.visibilityAnimation) tracks.push(...this.visibilityAnimation.toThreeTracks(this.frameCount));
 		
 		let clip = new AnimationClip(this.name, this.frameCount/30, tracks);
+		return clip;
+	}
+	
+	toPAClip() {
+		const { PAClip } = require('../../rendering/animation/PAClip');
+		let tracks = [];
+		
+		if (this.skeletonAnimation) tracks.push(...this.skeletonAnimation.toPATracks(this.frameCount));
+		if (this.materialAnimation) tracks.push(...this.materialAnimation.toPATracks(this.frameCount));
+		if (this.visibilityAnimation) tracks.push(...this.visibilityAnimation.toPATracks(this.frameCount));
+		
+		let clip = new PAClip(this.name, this.frameCount/30, tracks);
 		return clip;
 	}
 }

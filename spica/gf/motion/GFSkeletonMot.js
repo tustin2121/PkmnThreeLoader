@@ -35,15 +35,11 @@ class GFMotBoneTransform {
 				case 0: GFMotKeyFrame.setList(this.scaleX, data, flags, frameCount, end-data.offset); break;
 				case 1: GFMotKeyFrame.setList(this.scaleY, data, flags, frameCount, end-data.offset); break;
 				case 2: GFMotKeyFrame.setList(this.scaleZ, data, flags, frameCount, end-data.offset); break;
-				//*
+				
 				case 3: GFMotKeyFrame.setList(this.rotX, data, flags, frameCount, end-data.offset); break;
 				case 4: GFMotKeyFrame.setList(this.rotY, data, flags, frameCount, end-data.offset); break;
 				case 5: GFMotKeyFrame.setList(this.rotZ, data, flags, frameCount, end-data.offset); break;
-				/*/
-				case 3: GFMotKeyFrame.setList(this.rotZ, data, flags, frameCount, end-data.offset); break;
-				case 4: GFMotKeyFrame.setList(this.rotY, data, flags, frameCount, end-data.offset); break;
-				case 5: GFMotKeyFrame.setList(this.rotX, data, flags, frameCount, end-data.offset); break;
-				//*/
+				
 				case 6: GFMotKeyFrame.setList(this.transX, data, flags, frameCount, end-data.offset); break;
 				case 7: GFMotKeyFrame.setList(this.transY, data, flags, frameCount, end-data.offset); break;
 				case 8: GFMotKeyFrame.setList(this.transZ, data, flags, frameCount, end-data.offset); break;
@@ -67,6 +63,27 @@ class GFMotBoneTransform {
 		hash = this.transX.reduce(GFMotKeyFrame.hashCode, hash);
 		hash = this.transY.reduce(GFMotKeyFrame.hashCode, hash);
 		hash = this.transZ.reduce(GFMotKeyFrame.hashCode, hash);
+		return hash;
+	}
+	
+	calcFrameHash(frame) {
+		let hash = 0;
+		const props = [ 
+			this.scaleX, this.scaleY, this.scaleZ, 
+			this.rotX, this.rotY, this.rotZ, 
+			this.transX, this.transY, this.transZ, 
+		];
+		for (let prop of props) {
+			if (!prop || !prop.length) continue; //skip prop
+			let closestFrame = null;
+			for (let f of prop) {
+				if (f.frame === frame) { closestFrame = f; break; }
+				if (closestFrame === null) { closestFrame = f; continue; }
+				if (Math.abs(f.frame - frame) < Math.abs(closestFrame.frame - frame)) { closestFrame = f; continue; }
+			}
+			if (closestFrame === null) continue; //skip prop
+			hash = GFMotKeyFrame.hashCode(hash, closestFrame);
+		}
 		return hash;
 	}
 	
@@ -114,6 +131,14 @@ class GFSkeletonMot {
 		let hash = (this.bones.length * 17) % 0xFFFFFFFF;
 		for (let bone of this.bones) {
 			hash ^= bone.calcAnimHash();
+		}
+		return hash;
+	}
+	
+	calcFrameHash(frame) {
+		let hash = (this.bones.length * 17) % 0xFFFFFFFF;
+		for (let bone of this.bones) {
+			hash ^= bone.calcFrameHash(frame);
 		}
 		return hash;
 	}
@@ -179,6 +204,72 @@ class GFSkeletonMot {
 				//TODO frame.slope; ???
 			}
 			let track = new NumberKeyframeTrack(path, times, values);
+			return track;
+		}
+	}
+	
+	toPATracks(frameCount) {
+		const { Quaternion, Vector3, Euler } = require('three');
+		const { PAQuaternionTrack, PANumberTrack } = require('../../rendering/animation/PATrack');
+		
+		let tracks = [];
+		for (let bone of this.bones) {
+			tracks.push(...makeTrack(`.bones[${bone.name}].scale`, bone.scaleX, bone.scaleY, bone.scaleZ));
+			tracks.push(...makeRotationTrack(`.bones[${bone.name}].quaternion`, bone));
+			tracks.push(...makeTrack(`.bones[${bone.name}].position`, bone.transX, bone.transY, bone.transZ));
+		}
+		return tracks;
+		
+		function makeRotationTrack(names, bone) {
+			const q = new Quaternion();
+			const v = new Vector3();
+			const e = new Euler();
+			
+			if (!bone.rotX.length && !bone.rotY.length && !bone.rotZ.length) return [];
+			let vals = [], times = [];
+			
+			for (let i = 0; i < frameCount; i++) {
+				v.x = GFMotBoneTransform.getFrameValue(bone.rotX, i);
+				v.y = GFMotBoneTransform.getFrameValue(bone.rotY, i);
+				v.z = GFMotBoneTransform.getFrameValue(bone.rotZ, i);
+				
+				// Note from gdkchan:
+				// When the game uses Axis Angle for rotation, I believe that the original Euler rotation can be ignored,
+                // because otherwise we would need to either convert Euler to Axis Angle or Axis to Euler,
+				// and both conversions are pretty expensive. The vector is already halved as a optimization (needs * 2).
+				if (bone.isAxisAngle) {
+					let angle = v.length() * 2;
+					if (angle > 0) {
+						q.setFromAxisAngle(v.normalize(), angle);
+					} else {
+						q.set(0, 0, 0, 1); //set to identity
+					}
+				} else {
+					e.setFromVector3(v, 'ZYX');
+					q.setFromEuler(e);
+				}
+				times.push(i/30);
+				vals.push(q.x, q.y, q.z, q.w);
+			}
+			return [new PAQuaternionTrack({ names, times, values:vals })];
+		}
+		
+		function makeTrack(path, vx, vy, vz) {
+			let tracks = [];
+			if (vx.length) tracks.push(makeNumTrack(`${path}[x]`, vx));
+			if (vy.length) tracks.push(makeNumTrack(`${path}[y]`, vy));
+			if (vz.length) tracks.push(makeNumTrack(`${path}[z]`, vz));
+			return tracks;
+		}
+		
+		function makeNumTrack(name, vt, adjust=0) {
+			let times=[], values=[], slopes=[];
+			for (let frame of vt) {
+				times.push(frame.frame/30);
+				values.push(frame.value+adjust);
+				slopes.push(frame.slope);
+			}
+			let track = new PANumberTrack({ name, times, values, slopes });
 			return track;
 		}
 	}
