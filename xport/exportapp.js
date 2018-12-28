@@ -1,4 +1,4 @@
-// viewerapp.js
+// exportapp.js
 //
 /* global $, window, document, SPICA, THREE */
 
@@ -10,7 +10,7 @@ if (!Object.hasOwnProperty(THREE.Vector3.prototype, 'toString')) {
 
 let raf = window.requestAnimationFrame;
 
-class ViewerApp {
+class ExportApp {
 	constructor() {
 		this.$view = $('#view');
 		this.renderer = new THREE.WebGLRenderer();
@@ -151,79 +151,20 @@ class ViewerApp {
 		}
 	}
 	
-	async displayPokemonModel(exportReady=false) {
+	async displayPokemonModel() {
 		// Clear any previous pokemon models currently residing in the scene
 		this.root.remove(...this.root.children);
 		this.debugNodes = {};
 		
-		let mon = null;
 		let paks = global.loadedFiles;
-		{
-			let combined = new SPICA.gf.GFModelPack();
-			combined.merge(paks[0].modelpack);
-			let val = $(`#props input[name=poptColor]:checked`).val();
-			switch (val) {
-				case 'normal': combined.merge(paks[1].modelpack); break;
-				case 'shiny': combined.merge(paks[2].modelpack); break;
-				case 'petmap': combined.merge(paks[3].modelpack); break;
-			}
-			mon = await combined.toThreePokemon();
-			//TODO give mon animations
-			mon.name = "Pokemon";
-			this.root.add(mon);
-		}
-		if (exportReady) return;
-		
-		this.animMixer = mon.animMixer;
-		
-		let debugNode = new THREE.Group();
-		debugNode.name = 'Debug Info';
-		{
-			if (mon.children[1]) {
-				this.addDebugNode('shadowModel', mon.children[1]);
-			}
-			mon.shadowLight = this.dirLight;
-		}{
-			let node = new THREE.SkeletonHelper(mon.skeleton.bones[0]);
-			node.name = 'Mon Skeleton';
-			this.addDebugNode('skeletonHelper', node);
-			debugNode.add(node);
-			global.info.markSkeleton(mon.children[0].skeleton.bones);
-		}{
-			let point = new THREE.Mesh(new THREE.SphereBufferGeometry(), new THREE.MeshBasicMaterial());
-			point.name = 'Meta 07';
-			point.position.copy(paks[8].meta1.unk07);
-			this.addDebugNode('metaPoint', point);
-			debugNode.add(point);
-		}{
-			let box = new THREE.Box3(paks[8].meta1.boundingBoxMin, paks[8].meta1.boundingBoxMax);
-			let help = new THREE.Box3Helper(box);
-			help.name = 'Idle Bounds';
-			this.addDebugNode('idleBounds', help);
-			debugNode.add(help);
-		}{
-			let box = new THREE.Box3(paks[0].modelpack.models[0].boundingBoxMin, paks[0].modelpack.models[0].boundingBoxMax);
-			let help = new THREE.Box3Helper(box, 0x00FF00);
-			help.name = 'Model Bounds';
-			this.addDebugNode('modelBounds', help);
-			debugNode.add(help);
-		}{
-		}
-		this.root.add(debugNode);
-		this.addDebugNode('allMetaNodes', debugNode);
+		let mon = SPICA.gfPkmnModel.toThree(paks);
+		this.root.add(mon);
 	}
 	
 	
 	
 
 	playAnimation({ clip }={}) {
-		if (this.currAnim) {
-			this.currAnim.stop();
-			this.currAnim.enable = false;
-			this.currAnim = null;
-		}
-		if (!clip) return;
-		this.currAnim = this.animMixer.clipAction(clip);
-		this.currAnim.play();
+		
 	}
 }

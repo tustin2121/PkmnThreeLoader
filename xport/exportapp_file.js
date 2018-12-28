@@ -1,8 +1,8 @@
-// viewerapp_files.js
+// exportapp_files.js
 //
-/* global $, window, document, ViewerApp, ModelInfo, SPICA, THREE */
+/* global $, window, document, ExportApp, ModelInfo, SPICA, THREE */
 
-Object.assign(ViewerApp.prototype, {
+Object.assign(ExportApp.prototype, {
 	init_loadTab() {
 		let self = this;
 		$('#props .file').on('dblclick', function(){
@@ -26,7 +26,6 @@ Object.assign(ViewerApp.prototype, {
 	},
 	
 	async loadPokemonFiles() {
-		global.info = new ModelInfo('pokemon');
 		this.clearDisplay();
 		this.appMode = 'model';
 		let filenames = new Array(9);
@@ -51,7 +50,6 @@ Object.assign(ViewerApp.prototype, {
 	async loadTrainerFiles() {
 		let ttype = $(`#props input[name=loadTrainerType]:checked`).val();
 		
-		global.info = new ModelInfo(ttype); //trainer or overworld
 		this.clearDisplay();
 		this.appMode = 'model';
 		let filename = $(`#props input[name=loadTrainer0]`).val();
@@ -68,7 +66,6 @@ Object.assign(ViewerApp.prototype, {
 	},
 	
 	async loadBattleFiles() {
-		global.info = new ModelInfo('battlefield');
 		this.clearDisplay();
 		this.appMode = 'model';
 		let filename = $(`#props input[name=loadBattleFile0]`).val();
@@ -84,7 +81,6 @@ Object.assign(ViewerApp.prototype, {
 	},
 	
 	async loadOtherFile() {
-		global.info = new ModelInfo();
 		this.clearDisplay();
 		this.appMode = 'model';
 		let filename = $(`#props input[name=loadOtherFile0]`).val();

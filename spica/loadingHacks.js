@@ -61,3 +61,10 @@ module.exports = function(name, files) {
 		OBJ[name](files);
 	}
 };
+
+module.exports.selectHTML = `
+<option value="">[None]</option><!-- deliberately empty value -->
+<optgroup label="Pokemon">
+	<option value="megasteelix">Mega Steelix (Anim Fixes)</option>
+	<option value="vivillion">Vivillion (Variation Purge)</option>
+</optgroup>`;

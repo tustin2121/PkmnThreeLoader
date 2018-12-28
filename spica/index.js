@@ -129,7 +129,15 @@ function openPokemonPack(files) {
 	return Promise.all(files);
 }
 
-module.exports = { load, loadAll, parse, parseAll, open, openPokemonPack, gf:require('./gf') };
+const gfPkmnModel = require('./gfPkmnModel');
+const gfMapModel = require('./gfMapModel');
+const gfCharacterModel = require('./gfCharacterModel');
+
+module.exports = { 
+	load, loadAll, parse, parseAll, open, openPokemonPack, 
+	gfPkmnModel, gfMapModel, gfCharacterModel, 
+	gf:require('./gf'),
+};
 
 /*
 function open(file) {

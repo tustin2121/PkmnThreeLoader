@@ -14,8 +14,8 @@ class PATrack {
 		this.values = AnimationUtils.convertArray(values, this._valueBufferType);
 		/** @type {Float32Array} */
 		this.slopes = (slopes)?AnimationUtils.convertArray(slopes, this._slopeBufferType) : null;
-		
-		//TODO interpoation
+		/** @type {string}  */
+		this.interpolation = interpolation;
 	}
 	
 	shift(){ return this; } //TODO
@@ -28,9 +28,10 @@ class PATrack {
 		let json = {
 			name: this.name,
 			valueType: this.valueType,
+			interpoation: this.interpolation,
 			times: AnimationUtils.convertArray(this.times, Array),
 			values: AnimationUtils.convertArray(this.values, Array),
-			slopes: AnimationUtils.convertArray(this.slopes, Array),
+			slopes: (this.slopes)?AnimationUtils.convertArray(this.slopes, Array):null,
 		};
 		return json;
 	}

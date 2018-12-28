@@ -2,6 +2,28 @@
 
 const { Object3D, AnimationMixer, Vector3, Plane } = require('three');
 
+const TRACKING_POINT_NAMES = {
+	'headFocus': 0,
+	'headTop': 1,
+	'eye': 2,
+	'mouth': 3,
+	// 4 is unknown?
+	'center': 5,
+	'sp0': 6,
+	'handAttach': 7,
+	'tail': 8,
+	'groundContact': 9,
+	'phys0': 10,
+	'phys1': 11,
+	'phys2': 12,
+	'phys3': 13,
+	'pokeball': 14,
+	'sp1': 15,
+	'sp2': 16,
+	'sp3': 17,
+	// 18 is unknown?
+};
+
 class PokeModel extends Object3D {
 	constructor() {
 		super();
@@ -39,6 +61,11 @@ class PokeModel extends Object3D {
 	///////////////////////////////////////////////////////////////////////////
 	// Construction
 	
+	_bind(anim) {
+		let name = anim.name;
+		
+	}
+	
 	addAnimations(anims) {
 		if (!anims) return; //do nothing
 		if (!Array.isArray(anims)) throw new TypeError('Invalid animations!');
@@ -65,7 +92,7 @@ class PokeModel extends Object3D {
 		anims = anims.filter(x=>x);
 		this._anims_constant = anims;
 	}
-	setMetaPoints(pointlist) {
+	setMetaPointsFromList(pointlist) {
 		if (!Array.isArray(pointlist)) throw new TypeError('Invalid animations!');
 		this.metaPoints = [];
 		for (let pt of pointlist) {
@@ -74,18 +101,36 @@ class PokeModel extends Object3D {
 		}
 	}
 	
+	getMetaPoint(id) {
+		if (typeof id === 'string') id = TRACKING_POINT_NAMES[id];
+		if (typeof id === 'string') throw new TypeError('Invalid type id!');
+		return this.metaPoints[id];
+	}
+	
 	finalize() {
-		this.animMixer = new AnimationMixer(this.children[0]);
 		this.traverse((obj)=>{
-			if (!obj.isMesh) return;
-			if (!obj.material) return;
-			let mats = obj.material;
-			if (!Array.isArray(mats)) mats = [mats];
-			for (let mat of mats) {
-				if (!mat.isPokemonCommonMaterial) continue;
-				mat.parentModel = this;
+			if (obj.isBone) {
+				this._anim_bones[obj.name] = obj;
+			} 
+			else if (obj.isMesh) {
+				this._anim_vis[obj.name] = (this._anim_vis[obj.name]||[]);
+				this._anim_vis[obj.name].push(obj);
+				
+				if (obj.material) {
+					let mats = obj.material;
+					if (!Array.isArray(mats)) mats = [mats];
+					for (let mat of mats) {
+						this._anim_mats[mat.name] = (this._anim_mats[mat.name]||[]);
+						this._anim_mats[mat.name].push(mat);
+						if (mat.isPokemonCommonMaterial) {
+							mat.parentModel = this;
+						}
+					}
+				}
 			}
 		});
+		
+		
 	}
 	
 }

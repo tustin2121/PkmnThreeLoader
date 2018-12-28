@@ -1,0 +1,80 @@
+<html>
+<head>
+	<link rel="stylesheet" href="main.css" />
+	<title>GF Model Converter</title>
+</head>
+<body>
+	<div id="hidden"><input type="file" id="fileChooser" /></div>
+	<div id="view">
+		<div id="textureView"></div>
+		<div id="shaderView"></div>
+	</div>
+	<div id="bbar">
+		<div name="animTimeline"></div>
+	</div>
+	<div id="props">
+		<nav name="empty">
+			<li name="load" class="selected">Load</li>
+		</nav>
+		<nav name="export">
+			<li name="load" class="selected">Load</li>
+			<li name="anims">Animations</li>
+		</nav>
+		<section>
+			<div id="sec-load" name="load" class="selected">
+				<div class="group" group-name="Load Pokemon">
+					<p><label><input type="checkbox" name="loadPkmnFileAuto" checked />Autofill from Pack 0</label></p>
+					<p>Pack 0: <input type="text" readonly name="loadPkmnFile0" class="file"></input></p>
+					<p>Pack 1: <input type="text" readonly name="loadPkmnFile1" class="file"></input></p>
+					<p>Pack 2: <input type="text" readonly name="loadPkmnFile2" class="file"></input></p>
+					<p>Pack 3: <input type="text" readonly name="loadPkmnFile3" class="file"></input></p>
+					<p>Pack 4: <input type="text" readonly name="loadPkmnFile4" class="file"></input></p>
+					<p>Pack 5: <input type="text" readonly name="loadPkmnFile5" class="file"></input></p>
+					<p>Pack 6: <input type="text" readonly name="loadPkmnFile6" class="file"></input></p>
+					<p>Pack 7: <input type="text" readonly name="loadPkmnFile7" class="file"></input></p>
+					<p>Pack 8: <input type="text" readonly name="loadPkmnFile8" class="file"></input></p>
+					<p><button name="loadPkmnFileBtn">Load Pokemon</button></p>
+				</div>
+				<div class="group" group-name="Load Trainer / Overworld">
+					<p>Main: <input type="text" readonly name="loadTrainer0" class="file"></input></p>
+					<p>Prop: <input type="text" readonly name="loadTrainer1" class="file"></input></p>
+					<p>Ball: <input type="text" readonly name="loadTrainer2" class="file"></input></p>
+					<p>
+						<label><input type="radio" name="loadTrainerType" value="trainer" checked /> Battle</label>
+						<label><input type="radio" name="loadTrainerType" value="overworld" /> Overworld</label>
+					</p>
+					<p><button name="loadTrainerBtn">Load Model</button></p>
+				</div>
+				<div class="group" group-name="Load Battle Stage">
+					<p>File: <input type="text" readonly name="loadBattleFile0" class="file"></input></p>
+					<p><button name="loadBattleFileBtn">Load Model</button></p>
+				</div>
+				<div class="group" group-name="Load Other">
+					<p>File: <input type="text" readonly name="loadOtherFile0" class="file"></input></p>
+					<p><button name="loadOtherFileBtn">Load Model</button></p>
+				</div>
+				<div class="group" group-name="Load Options">
+					<p>
+						<label><input type="radio" name="poptColor" value="normal" checked/> Normal</label>
+						<label><input type="radio" name="poptColor" value="shiny"/> Shiny</label>
+						<label><input type="radio" name="poptColor" value="petmap"/> Pet Spots</label>
+					</p>
+					<p>Loading Hack: <select name="hackName"></select></p>
+				</div>
+			</div>
+			
+		</section>
+	</div>
+	
+	<script src="jquery-3.1.1.min.js"></script>
+	<script>
+		const SPICA = global.SPICA = require('../spica');
+		const THREE = global.THREE = require('three');
+		require('./OrbitControls');
+	</script>
+	
+	<script src="exportapp.js"></script>
+	<script src="exportapp_file.js"></script>
+	<script src="main.js"></script>
+</body>
+</html>

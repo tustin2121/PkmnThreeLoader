@@ -481,7 +481,7 @@ async function toThree(paks, { texPak='normal', customTexPak }) {
 	mon.addAnimations(paks[6].animations.map(x=>x.toPAClip()));
 	mon.setEmotionAnimations(paks[4].extradata.slice(1, 7));
 	mon.setConstantAnimations(paks[4].extradata.slice(7, 11));
-	mon.setMetaPoints(paks[[4].extradata[11]]);
+	mon.setMetaPointsFromList(paks[4].extradata[11]);
 	
 	mon.name = "Pokemon";
 	mon.finalize();
